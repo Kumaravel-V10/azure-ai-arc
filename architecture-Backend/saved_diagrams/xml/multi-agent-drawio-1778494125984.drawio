@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="1778494125967" agent="multi-agent-generator" etag="4b3e5bcf" version="24.7.17" type="device">
+  <diagram name="AI Agents Architecture" id="arch-4b3e5bcf">
+    <mxGraphModel dx="1674" dy="1014" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2855" pageHeight="1488" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="2" value="" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="20" y="20" width="2795" height="1428" as="geometry"/>
+        </mxCell>
+        <mxCell id="sub-label" value="Azure Subscription - AI Agents Architecture" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=14;fontStyle=1;" vertex="1" parent="2">
+          <mxGeometry x="10" y="5" width="420" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-10" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/general/User.svg;" vertex="1" parent="2">
+          <mxGeometry x="40" y="67" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-10-label" value="Users" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="2">
+          <mxGeometry x="20" y="133" width="104" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-11" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/networking/Front_Doors.svg;" vertex="1" parent="2">
+          <mxGeometry x="200" y="67" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-11-label" value="Azure Front Door" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="2">
+          <mxGeometry x="180" y="133" width="104" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="rg-0" value="" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;shadow=1;arcSize=5;fillColor=#e6f3ff;" vertex="1" parent="2">
+          <mxGeometry x="30" y="217" width="690" height="1048" as="geometry"/>
+        </mxCell>
+        <mxCell id="rg-0-label" value="rg-test-shared-backend-fra-sc (Shared backend services including API Management, Function Apps, and data layer)" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=12;fontStyle=1;" vertex="1" parent="rg-0">
+          <mxGeometry x="10" y="10" width="670" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="vnet-0-12" value="" style="whiteSpace=wrap;html=1;dashed=1;fillColor=#e6f3ff;" vertex="1" parent="rg-0">
+          <mxGeometry x="30" y="62" width="630" height="776" as="geometry"/>
+        </mxCell>
+        <mxCell id="vnet-0-12-label" value="vnet-test-shared-backend-fra-sc" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontStyle=1;" vertex="1" parent="vnet-0-12">
+          <mxGeometry x="10" y="5" width="217" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="sn-0-13" value="" style="whiteSpace=wrap;html=1;dashed=1;" vertex="1" parent="vnet-0-12">
+          <mxGeometry x="110" y="62" width="410" height="208" as="geometry"/>
+        </mxCell>
+        <mxCell id="sn-0-13-label" value="snet-shared-apim" style="text;html=1;align=center;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="vnet-0-12">
+          <mxGeometry x="360" y="270" width="150" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="sn-0-13-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/networking/Subnet.svg;" vertex="1" parent="vnet-0-12">
+          <mxGeometry x="465" y="240" width="42" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-14" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/app_services/API_Management_Services.svg;" vertex="1" parent="sn-0-13">
+          <mxGeometry x="45" y="10" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-14-label" value="Azure API Management" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="sn-0-13">
+          <mxGeometry x="25" y="76" width="104" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-15" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/integration/Logic_Apps.svg;" vertex="1" parent="sn-0-13">
+          <mxGeometry x="205" y="10" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-15-label" value="Azure Logic Apps" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="sn-0-13">
+          <mxGeometry x="185" y="76" width="104" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="sn-0-16" value="" style="whiteSpace=wrap;html=1;dashed=1;" vertex="1" parent="vnet-0-12">
+          <mxGeometry x="175" y="300" width="280" height="208" as="geometry"/>
+        </mxCell>
+        <mxCell id="sn-0-16-label" value="snet-shared-functions" style="text;html=1;align=center;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="vnet-0-12">
+          <mxGeometry x="295" y="508" width="150" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="sn-0-16-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/networking/Subnet.svg;" vertex="1" parent="vnet-0-12">
+          <mxGeometry x="400" y="478" width="42" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-17" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/compute/Function_Apps.svg;" vertex="1" parent="sn-0-16">
+          <mxGeometry x="60" y="10" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-17-label" value="Azure Functions (Shared Backend)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="sn-0-16">
+          <mxGeometry x="40" y="76" width="104" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="sn-0-18" value="" style="whiteSpace=wrap;html=1;dashed=1;" vertex="1" parent="vnet-0-12">
+          <mxGeometry x="30" y="538" width="570" height="208" as="geometry"/>
+        </mxCell>
+        <mxCell id="sn-0-18-label" value="snet-shared-data" style="text;html=1;align=center;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="vnet-0-12">
+          <mxGeometry x="440" y="746" width="150" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="sn-0-18-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/networking/Subnet.svg;" vertex="1" parent="vnet-0-12">
+          <mxGeometry x="545" y="716" width="42" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-19" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/databases/SQL_Database.svg;" vertex="1" parent="sn-0-18">
+          <mxGeometry x="45" y="10" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-19-label" value="Azure Database for PostgreSQL" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="sn-0-18">
+          <mxGeometry x="25" y="76" width="104" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-20" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/databases/Cache_Redis.svg;" vertex="1" parent="sn-0-18">
+          <mxGeometry x="205" y="10" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-20-label" value="Azure Redis Cache" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="sn-0-18">
+          <mxGeometry x="185" y="76" width="104" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-21" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/general/Resource_Groups.svg;" vertex="1" parent="sn-0-18">
+          <mxGeometry x="365" y="10" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-21-label" value="Azure Backup" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="sn-0-18">
+          <mxGeometry x="345" y="76" width="104" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-22" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/security/Key_Vaults.svg;" vertex="1" parent="rg-0">
+          <mxGeometry x="185" y="868" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-22-label" value="Azure Key Vault (Shared)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="rg-0">
+          <mxGeometry x="165" y="934" width="104" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-23" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/integration/App_Configuration.svg;" vertex="1" parent="rg-0">
+          <mxGeometry x="345" y="868" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-23-label" value="Azure App Configuration" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="rg-0">
+          <mxGeometry x="325" y="934" width="104" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="rg-1" value="" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;shadow=1;arcSize=5;fillColor=#f0f8f0;" vertex="1" parent="2">
+          <mxGeometry x="765" y="217" width="410" height="1048" as="geometry"/>
+        </mxCell>
+        <mxCell id="rg-1-label" value="rg-test-finnair-fra-sc (Tenant-specific resources for Finnair)" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=12;fontStyle=1;" vertex="1" parent="rg-1">
+          <mxGeometry x="10" y="10" width="390" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-24" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/networking/Application_Gateways.svg;" vertex="1" parent="rg-1">
+          <mxGeometry x="45" y="62" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-24-label" value="Azure Application Gateway (Finnair)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="rg-1">
+          <mxGeometry x="25" y="128" width="104" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-25" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/app_services/App_Service_Plans.svg;" vertex="1" parent="rg-1">
+          <mxGeometry x="205" y="62" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-25-label" value="Azure App Service Plan (Finnair)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="rg-1">
+          <mxGeometry x="185" y="128" width="104" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="rg-2" value="" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;shadow=1;arcSize=5;fillColor=#f5f5f5;" vertex="1" parent="2">
+          <mxGeometry x="1220" y="217" width="410" height="1048" as="geometry"/>
+        </mxCell>
+        <mxCell id="rg-2-label" value="rg-test-klm-fra-sc (Tenant-specific resources for KLM)" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=12;fontStyle=1;" vertex="1" parent="rg-2">
+          <mxGeometry x="10" y="10" width="390" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-26" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/networking/Application_Gateways.svg;" vertex="1" parent="rg-2">
+          <mxGeometry x="45" y="62" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-26-label" value="Azure Application Gateway (KLM)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="rg-2">
+          <mxGeometry x="25" y="128" width="104" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-27" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/app_services/App_Service_Plans.svg;" vertex="1" parent="rg-2">
+          <mxGeometry x="205" y="62" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-27-label" value="Azure App Service Plan (KLM)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="rg-2">
+          <mxGeometry x="185" y="128" width="104" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="rg-3" value="" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;shadow=1;arcSize=5;fillColor=#fff2e6;" vertex="1" parent="2">
+          <mxGeometry x="1675" y="217" width="730" height="1048" as="geometry"/>
+        </mxCell>
+        <mxCell id="rg-3-label" value="rg-test-monitoring-security-fra-sc (Monitoring and security services)" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=12;fontStyle=1;" vertex="1" parent="rg-3">
+          <mxGeometry x="10" y="10" width="552" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-28" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/devops/Application_Insights.svg;" vertex="1" parent="rg-3">
+          <mxGeometry x="45" y="62" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-28-label" value="Application Insights" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="rg-3">
+          <mxGeometry x="25" y="128" width="104" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-29" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/analytics/Log_Analytics_Workspaces.svg;" vertex="1" parent="rg-3">
+          <mxGeometry x="205" y="62" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-29-label" value="Log Analytics Workspace" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="rg-3">
+          <mxGeometry x="185" y="128" width="104" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-30" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/management_governance/Monitor.svg;" vertex="1" parent="rg-3">
+          <mxGeometry x="365" y="62" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-30-label" value="Azure Monitor" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="rg-3">
+          <mxGeometry x="345" y="128" width="104" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-31" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/security/MS_Defender_EASM.svg;" vertex="1" parent="rg-3">
+          <mxGeometry x="525" y="62" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-31-label" value="Microsoft Defender for Cloud" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="rg-3">
+          <mxGeometry x="505" y="128" width="104" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn-200" value="User requests" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;fontSize=10;" edge="1" parent="1" source="svc-10" target="svc-11">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn-201" value="HTTPS routing for Finnair" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;fontSize=10;" edge="1" parent="1" source="svc-11" target="svc-24">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn-202" value="HTTPS routing for KLM" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;fontSize=10;" edge="1" parent="1" source="svc-11" target="svc-26">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn-203" value="Backend routing for Finnair" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;fontSize=10;" edge="1" parent="1" source="svc-24" target="svc-25">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn-204" value="Backend routing for KLM" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;fontSize=10;" edge="1" parent="1" source="svc-26" target="svc-27">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn-205" value="API gateway routing" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;fontSize=10;" edge="1" parent="1" source="svc-14" target="svc-25">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn-206" value="API gateway routing" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;fontSize=10;" edge="1" parent="1" source="svc-14" target="svc-27">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn-207" value="Microservices invocation" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;fontSize=10;" edge="1" parent="1" source="svc-14" target="svc-17">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn-208" value="SQL queries" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;fontSize=10;" edge="1" parent="1" source="svc-17" target="svc-19">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn-209" value="Cache access" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;fontSize=10;" edge="1" parent="1" source="svc-17" target="svc-20">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn-210" value="Secrets retrieval" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;fontSize=10;" edge="1" parent="1" source="svc-17" target="svc-22">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn-211" value="Telemetry" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;fontSize=10;" edge="1" parent="1" source="svc-17" target="svc-28">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn-212" value="Content delivery" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;fontSize=10;" edge="1" parent="1" source="svc-11" target="svc-23">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn-213" value="Telemetry &amp; diagnostics" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;fontSize=10;" edge="1" parent="1" source="svc-25" target="svc-29">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn-214" value="Telemetry &amp; diagnostics" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;fontSize=10;" edge="1" parent="1" source="svc-25" target="svc-30">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn-215" value="Security monitoring" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;fontSize=10;" edge="1" parent="1" source="svc-11" target="svc-31">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn-216" value="SQL queries" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;fontSize=10;" edge="1" parent="1" source="svc-25" target="svc-19">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn-217" value="SQL queries" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;fontSize=10;" edge="1" parent="1" source="svc-27" target="svc-19">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn-218" value="Backup strategy" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;fontSize=10;" edge="1" parent="1" source="svc-19" target="svc-21">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="note-32" value="Shared Backend: Multi-tenant Function Apps + Data Layer" style="shape=note;whiteSpace=wrap;html=1;size=14;align=center;verticalAlign=middle;fillColor=#fff2cc;strokeColor=#d6b656;shadow=1;fontSize=10;fontStyle=2;" vertex="1" parent="2">
+          <mxGeometry x="2480" y="247" width="280" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="note-33" value="Tenant Isolation: Dedicated Application Gateway and App Service Plan per tenant" style="shape=note;whiteSpace=wrap;html=1;size=14;align=center;verticalAlign=middle;fillColor=#e6ffe6;strokeColor=#d6b656;shadow=1;fontSize=10;fontStyle=2;" vertex="1" parent="2">
+          <mxGeometry x="2480" y="322" width="280" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="note-34" value="Monitoring: Centralized logging and telemetry for all tenants" style="shape=note;whiteSpace=wrap;html=1;size=14;align=center;verticalAlign=middle;fillColor=#ffe6e6;strokeColor=#d6b656;shadow=1;fontSize=10;fontStyle=2;" vertex="1" parent="2">
+          <mxGeometry x="2480" y="417" width="280" height="80" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

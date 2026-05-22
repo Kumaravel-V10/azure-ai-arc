@@ -1,0 +1,73 @@
+graph TB
+    subgraph Azure["☁️ Microsoft Azure"]
+        subgraph RG["📦 Resource Group"]
+            subgraph COMPUTE["⚡ Compute"]
+                AzureAppServicePlanFinnair["🔧 Azure App Service Plan - Finnair"]
+                AzureAppServicePlanKLM["🔧 Azure App Service Plan - KLM"]
+                AzureFunctions["🔧 Azure Functions"]
+                AzureAppConfiguration["🔧 Azure App Configuration"]
+                AzureEntraID["🔧 Azure Entra ID"]
+                AzureDDoSProtection["🔧 Azure DDoS Protection"]
+            end
+            subgraph STORAGE["💾 Storage"]
+                AzureStorageAccountFinnair["💾 Azure Storage Account - Finnair"]
+                AzureStorageAccountKLM["💾 Azure Storage Account - KLM"]
+                AzureBackup["🔧 Azure Backup"]
+            end
+            subgraph DATABASE["🗄️ Database"]
+                AzurePostgreSQL["🔧 Azure PostgreSQL"]
+                AzureRedisCache["🔧 Azure Redis Cache"]
+            end
+            subgraph NETWORKING["🌐 Networking"]
+                AzureFrontDoor["🔧 Azure Front Door"]
+                AzureApplicationGatewayFinnair["🚪 Azure Application Gateway - Finnair"]
+                AzureApplicationGatewayKLM["🚪 Azure Application Gateway - KLM"]
+                AzureFirewallPremium["🔧 Azure Firewall Premium"]
+            end
+            subgraph SECURITY["🔒 Security"]
+                AzureKeyVaultShared["🔐 Azure Key Vault - Shared"]
+                AzureKeyVaultSecurity["🔐 Azure Key Vault - Security"]
+                MicrosoftDefenderforCloud["🔧 Microsoft Defender for Cloud"]
+            end
+            subgraph ANALYTICS["📊 Analytics"]
+                AzureLogAnalyticsWorkspace["🔧 Azure Log Analytics Workspace"]
+            end
+            subgraph INTEGRATION["🔗 Integration"]
+                AzureAPIManagement["🔧 Azure API Management"]
+            end
+            subgraph MONITORING["📈 Monitoring"]
+                AzureMonitor["🔧 Azure Monitor"]
+                AzureApplicationInsights["🔧 Azure Application Insights"]
+            end
+        end
+    end
+
+    %% Architecture Connections
+    AzureFrontDoor -->|HTTPS routing| AzureApplicationGatewayFinnair
+    AzureFrontDoor -->|HTTPS routing| AzureApplicationGatewayKLM
+    AzureApplicationGatewayFinnair -->|Backend routing| AzureAppServicePlanFinnair
+    AzureApplicationGatewayKLM -->|Backend routing| AzureAppServicePlanKLM
+    AzureAPIManagement -->|API calls| AzureFunctions
+    AzureFunctions -->|SQL queries| AzurePostgreSQL
+    AzureFunctions -->|Cache access| AzureRedisCache
+    AzureFunctions -->|Secrets retrieval| AzureKeyVaultShared
+    AzureAppServicePlanFinnair -->|Blob storage access| AzureStorageAccountFinnair
+    AzureAppServicePlanKLM -->|Blob storage access| AzureStorageAccountKLM
+    AzureFunctions -->|Configuration retrieval| AzureAppConfiguration
+    AzureFunctions -->|Telemetry & diagnostics| AzureMonitor
+    AzureFunctions -->|Telemetry & diagnostics| AzureApplicationInsights
+    AzureFunctions -->|Telemetry & diagnostics| AzureLogAnalyticsWorkspace
+    AzureFunctions -->|Service integration| AzureEntraID
+    AzureFirewallPremium -->|Traffic filtering| AzureAPIManagement
+    AzureFrontDoor -->|Secrets & certificate management| AzureKeyVaultSecurity
+    AzureFrontDoor -->|Security monitoring| MicrosoftDefenderforCloud
+    AzureFrontDoor -->|DDoS mitigation| AzureDDoSProtection
+    AzureFunctions -->|Network isolation| PrivateEndpoint
+
+    %% Azure Styling
+    classDef azure fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff
+    classDef compute fill:#ff6b35,stroke:#e55100,stroke-width:2px,color:#fff
+    classDef storage fill:#00bcf2,stroke:#0288d1,stroke-width:2px,color:#fff
+    classDef database fill:#ba68c8,stroke:#8e24aa,stroke-width:2px,color:#fff
+    classDef networking fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
+    classDef security fill:#f44336,stroke:#d32f2f,stroke-width:2px,color:#fff

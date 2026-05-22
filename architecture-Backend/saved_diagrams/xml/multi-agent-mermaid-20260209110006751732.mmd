@@ -1,0 +1,48 @@
+graph TB
+    subgraph Azure["☁️ Microsoft Azure"]
+        subgraph RG["📦 Resource Group"]
+            subgraph COMPUTE["⚡ Compute"]
+                AzureActiveDirectory["🔧 Azure Active Directory"]
+                AzurePrivateEndpoints["🔧 Azure Private Endpoints"]
+                AzureSpotVMs["🔧 Azure Spot VMs"]
+                AzureKubernetesService["🔧 Azure Kubernetes Service"]
+                AzureReservedInstances["🔧 Azure Reserved Instances"]
+            end
+            subgraph STORAGE["💾 Storage"]
+                AzureStorageTiers["🔧 Azure Storage Tiers"]
+            end
+            subgraph DATABASE["🗄️ Database"]
+                AzureCacheforRedis["🔧 Azure Cache for Redis"]
+                AzureSQLDatabase["🗃️ Azure SQL Database"]
+            end
+            subgraph NETWORKING["🌐 Networking"]
+                ApplicationGatewayv2["🚪 Application Gateway v2"]
+                AzureFirewall["🔧 Azure Firewall"]
+                AzureFrontDoor["🔧 Azure Front Door"]
+            end
+            subgraph SECURITY["🔒 Security"]
+                AzureKeyVault["🔐 Azure Key Vault"]
+            end
+        end
+    end
+
+    %% Service Connections
+    AzureCacheforRedis --> AzureKeyVault
+    AzureKeyVault --> ApplicationGatewayv2
+    ApplicationGatewayv2 --> AzureActiveDirectory
+    AzureActiveDirectory --> AzureFirewall
+    AzureFirewall --> AzurePrivateEndpoints
+    AzurePrivateEndpoints --> AzureSpotVMs
+    AzureSpotVMs --> AzureKubernetesService
+    AzureKubernetesService --> AzureSQLDatabase
+    AzureSQLDatabase --> AzureStorageTiers
+    AzureStorageTiers --> AzureReservedInstances
+    AzureReservedInstances --> AzureFrontDoor
+
+    %% Azure Styling
+    classDef azure fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff
+    classDef compute fill:#ff6b35,stroke:#e55100,stroke-width:2px,color:#fff
+    classDef storage fill:#00bcf2,stroke:#0288d1,stroke-width:2px,color:#fff
+    classDef database fill:#ba68c8,stroke:#8e24aa,stroke-width:2px,color:#fff
+    classDef networking fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
+    classDef security fill:#f44336,stroke:#d32f2f,stroke-width:2px,color:#fff

@@ -1,0 +1,621 @@
+{
+  "diagram_url": "/diagrams/generated-20260127125727565745.png",
+  "architecture": {
+    "services": [
+      "Azure SQL Database",
+      "Azure Active Directory (AAD)",
+      "App Services",
+      "Azure Blob Storage",
+      "Azure Active Directory",
+      "Blob Storage",
+      "Azure App Service"
+    ],
+    "architecture_pattern": "Scalable Web Application",
+    "connections": [
+      {
+        "source": "Azure App Service",
+        "target": "Azure Active Directory (AAD)",
+        "type": "authentication"
+      },
+      {
+        "source": "Azure App Service",
+        "target": "Azure SQL Database",
+        "type": "database connection"
+      },
+      {
+        "source": "Azure App Service",
+        "target": "Azure Blob Storage",
+        "type": "file storage"
+      }
+    ],
+    "drawio_xml": "<mxfile host=\"app.diagrams.net\" modified=\"2023-10-01T00:00:00.000Z\" agent=\"AzureSolutionArchitect\" version=\"20.8.0\" type=\"device\"><diagram name=\"Scalable Web Application\"><mxGraphModel dx=\"1000\" dy=\"1000\" grid=\"1\" gridSize=\"10\" guides=\"1\" tooltips=\"1\" connect=\"1\" arrows=\"1\" fold=\"1\" page=\"1\" pageScale=\"1\" pageWidth=\"800\" pageHeight=\"600\" background=\"#ffffff\" math=\"0\" shadow=\"0\"><root><mxCell id=\"0\"/><mxCell id=\"1\" parent=\"0\"/><mxCell id=\"2\" value=\"Azure App Service\" style=\"shape=image;image=https://azure.microsoft.com/svghandler/app-service;verticalLabelPosition=bottom;verticalAlign=top;\" vertex=\"1\" parent=\"1\"><mxGeometry x=\"200\" y=\"100\" width=\"120\" height=\"120\" as=\"geometry\"/></mxCell><mxCell id=\"3\" value=\"Azure Active Directory\" style=\"shape=image;image=https://azure.microsoft.com/svghandler/active-directory;verticalLabelPosition=bottom;verticalAlign=top;\" vertex=\"1\" parent=\"1\"><mxGeometry x=\"400\" y=\"100\" width=\"120\" height=\"120\" as=\"geometry\"/></mxCell><mxCell id=\"4\" value=\"Azure SQL Database\" style=\"shape=image;image=https://azure.microsoft.com/svghandler/sql-database;verticalLabelPosition=bottom;verticalAlign=top;\" vertex=\"1\" parent=\"1\"><mxGeometry x=\"200\" y=\"300\" width=\"120\" height=\"120\" as=\"geometry\"/></mxCell><mxCell id=\"5\" value=\"Azure Blob Storage\" style=\"shape=image;image=https://azure.microsoft.com/svghandler/storage;verticalLabelPosition=bottom;verticalAlign=top;\" vertex=\"1\" parent=\"1\"><mxGeometry x=\"400\" y=\"300\" width=\"120\" height=\"120\" as=\"geometry\"/></mxCell><mxCell id=\"6\" edge=\"1\" source=\"2\" target=\"3\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;\"><mxGeometry relative=\"1\" as=\"geometry\"/></mxCell><mxCell id=\"7\" edge=\"1\" source=\"2\" target=\"4\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;\"><mxGeometry relative=\"1\" as=\"geometry\"/></mxCell><mxCell id=\"8\" edge=\"1\" source=\"2\" target=\"5\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;\"><mxGeometry relative=\"1\" as=\"geometry\"/></mxCell></root></mxGraphModel></diagram></mxfile>",
+    "recommendations": [
+      "Use Azure App Service for hosting the web application to ensure scalability and ease of deployment.",
+      "Integrate Azure Active Directory for secure user authentication and single sign-on capabilities.",
+      "Utilize Azure SQL Database for structured data storage, ensuring high availability and performance.",
+      "Store uploaded files in Azure Blob Storage to handle large-scale file storage efficiently.",
+      "Implement role-based access control (RBAC) in Azure Active Directory to manage user permissions effectively.",
+      "Enable autoscaling in Azure App Service to handle varying traffic loads dynamically."
+    ],
+    "detected_services_info": [
+      {
+        "name": "App Services",
+        "confidence": 1.0,
+        "keywords_matched": [
+          "web app",
+          "web application",
+          "app"
+        ],
+        "icon_source": "portal",
+        "icon_url": "https://portal.azure.com/Content/static/MsPortalFx/Base/Images/Services/AppService.svg"
+      },
+      {
+        "name": "Blob Storage",
+        "confidence": 0.4,
+        "keywords_matched": [
+          "file upload"
+        ],
+        "icon_source": "portal",
+        "icon_url": "https://portal.azure.com/Content/static/MsPortalFx/Base/Images/Services/BlobStorage.svg"
+      },
+      {
+        "name": "Azure Active Directory",
+        "confidence": 0.4,
+        "keywords_matched": [
+          "ad",
+          "authentication"
+        ],
+        "icon_source": "portal",
+        "icon_url": "https://portal.azure.com/Content/static/MsPortalFx/Base/Images/Services/ActiveDirectory.svg"
+      },
+      {
+        "name": "Storage Account",
+        "confidence": 0.2,
+        "keywords_matched": [
+          "storage"
+        ],
+        "icon_source": "portal",
+        "icon_url": "https://portal.azure.com/Content/static/MsPortalFx/Base/Images/Services/StorageAccount.svg"
+      },
+      {
+        "name": "SQL Database",
+        "confidence": 0.2,
+        "keywords_matched": [
+          "database"
+        ],
+        "icon_source": "portal",
+        "icon_url": "https://portal.azure.com/Content/static/MsPortalFx/Base/Images/Services/SQLDatabase.svg"
+      }
+    ],
+    "services_with_icons": [
+      {
+        "name": "Azure SQL Database",
+        "icon_source": "default",
+        "icon_url": "local://Azure_Public_Service_Icons_V23/Azure_Public_Service_Icons/Icons/databases/10130-icon-service-SQL-Database.svg",
+        "icon_path": null,
+        "full_path": "local://Azure_Public_Service_Icons_V23/Azure_Public_Service_Icons/Icons/databases/10130-icon-service-SQL-Database.svg"
+      },
+      {
+        "name": "Azure Active Directory (AAD)",
+        "icon_source": "default",
+        "icon_url": "local://Azure_Public_Service_Icons_V23/Azure_Public_Service_Icons/Icons/compute/10021-icon-service-Virtual-Machine.svg",
+        "icon_path": null,
+        "full_path": "local://Azure_Public_Service_Icons_V23/Azure_Public_Service_Icons/Icons/compute/10021-icon-service-Virtual-Machine.svg"
+      },
+      {
+        "name": "App Services",
+        "icon_source": "portal",
+        "icon_url": "https://portal.azure.com/Content/static/MsPortalFx/Base/Images/Services/AppService.svg",
+        "icon_path": null,
+        "full_path": "https://portal.azure.com/Content/static/MsPortalFx/Base/Images/Services/AppService.svg"
+      },
+      {
+        "name": "Azure Blob Storage",
+        "icon_source": "default",
+        "icon_url": "local://Azure_Public_Service_Icons_V23/Azure_Public_Service_Icons/Icons/storage/10086-icon-service-Storage-Accounts.svg",
+        "icon_path": null,
+        "full_path": "local://Azure_Public_Service_Icons_V23/Azure_Public_Service_Icons/Icons/storage/10086-icon-service-Storage-Accounts.svg"
+      },
+      {
+        "name": "Azure Active Directory",
+        "icon_source": "portal",
+        "icon_url": "https://portal.azure.com/Content/static/MsPortalFx/Base/Images/Services/ActiveDirectory.svg",
+        "icon_path": null,
+        "full_path": "https://portal.azure.com/Content/static/MsPortalFx/Base/Images/Services/ActiveDirectory.svg"
+      },
+      {
+        "name": "Blob Storage",
+        "icon_source": "portal",
+        "icon_url": "https://portal.azure.com/Content/static/MsPortalFx/Base/Images/Services/BlobStorage.svg",
+        "icon_path": null,
+        "full_path": "https://portal.azure.com/Content/static/MsPortalFx/Base/Images/Services/BlobStorage.svg"
+      },
+      {
+        "name": "Azure App Service",
+        "icon_source": "default",
+        "icon_url": "local://Azure_Public_Service_Icons_V23/Azure_Public_Service_Icons/Icons/compute/10021-icon-service-Virtual-Machine.svg",
+        "icon_path": null,
+        "full_path": "local://Azure_Public_Service_Icons_V23/Azure_Public_Service_Icons/Icons/compute/10021-icon-service-Virtual-Machine.svg"
+      }
+    ]
+  },
+  "validation": {
+    "validation_id": "complex_ai_val_4134905898129473644",
+    "compliance_score": 82,
+    "critical_issues": [
+      "Public endpoints exposed without WAF protection.",
+      "No disaster recovery strategies implemented."
+    ],
+    "quick_wins": [
+      "Enable Azure Security Center Defender plans for immediate threat detection.",
+      "Set up monitoring dashboards using Azure Monitor and Application Insights."
+    ],
+    "ai_comparison": {
+      "strengths": [
+        "Implementation of multi-tier architecture with separation of concerns.",
+        "Use of Application Gateway with WAF for SSL termination and web application protection.",
+        "Private endpoints configured for PaaS services ensuring secure connectivity.",
+        "Azure Active Directory Premium P2 for robust identity management and Zero Trust Conditional Access policies.",
+        "Hub-and-Spoke network topology for centralized security and workload isolation."
+      ],
+      "gaps": [
+        "No disaster recovery or backup strategies explicitly mentioned.",
+        "Limited mention of high availability across zones for critical resources.",
+        "Monitoring and observability are not fully detailed (e.g., lack of Log Analytics integration).",
+        "Missing managed identity implementation for service authentication.",
+        "No explicit mention of Front Door for global load balancing and additional WAF protection."
+      ],
+      "insights": "The architecture demonstrates strong adherence to Azure enterprise-scale best practices, leveraging secure network design and identity management. However, there are gaps in disaster recovery, managed identities, and comprehensive monitoring which could impact reliability and security. The cost optimization strategies are promising but could be enhanced with more granular resource rightsizing.",
+      "well_architected_scores": {
+        "security": 85,
+        "reliability": 80,
+        "performance": 78,
+        "cost_optimization": 75,
+        "operational_excellence": 75
+      },
+      "overall_score": 82,
+      "architecture_assessment": {
+        "architecture_pattern": "Unknown",
+        "resource_group_organization": "Resource group organization is not explicitly detailed but should include domain separation for production, shared services, and monitoring/security resources.",
+        "network_design": "Hub-and-Spoke topology with private endpoints and NSGs is well-implemented. However, additional segmentation across tiers and integration with Azure Front Door could enhance security and performance.",
+        "security_implementation": "Strong use of Azure Active Directory, Application Gateway WAF, and Azure Key Vault. Missing managed identities for service authentication and additional WAF protection via Front Door.",
+        "monitoring_strategy": "Not defined",
+        "disaster_recovery": "Not defined"
+      }
+    },
+    "agent_recommendations": {
+      "agents_results": [
+        {
+          "agent": "security",
+          "recommendations": [
+            "Enable Azure Security Center",
+            "Configure private endpoints",
+            "Implement network segmentation"
+          ],
+          "security_services": [
+            {
+              "service": "Azure Active Directory",
+              "tier": "Premium P2",
+              "purpose": "Zero Trust identity foundation with Conditional Access and Identity Protection",
+              "configuration": "Implement Conditional Access policies for location, device, and risk-based access. Enable Identity Protection for automated risk remediation. Use PIM for just-in-time admin access.",
+              "architecture_pattern": "Zero Trust Reference Architecture",
+              "icon": "azure-active-directory"
+            },
+            {
+              "service": "Azure Firewall",
+              "tier": "Premium",
+              "purpose": "Centralized network security in hub-and-spoke topology",
+              "configuration": "Deploy in hub VNet with forced tunneling. Enable IDPS, URL filtering, and TLS inspection. Configure DNAT rules for controlled inbound access.",
+              "architecture_pattern": "Hub-and-Spoke Network Security",
+              "icon": "azure-firewall"
+            },
+            {
+              "service": "Application Gateway v2",
+              "tier": "WAF_v2",
+              "purpose": "Web application firewall and SSL termination",
+              "configuration": "Enable WAF with OWASP 3.2 rules. Configure custom rules for application-specific threats. Implement SSL end-to-end encryption.",
+              "architecture_pattern": "Secure Web Application",
+              "icon": "azure-application-gateway"
+            },
+            {
+              "service": "Azure Key Vault",
+              "tier": "Premium",
+              "purpose": "Centralized secrets and certificate management",
+              "configuration": "Use Managed HSM for FIPS 140-2 Level 3 compliance. Enable soft delete and purge protection. Implement RBAC for granular access control.",
+              "architecture_pattern": "Secure Key Management",
+              "icon": "azure-key-vault"
+            },
+            {
+              "service": "Azure Private Endpoints",
+              "tier": "Standard",
+              "purpose": "Private connectivity for PaaS services",
+              "configuration": "Deploy private endpoints for all PaaS services in dedicated subnet. Configure private DNS zones for name resolution.",
+              "architecture_pattern": "Private PaaS Connectivity",
+              "icon": "azure-private-endpoints"
+            }
+          ],
+          "network_security": [
+            {
+              "component": "Hub-and-Spoke Topology",
+              "configuration": "Hub VNet (10.0.0.0/16) with Azure Firewall, VPN Gateway. Spoke VNets (10.1.0.0/16, 10.2.0.0/16) with VNet peering",
+              "justification": "Centralized security management with workload isolation per Azure Architecture Center guidance",
+              "reference": "https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/hybrid-networking/hub-spoke",
+              "icon": "azure-virtual-network"
+            },
+            {
+              "component": "Network Security Groups",
+              "configuration": "Default deny inbound, allow specific application ports (443, 80). Use service tags and ASGs for granular control",
+              "justification": "Implements micro-segmentation per Azure security baseline",
+              "icon": "azure-network-security-groups"
+            }
+          ],
+          "identity_management": [
+            {
+              "capability": "Zero Trust Conditional Access",
+              "configuration": "Require MFA for all users, compliant devices for admin access, block legacy authentication, location-based restrictions",
+              "architecture_pattern": "Zero Trust Identity",
+              "reference": "https://learn.microsoft.com/en-us/azure/architecture/guide/security/conditional-access-zero-trust",
+              "icon": "azure-active-directory"
+            }
+          ],
+          "data_protection": [],
+          "compliance_score": 95,
+          "critical_issues": [
+            {
+              "issue": "Public endpoints exposed without WAF protection",
+              "severity": "Critical",
+              "remediation": "Implement Application Gateway with WAF, disable public access to PaaS services",
+              "architecture_reference": "Secure web application pattern",
+              "effort": "High"
+            }
+          ],
+          "quick_wins": [
+            {
+              "improvement": "Enable Azure Security Center Defender plans",
+              "impact": "Immediate threat detection and security recommendations",
+              "architecture_reference": "Security monitoring baseline",
+              "effort_hours": "2"
+            }
+          ],
+          "status": "completed"
+        },
+        {
+          "agent": "performance",
+          "recommendations": [
+            "Implement CDN for static content",
+            "Add Redis cache for sessions",
+            "Configure performance monitoring"
+          ],
+          "performance_services": [
+            {
+              "service": "Azure CDN",
+              "tier": "Standard",
+              "purpose": "Content delivery optimization"
+            },
+            {
+              "service": "Azure Cache for Redis",
+              "tier": "Standard",
+              "purpose": "Application caching"
+            },
+            {
+              "service": "Application Gateway",
+              "tier": "Standard_v2",
+              "purpose": "Load balancing and SSL termination"
+            }
+          ],
+          "optimization_strategies": [
+            "Enable CDN",
+            "Implement caching",
+            "Configure auto-scaling"
+          ],
+          "performance_score": 75,
+          "critical_issues": [],
+          "quick_wins": [
+            {
+              "optimization": "Enable CDN",
+              "impact": "Reduced latency",
+              "implementation_time": "2 hours"
+            }
+          ],
+          "status": "completed"
+        },
+        {
+          "agent": "cost_optimization",
+          "recommendations": [
+            "Consider reserved instances for steady workloads",
+            "Implement auto-shutdown policies",
+            "Optimize storage costs"
+          ],
+          "cost_optimization_services": [
+            {
+              "service": "Azure Reserved Instances",
+              "commitment": "3-year",
+              "workload": "Production VMs",
+              "savings_potential": "72%",
+              "annual_savings": "$15,000",
+              "configuration": "Reserve Standard_D4s_v3 instances for production workloads with consistent usage patterns",
+              "architecture_pattern": "Predictable Workload Optimization",
+              "payback_period": "14 months",
+              "icon": "azure-reserved-instances"
+            },
+            {
+              "service": "Azure Spot VMs",
+              "tier": "Standard_D4s_v3",
+              "workload": "Development/Testing",
+              "savings_potential": "90%",
+              "annual_savings": "$8,500",
+              "configuration": "Use Spot VMs for fault-tolerant batch processing and dev environments with auto-scaling",
+              "architecture_pattern": "Fault-Tolerant Cost Pattern",
+              "availability": "Variable",
+              "icon": "azure-spot-instances"
+            },
+            {
+              "service": "Azure Storage Tiers",
+              "optimization": "Lifecycle Management",
+              "workload": "Data Archival",
+              "savings_potential": "60%",
+              "annual_savings": "$3,200",
+              "configuration": "Implement automated tiering: Hot (0-30 days) → Cool (31-90 days) → Archive (90+ days)",
+              "architecture_pattern": "Data Lifecycle Cost Pattern",
+              "policy": "Automated",
+              "icon": "azure-blob-storage"
+            }
+          ],
+          "rightsizing_strategies": [],
+          "cost_score": 88,
+          "critical_issues": [],
+          "quick_wins": [],
+          "status": "completed"
+        },
+        {
+          "agent": "architecture",
+          "schema": "https://schema.management.azure.com/schemas/2019-04-01/architecture.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "title": "Default Azure Architecture",
+            "description": "Multi-tier web application",
+            "author": "Azure Architecture Agent",
+            "architecture_pattern": "Multi-tier Web Application"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Web/sites",
+              "name": "app-prod-eastus-001",
+              "location": "East US",
+              "properties": {
+                "serverFarmId": "/subscriptions/.../serverfarms/asp-prod"
+              },
+              "diagramPosition": {
+                "x": 200,
+                "y": 150,
+                "width": 120,
+                "height": 80
+              },
+              "tier": "Standard S1",
+              "purpose": "Web application hosting",
+              "icon": "azure-app-service"
+            },
+            {
+              "type": "Microsoft.Sql/servers/databases",
+              "name": "sqldb-prod-eastus-001",
+              "location": "East US",
+              "properties": {
+                "edition": "Standard",
+                "serviceLevelObjective": "S2"
+              },
+              "diagramPosition": {
+                "x": 400,
+                "y": 150,
+                "width": 120,
+                "height": 80
+              },
+              "tier": "Standard S2",
+              "purpose": "Primary database",
+              "icon": "azure-sql-database"
+            },
+            {
+              "type": "Microsoft.Network/applicationGateways",
+              "name": "agw-prod-eastus-001",
+              "location": "East US",
+              "properties": {
+                "sku": {
+                  "name": "Standard_v2",
+                  "tier": "Standard_v2"
+                }
+              },
+              "diagramPosition": {
+                "x": 50,
+                "y": 150,
+                "width": 120,
+                "height": 80
+              },
+              "tier": "Standard_v2",
+              "purpose": "Load balancing and SSL termination",
+              "icon": "azure-application-gateway"
+            }
+          ],
+          "connections": [
+            {
+              "id": "conn1",
+              "source": "agw-prod-eastus-001",
+              "target": "app-prod-eastus-001",
+              "type": "HTTPS",
+              "port": "443"
+            },
+            {
+              "id": "conn2",
+              "source": "app-prod-eastus-001",
+              "target": "sqldb-prod-eastus-001",
+              "type": "SQL",
+              "port": "1433"
+            }
+          ],
+          "network_architecture": {},
+          "recommendations": [
+            "Implement monitoring with Application Insights",
+            "Configure automated backups",
+            "Enable security features"
+          ],
+          "architecture_pattern": "Multi-tier Web Application",
+          "security_features": {},
+          "critical_issues": [],
+          "quick_wins": [
+            "Implement Infrastructure as Code",
+            "Set up monitoring dashboards"
+          ],
+          "status": "completed"
+        }
+      ],
+      "summary": {
+        "total_agents": 4,
+        "agents_completed": 4,
+        "critical_issues_found": 2,
+        "recommendations_generated": 2
+      }
+    },
+    "recommendations": {
+      "critical": [
+        {
+          "title": "Public endpoints exposed without WAF protection.",
+          "description": "Critical: Public endpoints exposed without WAF protection.",
+          "priority": "high",
+          "effort": "medium"
+        },
+        {
+          "title": "No disaster recovery strategies implemented.",
+          "description": "Critical: No disaster recovery strategies implemented.",
+          "priority": "high",
+          "effort": "medium"
+        }
+      ],
+      "high": [
+        {
+          "title": "Enable Azure Security Center Defender plans for immediate threat detection.",
+          "description": "High priority: Enable Azure Security Center Defender plans for immediate threat detection.",
+          "priority": "high",
+          "effort": "low"
+        },
+        {
+          "title": "Set up monitoring dashboards using Azure Monitor and Application Insights.",
+          "description": "High priority: Set up monitoring dashboards using Azure Monitor and Application Insights.",
+          "priority": "high",
+          "effort": "low"
+        }
+      ],
+      "medium": [
+        {
+          "title": "Consider Azure Policy for enforcing compliance and security standards.",
+          "description": "Medium priority: Consider Azure Policy for enforcing compliance and security standards.",
+          "priority": "medium",
+          "effort": "medium"
+        },
+        {
+          "title": "Use Azure Monitor dashboards for centralized observability.",
+          "description": "Medium priority: Use Azure Monitor dashboards for centralized observability.",
+          "priority": "medium",
+          "effort": "medium"
+        },
+        {
+          "title": "Implement lifecycle management for storage tiers to optimize costs further.",
+          "description": "Medium priority: Implement lifecycle management for storage tiers to optimize costs further.",
+          "priority": "medium",
+          "effort": "medium"
+        }
+      ]
+    },
+    "validation_type": "AI-Enhanced Complex Architecture Analysis",
+    "architecture_complexity": "Enterprise-Scale Multi-Tier"
+  },
+  "service_detection": {
+    "ai_detected": [
+      "Azure App Service",
+      "Azure Active Directory (AAD)",
+      "Azure SQL Database",
+      "Azure Blob Storage"
+    ],
+    "prompt_detected": [
+      "App Services",
+      "Blob Storage",
+      "Azure Active Directory"
+    ],
+    "final_services": [
+      "Azure SQL Database",
+      "Azure Active Directory (AAD)",
+      "App Services",
+      "Azure Blob Storage",
+      "Azure Active Directory",
+      "Blob Storage",
+      "Azure App Service"
+    ],
+    "detection_details": [
+      {
+        "name": "App Services",
+        "confidence": 1.0,
+        "keywords_matched": [
+          "web app",
+          "web application",
+          "app"
+        ],
+        "icon_source": "portal",
+        "icon_url": "https://portal.azure.com/Content/static/MsPortalFx/Base/Images/Services/AppService.svg"
+      },
+      {
+        "name": "Blob Storage",
+        "confidence": 0.4,
+        "keywords_matched": [
+          "file upload"
+        ],
+        "icon_source": "portal",
+        "icon_url": "https://portal.azure.com/Content/static/MsPortalFx/Base/Images/Services/BlobStorage.svg"
+      },
+      {
+        "name": "Azure Active Directory",
+        "confidence": 0.4,
+        "keywords_matched": [
+          "ad",
+          "authentication"
+        ],
+        "icon_source": "portal",
+        "icon_url": "https://portal.azure.com/Content/static/MsPortalFx/Base/Images/Services/ActiveDirectory.svg"
+      },
+      {
+        "name": "Storage Account",
+        "confidence": 0.2,
+        "keywords_matched": [
+          "storage"
+        ],
+        "icon_source": "portal",
+        "icon_url": "https://portal.azure.com/Content/static/MsPortalFx/Base/Images/Services/StorageAccount.svg"
+      },
+      {
+        "name": "SQL Database",
+        "confidence": 0.2,
+        "keywords_matched": [
+          "database"
+        ],
+        "icon_source": "portal",
+        "icon_url": "https://portal.azure.com/Content/static/MsPortalFx/Base/Images/Services/SQLDatabase.svg"
+      }
+    ]
+  },
+  "icon_sources": {
+    "local_icons": 0,
+    "portal_icons": 5,
+    "default_icons": 0
+  },
+  "diagrams": {
+    "drawio_xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<mxfile host=\"app.diagrams.net\" modified=\"1769498847563\" agent=\"azure-architecture-generator\" etag=\"154223b3\" version=\"24.7.17\">\n  <diagram name=\"Azure Architecture Diagram\" id=\"azure-architecture\">\n    <mxGraphModel dx=\"1422\" dy=\"794\" grid=\"1\" gridSize=\"10\" guides=\"1\" tooltips=\"1\" connect=\"1\" arrows=\"1\" fold=\"1\" page=\"1\" pageScale=\"1\" pageWidth=\"1169\" pageHeight=\"827\" math=\"0\" shadow=\"0\">\n      <root>\n        <mxCell id=\"0\"/>\n        <mxCell id=\"1\" parent=\"0\"/>\n        \n        <!-- Azure Cloud Header -->\n        <mxCell id=\"azure-header\" value=\"\" style=\"rounded=0;whiteSpace=wrap;html=1;fillColor=#0078d4;strokeColor=none;fontSize=16;fontColor=#ffffff;fontStyle=1;\" vertex=\"1\" parent=\"1\">\n          <mxGeometry x=\"40\" y=\"20\" width=\"1089\" height=\"50\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"azure-logo\" value=\"\" style=\"image;sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%220%200%2040%2040%22%3E%0A%3Cpath%20d%3D%22M20%202L38%2036H2L20%202z%22%20fill%3D%22%230078d4%22/%3E%0A%3Ctext%20x%3D%2220%22%20y%3D%2225%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Arial%22%3EAz%3C/text%3E%0A%3C/svg%3E;\" vertex=\"1\" parent=\"1\">\n          <mxGeometry x=\"50\" y=\"25\" width=\"40\" height=\"40\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"azure-title\" value=\"Microsoft Azure Architecture\" style=\"text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontColor=#ffffff;fontStyle=1;\" vertex=\"1\" parent=\"1\">\n          <mxGeometry x=\"100\" y=\"30\" width=\"300\" height=\"30\" as=\"geometry\"/>\n        </mxCell>\n        \n        <!-- Azure Subscription Container -->\n        <mxCell id=\"subscription\" value=\"Azure Subscription\" style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=14;startSize=30;rounded=1;shadow=1;\" vertex=\"1\" parent=\"1\">\n          <mxGeometry x=\"60\" y=\"90\" width=\"1049\" height=\"720\" as=\"geometry\"/>\n        </mxCell>\n        \n        <!-- Resource Group Container -->\n        <mxCell id=\"resource-group\" value=\"Resource Group\" style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;startSize=26;rounded=1;dashed=1;dashPattern=5 5;\" vertex=\"1\" parent=\"subscription\">\n          <mxGeometry x=\"30\" y=\"40\" width=\"989\" height=\"650\" as=\"geometry\"/>\n        </mxCell>\n        \n        \n        <mxCell id=\"cat-compute\" value=\"⚡ Compute\" style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ff9800;fontSize=12;startSize=26;rounded=1;\" vertex=\"1\" parent=\"resource-group\">\n          <mxGeometry x=\"20\" y=\"60\" width=\"949\" height=\"220\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"service-app-services\" value=\"App Services\" style=\"sketch=0;aspect=fixed;html=1;points=[];align=center;image;fontSize=10;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%228%22%20fill%3D%22%230078d4%22%20stroke%3D%22%23005a9e%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2232%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%227%22%20font-family%3D%22Segoe%20UI%22%3EPortal%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2244%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EIcon%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2256%22%20text-anchor%3D%22middle%22%20fill%3D%22%2387ceeb%22%20font-size%3D%225%22%20font-family%3D%22Segoe%20UI%22%3ELive%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;\" vertex=\"1\" parent=\"cat-compute\">\n          <mxGeometry x=\"50\" y=\"40\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"service-azure-app-service\" value=\"Azure App Service\" style=\"sketch=0;aspect=fixed;html=1;points=[];align=center;image;fontSize=10;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20id%3D%22fd454f1c-5506-44b8-874e-8814b8b2f70b%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2218%22%20height%3D%2218%22%20viewBox%3D%220%200%2018%2018%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22f34d9569-2bd0-4002-8f16-3d01d8106cb5%22%20x1%3D%228.88%22%20y1%3D%2212.21%22%20x2%3D%228.88%22%20y2%3D%220.21%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%230078d4%22%20/%3E%3Cstop%20offset%3D%220.82%22%20stop-color%3D%22%235ea0ef%22%20/%3E%3C/linearGradient%3E%3ClinearGradient%20id%3D%22bdb45a0b-eb58-4970-a60a-fb2ce314f866%22%20x1%3D%228.88%22%20y1%3D%2216.84%22%20x2%3D%228.88%22%20y2%3D%2212.21%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%3Cstop%20offset%3D%220.15%22%20stop-color%3D%22%23ccc%22%20/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23707070%22%20/%3E%3C/linearGradient%3E%3C/defs%3E%3Ctitle%3EIcon-compute-21%3C/title%3E%3Crect%20x%3D%22-0.12%22%20y%3D%220.21%22%20width%3D%2218%22%20height%3D%2212%22%20rx%3D%220.6%22%20fill%3D%22url%28%23f34d9569-2bd0-4002-8f16-3d01d8106cb5%29%22%20/%3E%3Cpolygon%20points%3D%2211.88%204.46%2011.88%207.95%208.88%209.71%208.88%206.21%2011.88%204.46%22%20fill%3D%22%2350e6ff%22%20/%3E%3Cpolygon%20points%3D%2211.88%204.46%208.88%206.22%205.88%204.46%208.88%202.71%2011.88%204.46%22%20fill%3D%22%23c3f1ff%22%20/%3E%3Cpolygon%20points%3D%228.88%206.22%208.88%209.71%205.88%207.95%205.88%204.46%208.88%206.22%22%20fill%3D%22%239cebff%22%20/%3E%3Cpolygon%20points%3D%225.88%207.95%208.88%206.21%208.88%209.71%205.88%207.95%22%20fill%3D%22%23c3f1ff%22%20/%3E%3Cpolygon%20points%3D%2211.88%207.95%208.88%206.21%208.88%209.71%2011.88%207.95%22%20fill%3D%22%239cebff%22%20/%3E%3Cpath%20d%3D%22M12.49%2C15.84c-1.78-.28-1.85-1.56-1.85-3.63H7.11c0%2C2.07-.06%2C3.35-1.84%2C3.63a1%2C1%2C0%2C0%2C0-.89%2C1h9A1%2C1%2C0%2C0%2C0%2C12.49%2C15.84Z%22%20fill%3D%22url%28%23bdb45a0b-eb58-4970-a60a-fb2ce314f866%29%22%20/%3E%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;\" vertex=\"1\" parent=\"cat-compute\">\n          <mxGeometry x=\"160\" y=\"40\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"cat-storage\" value=\"💾 Storage\" style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#2196f3;fontSize=12;startSize=26;rounded=1;\" vertex=\"1\" parent=\"resource-group\">\n          <mxGeometry x=\"20\" y=\"300\" width=\"949\" height=\"220\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"service-azure-blob-storage\" value=\"Azure Blob Storage\" style=\"sketch=0;aspect=fixed;html=1;points=[];align=center;image;fontSize=10;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20id%3D%22f2f04349-8aee-4413-84c9-a9053611b319%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2218%22%20height%3D%2218%22%20viewBox%3D%220%200%2018%2018%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22ad4c4f96-09aa-4f91-ba10-5cb8ad530f74%22%20x1%3D%229%22%20y1%3D%2215.83%22%20x2%3D%229%22%20y2%3D%225.79%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23b3b3b3%22%20/%3E%3Cstop%20offset%3D%220.26%22%20stop-color%3D%22%23c1c1c1%22%20/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e6e6e6%22%20/%3E%3C/linearGradient%3E%3C/defs%3E%3Ctitle%3EIcon-storage-86%3C/title%3E%3Cpath%20d%3D%22M.5%2C5.79h17a0%2C0%2C0%2C0%2C1%2C0%2C0v9.48a.57.57%2C0%2C0%2C1-.57.57H1.07a.57.57%2C0%2C0%2C1-.57-.57V5.79A0%2C0%2C0%2C0%2C1%2C.5%2C5.79Z%22%20fill%3D%22url%28%23ad4c4f96-09aa-4f91-ba10-5cb8ad530f74%29%22%20/%3E%3Cpath%20d%3D%22M1.07%2C2.17H16.93a.57.57%2C0%2C0%2C1%2C.57.57V5.79a0%2C0%2C0%2C0%2C1%2C0%2C0H.5a0%2C0%2C0%2C0%2C1%2C0%2C0V2.73A.57.57%2C0%2C0%2C1%2C1.07%2C2.17Z%22%20fill%3D%22%2337c2b1%22%20/%3E%3Cpath%20d%3D%22M2.81%2C6.89H15.18a.27.27%2C0%2C0%2C1%2C.26.27v1.4a.27.27%2C0%2C0%2C1-.26.27H2.81a.27.27%2C0%2C0%2C1-.26-.27V7.16A.27.27%2C0%2C0%2C1%2C2.81%2C6.89Z%22%20fill%3D%22%23fff%22%20/%3E%3Cpath%20d%3D%22M2.82%2C9.68H15.19a.27.27%2C0%2C0%2C1%2C.26.27v1.41a.27.27%2C0%2C0%2C1-.26.27H2.82a.27.27%2C0%2C0%2C1-.26-.27V10A.27.27%2C0%2C0%2C1%2C2.82%2C9.68Z%22%20fill%3D%22%2337c2b1%22%20/%3E%3Cpath%20d%3D%22M2.82%2C12.5H15.19a.27.27%2C0%2C0%2C1%2C.26.27v1.41a.27.27%2C0%2C0%2C1-.26.27H2.82a.27.27%2C0%2C0%2C1-.26-.27V12.77A.27.27%2C0%2C0%2C1%2C2.82%2C12.5Z%22%20fill%3D%22%23258277%22%20/%3E%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;\" vertex=\"1\" parent=\"cat-storage\">\n          <mxGeometry x=\"50\" y=\"40\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"service-blob-storage\" value=\"Blob Storage\" style=\"sketch=0;aspect=fixed;html=1;points=[];align=center;image;fontSize=10;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%228%22%20fill%3D%22%230078d4%22%20stroke%3D%22%23005a9e%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2232%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%227%22%20font-family%3D%22Segoe%20UI%22%3EPortal%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2244%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EIcon%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2256%22%20text-anchor%3D%22middle%22%20fill%3D%22%2387ceeb%22%20font-size%3D%225%22%20font-family%3D%22Segoe%20UI%22%3ELive%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;\" vertex=\"1\" parent=\"cat-storage\">\n          <mxGeometry x=\"160\" y=\"40\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"cat-database\" value=\"🗄️ Database\" style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#9c27b0;fontSize=12;startSize=26;rounded=1;\" vertex=\"1\" parent=\"resource-group\">\n          <mxGeometry x=\"20\" y=\"540\" width=\"949\" height=\"140\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"service-azure-sql-database\" value=\"Azure SQL Database\" style=\"sketch=0;aspect=fixed;html=1;points=[];align=center;image;fontSize=10;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20id%3D%22a96792b7-ce28-4ca3-9767-4e065ef4820f%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2218%22%20height%3D%2218%22%20viewBox%3D%220%200%2018%2018%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22ef16bf9d-a8b6-4181-b6cd-66fc5203f956%22%20x1%3D%222.59%22%20y1%3D%2210.16%22%20x2%3D%2215.41%22%20y2%3D%2210.16%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23005ba1%22%20/%3E%3Cstop%20offset%3D%220.07%22%20stop-color%3D%22%230060a9%22%20/%3E%3Cstop%20offset%3D%220.36%22%20stop-color%3D%22%230071c8%22%20/%3E%3Cstop%20offset%3D%220.52%22%20stop-color%3D%22%230078d4%22%20/%3E%3Cstop%20offset%3D%220.64%22%20stop-color%3D%22%230074cd%22%20/%3E%3Cstop%20offset%3D%220.82%22%20stop-color%3D%22%23006abb%22%20/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23005ba1%22%20/%3E%3C/linearGradient%3E%3CradialGradient%20id%3D%22bf3846c3-4d74-4743-ab9a-f334c248bd92%22%20cx%3D%229.36%22%20cy%3D%2210.57%22%20r%3D%227.07%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23f2f2f2%22%20/%3E%3Cstop%20offset%3D%220.58%22%20stop-color%3D%22%23eee%22%20/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e6e6e6%22%20/%3E%3C/radialGradient%3E%3C/defs%3E%3Ctitle%3EIcon-databases-130%3C/title%3E%3Cpath%20d%3D%22M9%2C5.14c-3.54%2C0-6.41-1-6.41-2.32V15.18c0%2C1.27%2C2.82%2C2.3%2C6.32%2C2.32H9c3.54%2C0%2C6.41-1%2C6.41-2.32V2.82C15.41%2C4.11%2C12.54%2C5.14%2C9%2C5.14Z%22%20fill%3D%22url%28%23ef16bf9d-a8b6-4181-b6cd-66fc5203f956%29%22%20/%3E%3Cpath%20d%3D%22M15.41%2C2.82c0%2C1.29-2.87%2C2.32-6.41%2C2.32s-6.41-1-6.41-2.32S5.46.5%2C9%2C.5s6.41%2C1%2C6.41%2C2.32%22%20fill%3D%22%23e8e8e8%22%20/%3E%3Cpath%20d%3D%22M13.92%2C2.63c0%2C.82-2.21%2C1.48-4.92%2C1.48S4.08%2C3.45%2C4.08%2C2.63%2C6.29%2C1.16%2C9%2C1.16s4.92.66%2C4.92%2C1.47%22%20fill%3D%22%2350e6ff%22%20/%3E%3Cpath%20d%3D%22M9%2C3a11.55%2C11.55%2C0%2C0%2C0-3.89.57A11.42%2C11.42%2C0%2C0%2C0%2C9%2C4.11a11.15%2C11.15%2C0%2C0%2C0%2C3.89-.58A11.84%2C11.84%2C0%2C0%2C0%2C9%2C3Z%22%20fill%3D%22%23198ab3%22%20/%3E%3Cpath%20d%3D%22M12.9%2C11.4V8H12v4.13h2.46V11.4ZM5.76%2C9.73a1.83%2C1.83%2C0%2C0%2C1-.51-.31.44.44%2C0%2C0%2C1-.12-.32.34.34%2C0%2C0%2C1%2C.15-.3.68.68%2C0%2C0%2C1%2C.42-.12%2C1.62%2C1.62%2C0%2C0%2C1%2C1%2C.29V8.11a2.58%2C2.58%2C0%2C0%2C0-1-.16%2C1.64%2C1.64%2C0%2C0%2C0-1.09.34%2C1.08%2C1.08%2C0%2C0%2C0-.42.89c0%2C.51.32.91%2C1%2C1.21a2.88%2C2.88%2C0%2C0%2C1%2C.62.36.42.42%2C0%2C0%2C1%2C.15.32.38.38%2C0%2C0%2C1-.16.31.81.81%2C0%2C0%2C1-.45.11%2C1.66%2C1.66%2C0%2C0%2C1-1.09-.42V12a2.17%2C2.17%2C0%2C0%2C0%2C1.07.24%2C1.88%2C1.88%2C0%2C0%2C0%2C1.18-.33A1.08%2C1.08%2C0%2C0%2C0%2C6.84%2C11a1.05%2C1.05%2C0%2C0%2C0-.25-.7A2.42%2C2.42%2C0%2C0%2C0%2C5.76%2C9.73ZM11%2C11.32a2.34%2C2.34%2C0%2C0%2C0%2C.33-1.26A2.32%2C2.32%2C0%2C0%2C0%2C11%2C9a1.81%2C1.81%2C0%2C0%2C0-.7-.75%2C2%2C2%2C0%2C0%2C0-1-.26%2C2.11%2C2.11%2C0%2C0%2C0-1.08.27A1.86%2C1.86%2C0%2C0%2C0%2C7.49%2C9a2.46%2C2.46%2C0%2C0%2C0-.26%2C1.14%2C2.26%2C2.26%2C0%2C0%2C0%2C.24%2C1%2C1.76%2C1.76%2C0%2C0%2C0%2C.69.74%2C2.06%2C2.06%2C0%2C0%2C0%2C1%2C.3l.86%2C1h1.21L10%2C12.08A1.79%2C1.79%2C0%2C0%2C0%2C11%2C11.32ZM10%2C11.07a.94.94%2C0%2C0%2C1-.76.35.92.92%2C0%2C0%2C1-.76-.36%2C1.52%2C1.52%2C0%2C0%2C1-.29-1%2C1.53%2C1.53%2C0%2C0%2C1%2C.29-1%2C1%2C1%2C0%2C0%2C1%2C.78-.37.87.87%2C0%2C0%2C1%2C.75.37%2C1.62%2C1.62%2C0%2C0%2C1%2C.27%2C1A1.46%2C1.46%2C0%2C0%2C1%2C10%2C11.07Z%22%20fill%3D%22url%28%23bf3846c3-4d74-4743-ab9a-f334c248bd92%29%22%20/%3E%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;\" vertex=\"1\" parent=\"cat-database\">\n          <mxGeometry x=\"50\" y=\"40\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"cat-other\" value=\"🔧 Other\" style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#9e9e9e;fontSize=12;startSize=26;rounded=1;\" vertex=\"1\" parent=\"resource-group\">\n          <mxGeometry x=\"20\" y=\"700\" width=\"949\" height=\"220\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"service-azure-active-directory-(aad)\" value=\"Azure Active Directory (AAD)\" style=\"sketch=0;aspect=fixed;html=1;points=[];align=center;image;fontSize=10;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20id%3D%22fd454f1c-5506-44b8-874e-8814b8b2f70b%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2218%22%20height%3D%2218%22%20viewBox%3D%220%200%2018%2018%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22f34d9569-2bd0-4002-8f16-3d01d8106cb5%22%20x1%3D%228.88%22%20y1%3D%2212.21%22%20x2%3D%228.88%22%20y2%3D%220.21%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%230078d4%22%20/%3E%3Cstop%20offset%3D%220.82%22%20stop-color%3D%22%235ea0ef%22%20/%3E%3C/linearGradient%3E%3ClinearGradient%20id%3D%22bdb45a0b-eb58-4970-a60a-fb2ce314f866%22%20x1%3D%228.88%22%20y1%3D%2216.84%22%20x2%3D%228.88%22%20y2%3D%2212.21%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%3Cstop%20offset%3D%220.15%22%20stop-color%3D%22%23ccc%22%20/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23707070%22%20/%3E%3C/linearGradient%3E%3C/defs%3E%3Ctitle%3EIcon-compute-21%3C/title%3E%3Crect%20x%3D%22-0.12%22%20y%3D%220.21%22%20width%3D%2218%22%20height%3D%2212%22%20rx%3D%220.6%22%20fill%3D%22url%28%23f34d9569-2bd0-4002-8f16-3d01d8106cb5%29%22%20/%3E%3Cpolygon%20points%3D%2211.88%204.46%2011.88%207.95%208.88%209.71%208.88%206.21%2011.88%204.46%22%20fill%3D%22%2350e6ff%22%20/%3E%3Cpolygon%20points%3D%2211.88%204.46%208.88%206.22%205.88%204.46%208.88%202.71%2011.88%204.46%22%20fill%3D%22%23c3f1ff%22%20/%3E%3Cpolygon%20points%3D%228.88%206.22%208.88%209.71%205.88%207.95%205.88%204.46%208.88%206.22%22%20fill%3D%22%239cebff%22%20/%3E%3Cpolygon%20points%3D%225.88%207.95%208.88%206.21%208.88%209.71%205.88%207.95%22%20fill%3D%22%23c3f1ff%22%20/%3E%3Cpolygon%20points%3D%2211.88%207.95%208.88%206.21%208.88%209.71%2011.88%207.95%22%20fill%3D%22%239cebff%22%20/%3E%3Cpath%20d%3D%22M12.49%2C15.84c-1.78-.28-1.85-1.56-1.85-3.63H7.11c0%2C2.07-.06%2C3.35-1.84%2C3.63a1%2C1%2C0%2C0%2C0-.89%2C1h9A1%2C1%2C0%2C0%2C0%2C12.49%2C15.84Z%22%20fill%3D%22url%28%23bdb45a0b-eb58-4970-a60a-fb2ce314f866%29%22%20/%3E%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;\" vertex=\"1\" parent=\"cat-other\">\n          <mxGeometry x=\"50\" y=\"40\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"service-azure-active-directory\" value=\"Azure Active Directory\" style=\"sketch=0;aspect=fixed;html=1;points=[];align=center;image;fontSize=10;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%228%22%20fill%3D%22%230078d4%22%20stroke%3D%22%23005a9e%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2232%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%227%22%20font-family%3D%22Segoe%20UI%22%3EPortal%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2244%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EIcon%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2256%22%20text-anchor%3D%22middle%22%20fill%3D%22%2387ceeb%22%20font-size%3D%225%22%20font-family%3D%22Segoe%20UI%22%3ELive%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;\" vertex=\"1\" parent=\"cat-other\">\n          <mxGeometry x=\"160\" y=\"40\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        \n        <mxCell id=\"conn_0\" value=\"\" style=\"endArrow=classic;html=1;rounded=0;strokeColor=#0078d4;strokeWidth=2;\" edge=\"1\" parent=\"1\" source=\"service_0\" target=\"service_1\">\n          <mxGeometry width=\"50\" height=\"50\" relative=\"1\" as=\"geometry\">\n            <mxPoint x=\"400\" y=\"300\" as=\"sourcePoint\"/>\n            <mxPoint x=\"450\" y=\"250\" as=\"targetPoint\"/>\n          </mxGeometry>\n        </mxCell>\n        <mxCell id=\"conn_1\" value=\"\" style=\"endArrow=classic;html=1;rounded=0;strokeColor=#0078d4;strokeWidth=2;\" edge=\"1\" parent=\"1\" source=\"service_1\" target=\"service_2\">\n          <mxGeometry width=\"50\" height=\"50\" relative=\"1\" as=\"geometry\">\n            <mxPoint x=\"400\" y=\"300\" as=\"sourcePoint\"/>\n            <mxPoint x=\"450\" y=\"250\" as=\"targetPoint\"/>\n          </mxGeometry>\n        </mxCell>\n        <mxCell id=\"conn_2\" value=\"\" style=\"endArrow=classic;html=1;rounded=0;strokeColor=#0078d4;strokeWidth=2;\" edge=\"1\" parent=\"1\" source=\"service_2\" target=\"service_3\">\n          <mxGeometry width=\"50\" height=\"50\" relative=\"1\" as=\"geometry\">\n            <mxPoint x=\"400\" y=\"300\" as=\"sourcePoint\"/>\n            <mxPoint x=\"450\" y=\"250\" as=\"targetPoint\"/>\n          </mxGeometry>\n        </mxCell>\n        <mxCell id=\"conn_3\" value=\"\" style=\"endArrow=classic;html=1;rounded=0;strokeColor=#0078d4;strokeWidth=2;\" edge=\"1\" parent=\"1\" source=\"service_3\" target=\"service_4\">\n          <mxGeometry width=\"50\" height=\"50\" relative=\"1\" as=\"geometry\">\n            <mxPoint x=\"400\" y=\"300\" as=\"sourcePoint\"/>\n            <mxPoint x=\"450\" y=\"250\" as=\"targetPoint\"/>\n          </mxGeometry>\n        </mxCell>\n        <mxCell id=\"conn_4\" value=\"\" style=\"endArrow=classic;html=1;rounded=0;strokeColor=#0078d4;strokeWidth=2;\" edge=\"1\" parent=\"1\" source=\"service_4\" target=\"service_5\">\n          <mxGeometry width=\"50\" height=\"50\" relative=\"1\" as=\"geometry\">\n            <mxPoint x=\"400\" y=\"300\" as=\"sourcePoint\"/>\n            <mxPoint x=\"450\" y=\"250\" as=\"targetPoint\"/>\n          </mxGeometry>\n        </mxCell>\n        <mxCell id=\"conn_5\" value=\"\" style=\"endArrow=classic;html=1;rounded=0;strokeColor=#0078d4;strokeWidth=2;\" edge=\"1\" parent=\"1\" source=\"service_5\" target=\"service_6\">\n          <mxGeometry width=\"50\" height=\"50\" relative=\"1\" as=\"geometry\">\n            <mxPoint x=\"400\" y=\"300\" as=\"sourcePoint\"/>\n            <mxPoint x=\"450\" y=\"250\" as=\"targetPoint\"/>\n          </mxGeometry>\n        </mxCell>\n        <mxCell id=\"conn-0\" value=\"\" style=\"endArrow=classic;html=1;rounded=1;strokeColor=#0078d4;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;\" edge=\"1\" parent=\"resource-group\" source=\"service-azure-sql-database\" target=\"service-azure-active-directory-(aad)\">\n          <mxGeometry width=\"50\" height=\"50\" relative=\"1\" as=\"geometry\">\n            <mxPoint x=\"400\" y=\"300\" as=\"sourcePoint\"/>\n            <mxPoint x=\"450\" y=\"250\" as=\"targetPoint\"/>\n          </mxGeometry>\n        </mxCell>\n        <mxCell id=\"conn-1\" value=\"\" style=\"endArrow=classic;html=1;rounded=1;strokeColor=#0078d4;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;\" edge=\"1\" parent=\"resource-group\" source=\"service-azure-active-directory-(aad)\" target=\"service-app-services\">\n          <mxGeometry width=\"50\" height=\"50\" relative=\"1\" as=\"geometry\">\n            <mxPoint x=\"400\" y=\"300\" as=\"sourcePoint\"/>\n            <mxPoint x=\"450\" y=\"250\" as=\"targetPoint\"/>\n          </mxGeometry>\n        </mxCell>\n        <mxCell id=\"conn-2\" value=\"\" style=\"endArrow=classic;html=1;rounded=1;strokeColor=#0078d4;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;\" edge=\"1\" parent=\"resource-group\" source=\"service-app-services\" target=\"service-azure-blob-storage\">\n          <mxGeometry width=\"50\" height=\"50\" relative=\"1\" as=\"geometry\">\n            <mxPoint x=\"400\" y=\"300\" as=\"sourcePoint\"/>\n            <mxPoint x=\"450\" y=\"250\" as=\"targetPoint\"/>\n          </mxGeometry>\n        </mxCell>\n        <mxCell id=\"conn-3\" value=\"\" style=\"endArrow=classic;html=1;rounded=1;strokeColor=#0078d4;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;\" edge=\"1\" parent=\"resource-group\" source=\"service-azure-blob-storage\" target=\"service-azure-active-directory\">\n          <mxGeometry width=\"50\" height=\"50\" relative=\"1\" as=\"geometry\">\n            <mxPoint x=\"400\" y=\"300\" as=\"sourcePoint\"/>\n            <mxPoint x=\"450\" y=\"250\" as=\"targetPoint\"/>\n          </mxGeometry>\n        </mxCell>\n        <mxCell id=\"conn-4\" value=\"\" style=\"endArrow=classic;html=1;rounded=1;strokeColor=#0078d4;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;\" edge=\"1\" parent=\"resource-group\" source=\"service-azure-active-directory\" target=\"service-blob-storage\">\n          <mxGeometry width=\"50\" height=\"50\" relative=\"1\" as=\"geometry\">\n            <mxPoint x=\"400\" y=\"300\" as=\"sourcePoint\"/>\n            <mxPoint x=\"450\" y=\"250\" as=\"targetPoint\"/>\n          </mxGeometry>\n        </mxCell>\n        <mxCell id=\"conn-5\" value=\"\" style=\"endArrow=classic;html=1;rounded=1;strokeColor=#0078d4;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;\" edge=\"1\" parent=\"resource-group\" source=\"service-blob-storage\" target=\"service-azure-app-service\">\n          <mxGeometry width=\"50\" height=\"50\" relative=\"1\" as=\"geometry\">\n            <mxPoint x=\"400\" y=\"300\" as=\"sourcePoint\"/>\n            <mxPoint x=\"450\" y=\"250\" as=\"targetPoint\"/>\n          </mxGeometry>\n        </mxCell>\n        \n        <!-- Architecture Legend -->\n        <mxCell id=\"legend\" value=\"\" style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#dee2e6;fontSize=12;startSize=26;rounded=1;\" vertex=\"1\" parent=\"1\">\n          <mxGeometry x=\"1150\" y=\"90\" width=\"200\" height=\"300\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"legend-title\" value=\"Azure Services Legend\" style=\"text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;\" vertex=\"1\" parent=\"legend\">\n          <mxGeometry x=\"10\" y=\"10\" width=\"180\" height=\"30\" as=\"geometry\"/>\n        </mxCell>\n      </root>\n    </mxGraphModel>\n  </diagram>\n</mxfile>",
+    "mermaid": "graph TB\n    subgraph Azure[\"☁️ Microsoft Azure\"]\n        subgraph RG[\"📦 Resource Group\"]\n            subgraph COMPUTE[\"⚡ Compute\"]\n                AzureActiveDirectory(AAD)[\"🔧 Azure Active Directory (AAD)\"]\n                AppServices[\"🌐 App Services\"]\n                AzureActiveDirectory[\"🔧 Azure Active Directory\"]\n                AzureAppService[\"🔧 Azure App Service\"]\n            end\n            subgraph STORAGE[\"💾 Storage\"]\n                AzureBlobStorage[\"🔧 Azure Blob Storage\"]\n                BlobStorage[\"🔧 Blob Storage\"]\n            end\n            subgraph DATABASE[\"🗄️ Database\"]\n                AzureSQLDatabase[\"🗃️ Azure SQL Database\"]\n            end\n        end\n    end\n\n    %% Service Connections\n    AzureSQLDatabase --> AzureActiveDirectory(AAD)\n    AzureActiveDirectory(AAD) --> AppServices\n    AppServices --> AzureBlobStorage\n    AzureBlobStorage --> AzureActiveDirectory\n    AzureActiveDirectory --> BlobStorage\n    BlobStorage --> AzureAppService\n\n    %% Azure Styling\n    classDef azure fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff\n    classDef compute fill:#ff6b35,stroke:#e55100,stroke-width:2px,color:#fff\n    classDef storage fill:#00bcf2,stroke:#0288d1,stroke-width:2px,color:#fff\n    classDef database fill:#ba68c8,stroke:#8e24aa,stroke-width:2px,color:#fff\n    classDef networking fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff\n    classDef security fill:#f44336,stroke:#d32f2f,stroke-width:2px,color:#fff\n",
+    "terraform": "# Azure Architecture Terraform Template\n# Generated by Azure Architecture Generator\n\nterraform {\n  required_version = \">= 1.5\"\n  required_providers {\n    azurerm = {\n      source  = \"hashicorp/azurerm\"\n      version = \"~> 3.80\"\n    }\n    random = {\n      source  = \"hashicorp/random\"\n      version = \"~> 3.1\"\n    }\n  }\n}\n\nprovider \"azurerm\" {\n  features {\n    key_vault {\n      purge_soft_delete_on_destroy    = true\n      recover_soft_deleted_key_vaults = true\n    }\n    resource_group {\n      prevent_deletion_if_contains_resources = false\n    }\n  }\n}\n\n# Variables\nvariable \"environment\" {\n  description = \"Environment name (dev, staging, prod)\"\n  type        = string\n  default     = \"dev\"\n  validation {\n    condition     = contains([\"dev\", \"staging\", \"prod\"], var.environment)\n    error_message = \"Environment must be one of: dev, staging, prod.\"\n  }\n}\n\nvariable \"location\" {\n  description = \"Azure region for resources\"\n  type        = string\n  default     = \"East US\"\n}\n\nvariable \"project_name\" {\n  description = \"Name of the project\"\n  type        = string\n  default     = \"azure-architecture\"\n}\n\nvariable \"tags\" {\n  description = \"Common tags for all resources\"\n  type        = map(string)\n  default = {\n    Environment = \"dev\"\n    Project     = \"Azure Architecture\"\n    ManagedBy   = \"Terraform\"\n  }\n}\n\n# Random suffix for unique resource names\nresource \"random_string\" \"suffix\" {\n  length  = 8\n  special = false\n  upper   = false\n}\n\n# Data sources\ndata \"azurerm_client_config\" \"current\" {}\n\n# Resource Group\nresource \"azurerm_resource_group\" \"main\" {\n  name     = \"rg-${var.project_name}-${var.environment}\"\n  location = var.location\n  tags     = var.tags\n}\n\n# Network Security Group\nresource \"azurerm_network_security_group\" \"main\" {\n  name                = \"nsg-${var.project_name}-${var.environment}\"\n  location            = azurerm_resource_group.main.location\n  resource_group_name = azurerm_resource_group.main.name\n  tags                = var.tags\n\n  security_rule {\n    name                       = \"HTTPS\"\n    priority                   = 1001\n    direction                  = \"Inbound\"\n    access                     = \"Allow\"\n    protocol                   = \"Tcp\"\n    source_port_range          = \"*\"\n    destination_port_range     = \"443\"\n    source_address_prefix      = \"*\"\n    destination_address_prefix = \"*\"\n  }\n\n  security_rule {\n    name                       = \"HTTP\"\n    priority                   = 1002\n    direction                  = \"Inbound\"\n    access                     = \"Allow\"\n    protocol                   = \"Tcp\"\n    source_port_range          = \"*\"\n    destination_port_range     = \"80\"\n    source_address_prefix      = \"*\"\n    destination_address_prefix = \"*\"\n  }\n}\n\n\n# Virtual Network\nresource \"azurerm_virtual_network\" \"main\" {\n  name                = \"vnet-${var.project_name}-${var.environment}\"\n  address_space       = [\"10.0.0.0/16\"]\n  location            = azurerm_resource_group.main.location\n  resource_group_name = azurerm_resource_group.main.name\n  tags                = var.tags\n}\n\nresource \"azurerm_subnet\" \"internal\" {\n  name                 = \"snet-internal\"\n  resource_group_name  = azurerm_resource_group.main.name\n  virtual_network_name = azurerm_virtual_network.main.name\n  address_prefixes     = [\"10.0.2.0/24\"]\n}\n\n\n# Storage Account\nresource \"azurerm_storage_account\" \"main\" {\n  name                     = \"st${random_string.suffix.result}\"\n  resource_group_name      = azurerm_resource_group.main.name\n  location                 = azurerm_resource_group.main.location\n  account_tier             = \"Standard\"\n  account_replication_type = \"LRS\"\n  tags                     = var.tags\n}\n\n\n# App Service Plan\nresource \"azurerm_service_plan\" \"main\" {\n  name                = \"sp-${var.project_name}-${var.environment}\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  os_type             = \"Linux\"\n  sku_name            = \"B1\"\n  tags                = var.tags\n}\n\n# App Service\nresource \"azurerm_linux_web_app\" \"main\" {\n  name                = \"app-${var.project_name}-${var.environment}-${random_string.suffix.result}\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  service_plan_id     = azurerm_service_plan.main.id\n  tags                = var.tags\n\n  site_config {\n    always_on = false\n  }\n}\n\n\n# SQL Server\nresource \"azurerm_mssql_server\" \"main\" {\n  name                         = \"sql-${var.project_name}-${var.environment}-${random_string.suffix.result}\"\n  resource_group_name          = azurerm_resource_group.main.name\n  location                     = azurerm_resource_group.main.location\n  version                      = \"12.0\"\n  administrator_login          = \"sqladmin\"\n  administrator_login_password = \"P@ssw0rd123!\" # Use Key Vault in production\n  tags                         = var.tags\n}\n\n# SQL Database\nresource \"azurerm_mssql_database\" \"main\" {\n  name      = \"sqldb-${var.project_name}-${var.environment}\"\n  server_id = azurerm_mssql_server.main.id\n  sku_name  = \"Basic\"\n  tags      = var.tags\n}\n\n\n# Outputs\noutput \"resource_group_name\" {\n  description = \"Name of the resource group\"\n  value       = azurerm_resource_group.main.name\n}\n\noutput \"resource_group_location\" {\n  description = \"Location of the resource group\"\n  value       = azurerm_resource_group.main.location\n}\n\noutput \"deployment_summary\" {\n  description = \"Summary of deployed resources\"\n  value = {\n    environment      = var.environment\n    location        = var.location\n    project_name    = var.project_name\n    resource_count  = length(azurerm_resource_group.main.tags)\n  }\n}\n",
+    "image": "data:image/png;base64,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2tk7zBACAAAEKrgZwpise/35hF+Ju63YTh2rdvJQ7YRDtROOYlzt7GlmCAEAAAIlEAIAAARKIAQAAAiUQAgAABAogRAAACBQAiEAAECgBEIAAIBACYQAAACBEggBAAACJRACAAAESiAEAAAIlEAIAAAQKIEQAAAgUAIhAABAoBL29QCKmLjbkvbm6rLubZlz+7vZs489ttcTTz513HHH7fYVDR069IH771uwYEHdunWP6dXrlptviU9I2Lhhw3333zfko4/Wr1/fokWLG264sVv37lEUzZw584/XXD1i5Kj8/fzwww9HH9Uzdrts2bKHH374X/92T5UqVfK33LRp05//7/8eePDB/A+NGTN6wKsDnnn22d3+NNkpxbXad6T/nPocP27cCy88//wLL+5459t6F+xCV+w1Rbfat7r33qkeVGZoim61F2DmzJknHP9Ln/vvv//Z55zTr9+fRo8aNWjQwCeefGqnDjPyv6dS09K2dcQCxYMZwsK7D82zxrfeeqt3796vvTZgt69l9apVt/6p373/+Oc3STNfHTBg2lfTBg0alJmZ+Yc//GHVT6sGDnr7y6lfXXjRRVdffdWkSZO221vNmjWT582fmzxv7GeflS1b7o/XXL3VZuvXr58y5Yvd/lzYXYprte9g/zn12a17912IcFt9F+xaV+wFRbfat7r33tlOVGZQim61b1ejRo1iO96PP/lk6NCho0eP3l3vKUcsFHsCYeHdh+Zeb3p6+gcfvH/nXXd9N3v2/Pnzoyj6y1/ubtigfs6/Vat+GjlixFVXXhFb6obrr/t4yJAxY0ZfeMEF3bt1vfXWP0VR9Pzzz3XpfEiHDu3vvffvWVlZOatYt359yZIlD2zUqGTJkrVq1X7jzTfPOvvsiRMmLFu+7F8PPVS/fv3ExMQTTzzp5ltuefSRh3d02HFxlStXuefvf//222/nzJmzfv36Sy65uEOH9k2bNP7d785cu3btBb8/f/78+Uf1PDL/Q9lDWrf2vPP6tm/X9u67+2dkZORv8/PPP5/X99yWLQ46+eSTZsyYEVvptp4gu1Z1xbLat9p/FEWPP/7vjh06dGjf7qUXszNbTn2OHzfu4j9cdMXll3388cexliedeEJSUtKO1Fued0Gsqz2/FSna1T5mzOgrLr/s9NNObdnioNtvvy0jIyP/PQXvvfMXZ+53R/5izqnM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EAIAAARKIAQAAAiUQAgAABAogRAAACBQAiEAAECgBEIAAIBACYQAAACBEggBAAACJRACAAAESiAEAAAIlEAIAAAQKIEQAAAgUAIhAABAoARCAACAQAmEAAAAgRIIAQAAAiUQAgAABEogBAAACJRACAAAECiBEAAAIFACIQAAQKAEQgAAgEAJhAAAAIESCAEAAAIlEAIAAARKIAQAAAiUQAgAABAogRAAACBQAiEAAECgBEIAAIBACYQAAACBEggBAAACJRACAAAESiAEAAAIlEAIAAAQKIEQAAAgUAIhAABAoARCAACAQAmEAAAAgRIIAQAAAiUQAgAABEogBAAACJRACAAAECiBEAAAIFACIQAAQKAEQgAAgEAJhAAAAIESCAEAAAIlEAIAAARKIAQAAAiUQAgAABAogRAAACBQAiEAAECgBEIAAIBACYQAAACBEggBAAACJRACAAAESiAEAAAIlEAIAAAQKIEQAAAgUAIhAABAoARCAACAQAmEAAAAgRIIAQAAAiUQAgAABEogBAAACJRACAAAECiBEAAAIFACIQAAQKAEQgAAgEAJhAAAAIESCAEAAAIlEAIAAARKIAQAAAiUQAgAABAogRAAACBQAiEAAECgBEIAAIBACYQAAACBEggBAAACJRACAAAESiAEAAAIlEAIAAAQKIEQAAAgUAIhAABAoARCAACAQAmEAAAAgRIIAQAAAiUQAgAABEogBAAACJRACAAAECiBEAAAIFACIQAAQKAEQgAAgEAJhAAAAIESCAEAAAIlEAIAAARKIAQAAAiUQAgAABAogRAAACBQAiEAAECgBEIAAIBACYQAAACBEggBAAACJRACAAAESiAEAAAIlEAIAAAQKIEQAAAgUAIhAABAoARCAACAQAmEAAAAgRIIAQAAAiUQAgAABEogBAAACJRACAAAECiBEAAAIFACIQAAQKAEQgAAgEAJhAAAAIESCAEAAAIlEAIAAARKIAQAAAiUQAgAABAogRAAACBQAiEAAECgBEIAAIBACYQAAACBEggBAAACJRACAAAESiAEAAAIlEAIAAAQKIEQAAAgUAIhAABAoARCAACAQAmEAAAAgRIIAQAAAiUQAgAABEogBAAACJRACAAAECiBEAAAIFACIQAAQKAEQgAAgEAJhAAAAIESCAEAAAIlEAIAAARKIAQAAAiUQAgAABAogRAAACBQAiEAAECgBEIAAIBACYQAAACBEggBAAACJRACAAAESiAEAAAIlEAIAAAQKIEQAAAgUAIhAABAoARCAACAQAmEAAAAgRIIAQAAAiUQAgAABEogBAAACJRACAAAECiBEAAAIFACIQAAQKAEQgAAgEAJhAAAAIESCAEAAAIlEAIAAARKIAQAAAiUQAgAABAogRAAACBQAiEAAECgBEIAAIBACYQAAACBEggBAAACJRACAAAESiAEAAAIlEAIAAAQKIEQAAAgUAIhAABAoARCAACAQAmEAAAAgRIIAQAAAiUQAgAABEogBAAACJRACAAAECiBEAAAIFACIQAAQKAEQgAAgEAJhAAAAIESCAEAAAIlEAIAAARKIAQAAAiUQAgAABAogRAAACBQAiEAAECgBEIAAIBACYQAAACBEggBAAACJRACAAAESiAEAAAIlEAIAAAQKIEQAAAgUAIhAABAoARCAACAQAmEAAAAgRIIAQAAAiUQAgAABEogBAAACJRACAAAECiBEAAAIFACIQAAQKAEQgAAgEAJhAAAAIESCAEAAAIlEAIAAARKIAQAAAiUQAgAABAogRAAACBQAiEAAECgBEIAAIBACYQAAACBEggBAAACJRACAAAESiAEAAAIlEAIAAAQKIEQAAAgUAIhAABAoARCAACAQAmEAAAAgRIIAQAAAiUQAgAABEogBAAACJRACAAAECiBEAAAIFACIQAAQKAEQgAAgEAJhAAAAIESCAEAAAIlEAIAAARKIAQAAAiUQAgAABAogRAAACBQAiEAAECgBEIAAIBACYQAAACBEggBAAACJRACAAAESiAEAAAIlEAIAAAQKIEQAAAgUAIhAABAoARCAACAQAmEAAAAgRIIAQAAAiUQAgAABEogBAAACJRACAAAECiBEAAAIFACIQAAQKAEQgAAgEAJhAAAAIESCAEAAAIlEAIAAARKIAQAAAiUQAgAABAogRAAACBQAiEAAECgBEIAAIBACYQAAACBEggBAAACJRACAAAESiAEAAAIlEAIAAAQKIEQAAAgUAIhAABAoARCAACAQAmEAAAAgRIIAQAAAiUQAgAABEogBAAACJRACAAAECiBEAAAIFACIQAAQKAEQgAAgEAJhAAAAIESCAEAAAIlEAIAAARKIAQAAAiUQAgAABAogRAAACBQAiEAAECgBEIAAIBACYQAAACBEggBAAACJRACAAAESiAEAAAIlEAIAAAQKIEQAAAgUAIhAABAoARCAACAQAmEAAAAgRIIAQAAAiUQAgAABEogBAAACJRACAAAECiBEAAAIFACIQAAQKAEQgAAgEAJhAAAAIESCAEAAAIlEAIAAARKIAQAAAiUQAgAABCohH09gOjpW+fs6yEAAACEyAwhAABAoARCAACAQMVtTk3f12MAAABgHzBDCAAAECiBEAAAIFACIQAAQKAEQgAAgEAJhAAAAIESCAEAAAIlEAIAAARKIAQAAAiUQAgAABAogRAAACBQAiEAAECgBEIAAIBACYQAAACBEggBAAACJRACAAAESiAEAAAIlEAIAAAQKIEQAAAgUAlpmzfs6zEAAACwD5ghBAAACJRACAAAECiBEAAAIFACIQAAQKAEQgAAgEAJhAAAAIESCAEAAAIlEAIAAARKIAQAAAiUQAgAABAogRAAACBQezYQTp8+/Z6//fWG66/761//8v5772VmZu5sD7Nnz3rqqSd313iGfvLJH6+5OuffawMGbHeRlJSUQYMG3nHH7TfdeMOjjzy8aNGiHVxXamrqq6+8stWHli1bdu0fr0lOTs6556Ybb0hJSYnd/teDD2RlZUVRtGTx4j9ec/W0adN2cI0AABRvGRkZQ4Z8dHf/u66/7rr+d905YvjwPbeuAo5mc/vPf16a9tVXOT/OnDnz2Wee3qkV7emD3vz933D9dZs2bdpDqytyEvZc1+vXr39twIDLr7iifv16a9eue/nl/0yaNKlr16471UmzZs2bNWu+u4Z0bO/ex/buHUXRunXrHn7oX8f06rXdRZ595pnyFcrffPPNZcuWmzz588f//didd/Xfb7/9trvg5s2bf/hhzrYeLVOmzDtvD7rhxptKlPhVJl++fHm16tXj4uKiKJo4aWLbdu3Gj/usXbt2O/wUAQAotl4b8OrqNWsuvuSS6tVrLFq0aMCrr5QpW+bQQ3fuAHsHFXw0uxvt6YNeB9X7LBBu3rw5ISG+evXq8fEJlSpVuu6662P3jxo5csSI4RkZGZ27dOnT55Rvv/12zOhRS5cubd68+YYNGzodfEisFO775z/O7dt3w4YNo0aNuuKKKz8dOnTUqJFZWVnHHXf8ET165O9n06ZNLzz/XHJycs2aNc8++5wD6tWLouiP11x9z9/vrVChQp6xDRr4Vo8eR1arVi3nnjVr1jzy8EOJiYnXXXd96f/mvXnJyUuWLL7yqr/Fx8dHUdS9+2EJ8QmbNm3ab7/9Pvn447Fjx0RRdOihXU886aT8a3/i8X+vXLnyr3/9y5//fGf+YZQtV65N27YjRgw/5phfhdKZM5NatGgZ+/PPl1Om3HxLvwceuH/lypVVq1bdc68UAACF34oVK7755pv+d/8lMTExiqKGDRv2Pe/8n35aua1j7JEjhqekpCxZurRlixa/v+DC+Pj4Ao7DTz3t9P/856V5ycmbNm1u0KDB5VdckftoNs+CURS9/fagSRMn1qpdu8yWweS2adOmfz/22MKFCw8+5ODTTjv91Vdeady4cddu3aIo+vdjj55w4kkNGzbMaZz/oPftQYNGjx6V0+Def/xz3rx5n0+aePEll8YmJNu2aVuqdOmckZ9zbt88w4tNrmyr/z3/QhUxezAQVq1atWu3bn+5u3+DBg2aNG3avn2HqlWrfv/990lJ3/Tr96eEkiVfe23AF5MnlytfPjk5ud+fbi1btux33303ZcoX7dq1W7FieVpaet26B8yePSt24uikSRNvvOnmKMp65OGHW7RssWbNz3n62bRpU+XKVa648qovvpj8/vvvXfPHa6Moeuzfj+cf2I8/Lly4cOEFF16U+85Zs75duTL77TRv/rycOckfF/1Yr169WBqM6XLooVEUzZjx9ZdffnnjTTcnJCQ89+wz1WtU37xpc561X3X1NQ/968E///nObQ3jqKOOfuhfD3bo0LFKlSr/G8a33/7+gguiKEpK+qZ69eqVKlVq17bd+HHj+pyS/cYDACBYycnJDRs2jKXBmIZbRFG0rWPsa6+7vnLlyo8+8vDs2bNKlixVwHH45s2bex7Zs9EljVJSUp968onZs2blHM3m77xUqVI/zJnz5zvvWvvzz48++kieKcr58+dfc80fq1St+tRTT0798stDDz10yMdDunbrtn79+lWrVudOg1s96D39jDNOP+OMKIreeP31MmXLlCtXbltbIzby/MM7pHPnAvrfA69M0bYHA2EURSeccGLPnkd9//13s2fPvv+++847/7z58+bPnj37jjtujzUok1imXfv2BxxQLxbWW7VqOWjgWykpKVOmTDn4kINz+vn+u+87d+4Sm9D72z1/j6Lo80mf5+mna7dugwd/sHz5soNatMgT9vIYM2bMET165DlXs3nzg6pWrZqYmNigfoOcO+OiuISSJfP38N3s77of1j025iOP7DlzZtJhhx+xg2vPUaJEidNOP2PgW29eceVVsXvSsqWXKVM2iqJJEye179AhiqL27ds///xzJ550Ynz8nn2xAAAo1LKyov/OfQ379NMPPng/iqLKlSvf/Ze/zp41K/8xdsOGjerXrx9FUYOGDTdu2Lh06dwCjsMTExOXLVs6ePDgZUuXLl6yJCPXtT/yd16yZMnOXbrsv0Xr1m3yDLNFixYNGzWKnV73/fffnX3OuT+/vmb16tVJSd906Jh9fJvbtg56Px4yZOPGjWedffa2NkbOyPMPL3cgdFC9XXs8YyQmJrZp07ZNm7Z169b9bOzYugcccPzxJxx3/PE5DWbOnLnffqVjt+PjE1q2ajVjxtdfTZ2aE5O23B8f/W/iN1tmVmaefqIouuP//m/atOkzk76ZNHHiXf3v3up4MjMzZ3z99ckn98lzf8WKFfMvckC9ep988nFmZmZOenzzjTfatG0bu+hLTFZWVkZGRoMGDXZk7Xk0bNiwYqVKU6d+Gfvxu+++a9KkSewjjklJ38yY8fXAt96KPTRt2vSOHTvuSJ8AABRL9erXf/vtt1NTU0uVKnVMr17H9Oq1bNmyJx7/91aPjWfOnFm6dKnY7bgoLivK2mqbnOPwqVO//HDw4G7duzdp0jQtLT33evMvOHDgWzmHw7lPpovJOXLOysqMj4+Pi4vr3LnL1KlfJn3zze/O+lXA29ZB78SJE2Z+O/Paa6+LnfwZt+WQO9YgLS0tdiNn5FvNBQX3v6NbPAx78CqjX3wx+YH771uyeHFaWtqmTZtWr15ds2bNpk2bTZgwfvHixWt//vnJJ56IfQwvt0MO6Txi+IiyZctWrlw5587GTZp8MXnyqp9+Wr161X33ZZ9GnL+fIUM+GjZsWPfu3c8883fr1q9PT/9VHedYsmRJYmJi+fLld+Qp1KtXr1q1agMGvLpmzZqUzZtHjx41ffq0evXqNW3WdNxn41auXLlmzZrRo0c1btIk/9pLlCixZcbvl5Ldlj59Thn26aex669mf4CwZfYHCL+YPLlJkyaP/fvx2L9evY4dN+6zHRkwAADFVc2aNVu0bPHM008vWrQoLS1t6dKl48ePS0jInuDZ7jH2dtvMnze/WbPmRxyRfamO5OS56elpOUez+Rds1qz5hPHjV69etWjRoq+//jrPir799tt58+atWbPms7FjYx/F6tyly4QJEzanpNSsWTN3y60e9CZ9883oUaMuu+zykv89U69suXLz589fvXp1cnLy9999t+PPy0H1Pp4h7NTp4NWrVj/77DOrVq0qXXq/du3bnX76GaVKlTqiR48nn3h88+bNHTt16t79sFmzsj8lmKNRo0abN2867LDDct/ZpEmTzp27PPDA/ZmZmUcdfXSDBtlndebpJyUl5T8vvXjrn/pVqFChb9++sfdG/qu5rFi+vFat2jv+LC659LJ33n77n/+4NzU1tX6DBldf88eyZcu2adP2xx9//NeDD6Snp3c59NCuXbvlX3vZsmUrVa78t7/+5e6//HVb17aJzaAefUyvl158IYqihQsWnHHGmdlT259POumkk3La9DjyyFGjRi5btqxGjRo7+SIAAFB8nH/+74cPH/bCC8//tPKncuXKtmrdOnbhjObNmxd8jL3dNl27dXv++eduvfVPzZo2Peyww5cvW37IIf87ms2zYIkSJebPm3fPPfdUqVy5cePGeVZ0YOPGb7315k8rV3bvfljbLVeLrFixYvly5du0zXty6VYPegcP/mDx4sW333Zr7M5r/vjHpk2bNW3W7J6//bVOnTpt2rTd7vMquP9ly5bt6uYvnuLWrf15X48BAAAonjIzM9esXv3ggw/cetvtO3iaHnuT65QAAAB7ytfTp7/22oBTTjlVGiyczBACAAAEag9eVAYAAIDCTCAEAAAIlEAIAAAQKIEQAAAgUAIhAABAoARCAACAQAmEAAAAgRIIAQAAAiUQAgAABEogBAAACJRACAAAECiBEAAAIFACIQAAQKAEQgAAgEAJhAAAAIESCAEAAAIlEAIAAERh+n+W1Zl08IviMwAAAABJRU5ErkJggg=="
+  },
+  "saved_files": {
+    "drawio_xml_path": "C:\\Users\\2786681\\Music\\arch\\architecture-Backend\\saved_diagrams\\xml\\drawio-20260127125727565745.xml",
+    "mermaid_path": "C:\\Users\\2786681\\Music\\arch\\architecture-Backend\\saved_diagrams\\xml\\mermaid-20260127125727565745.mmd",
+    "terraform_path": "C:\\Users\\2786681\\Music\\arch\\architecture-Backend\\saved_diagrams\\xml\\terraform-20260127125727565745.tf",
+    "png_path": "C:\\Users\\2786681\\Music\\arch\\architecture-Backend\\front\\arc-front\\public\\diagrams\\generated-20260127125727565745.png",
+    "response_json_path": "C:\\Users\\2786681\\Music\\arch\\architecture-Backend\\saved_diagrams\\responses\\response-20260127125727565745.json"
+  },
+  "timestamp": "20260127125727565745",
+  "requirements": "I need a scalable web application with user authentication, database storage, and file uploads"
+}

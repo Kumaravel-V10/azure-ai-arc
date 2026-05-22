@@ -1,0 +1,75 @@
+graph TB
+    subgraph Azure["☁️ Microsoft Azure"]
+        subgraph RG["📦 Resource Group"]
+            subgraph COMPUTE["⚡ Compute"]
+                Users["🔧 Users"]
+                AzureAppServiceFinnairPortal["🔧 Azure App Service - Finnair Portal"]
+                AzureAppServiceKLMPortal["🔧 Azure App Service - KLM Portal"]
+                AzureFunctionsSharedBackend["🔧 Azure Functions - Shared Backend"]
+                AzureDDoSProtection["🔧 Azure DDoS Protection"]
+                AzureAppConfiguration["🔧 Azure App Configuration"]
+                AzureSiteRecovery["🔧 Azure Site Recovery"]
+            end
+            subgraph STORAGE["💾 Storage"]
+                AzureBackup["🔧 Azure Backup"]
+            end
+            subgraph DATABASE["🗄️ Database"]
+                AzurePostgreSQL["🔧 Azure PostgreSQL"]
+                AzureRedisCache["🔧 Azure Redis Cache"]
+            end
+            subgraph NETWORKING["🌐 Networking"]
+                AzureFrontDoor["🔧 Azure Front Door"]
+                AzureApplicationGatewayFinnair["🚪 Azure Application Gateway - Finnair"]
+                AzureApplicationGatewayKLM["🚪 Azure Application Gateway - KLM"]
+                AzureFirewallPremium["🔧 Azure Firewall Premium"]
+            end
+            subgraph SECURITY["🔒 Security"]
+                AzureKeyVaultShared["🔐 Azure Key Vault - Shared"]
+                AzureKeyVaultSecurity["🔐 Azure Key Vault - Security"]
+                MicrosoftDefenderforCloud["🔧 Microsoft Defender for Cloud"]
+                MicrosoftSentinel["🔧 Microsoft Sentinel"]
+            end
+            subgraph ANALYTICS["📊 Analytics"]
+                AzureLogAnalyticsWorkspace["🔧 Azure Log Analytics Workspace"]
+            end
+            subgraph INTEGRATION["🔗 Integration"]
+                AzureAPIManagement["🔧 Azure API Management"]
+            end
+            subgraph MONITORING["📈 Monitoring"]
+                AzureMonitor["🔧 Azure Monitor"]
+                AzureApplicationInsights["🔧 Azure Application Insights"]
+            end
+        end
+    end
+
+    %% Architecture Connections
+    Users -->|User requests| AzureFrontDoor
+    AzureFrontDoor -->|HTTPS routing for Finnair| AzureApplicationGatewayFinnair
+    AzureFrontDoor -->|HTTPS routing for KLM| AzureApplicationGatewayKLM
+    AzureApplicationGatewayFinnair -->|Backend routing for Finnair| AzureAppServiceFinnairPortal
+    AzureApplicationGatewayKLM -->|Backend routing for KLM| AzureAppServiceKLMPortal
+    AzureAppServiceFinnairPortal -->|Data queries for Finnair| AzurePostgreSQL
+    AzureAppServiceKLMPortal -->|Data queries for KLM| AzurePostgreSQL
+    AzureFunctionsSharedBackend -->|Cache access| AzureRedisCache
+    AzureFunctionsSharedBackend -->|Secrets retrieval| AzureKeyVaultShared
+    AzureAppServiceFinnairPortal -->|Telemetry for Finnair| AzureApplicationInsights
+    AzureAppServiceKLMPortal -->|Telemetry for KLM| AzureApplicationInsights
+    AzureAPIManagement -->|API gateway routing| AzureFunctionsSharedBackend
+    AzureFrontDoor -->|Secrets & certificate management| AzureKeyVaultSecurity
+    AzureAppServiceFinnairPortal -->|Telemetry & diagnostics| AzureMonitor
+    AzureAppServiceFinnairPortal -->|Telemetry & diagnostics| AzureLogAnalyticsWorkspace
+    AzureFrontDoor -->|Security monitoring| MicrosoftDefenderforCloud
+    AzureFirewallPremium -->|Network security filtering| AzureFunctionsSharedBackend
+    AzureFrontDoor -->|Content delivery| AzureDDoSProtection
+    AzureFrontDoor -->|Security monitoring| MicrosoftSentinel
+    AzureFunctionsSharedBackend -->|Database queries| AzurePostgreSQL
+    AzureAppServiceFinnairPortal -->|Caching for Finnair portal| AzureCacheforRedis
+    AzureAppServiceKLMPortal -->|Caching for KLM portal| AzureCacheforRedis
+
+    %% Azure Styling
+    classDef azure fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff
+    classDef compute fill:#ff6b35,stroke:#e55100,stroke-width:2px,color:#fff
+    classDef storage fill:#00bcf2,stroke:#0288d1,stroke-width:2px,color:#fff
+    classDef database fill:#ba68c8,stroke:#8e24aa,stroke-width:2px,color:#fff
+    classDef networking fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
+    classDef security fill:#f44336,stroke:#d32f2f,stroke-width:2px,color:#fff

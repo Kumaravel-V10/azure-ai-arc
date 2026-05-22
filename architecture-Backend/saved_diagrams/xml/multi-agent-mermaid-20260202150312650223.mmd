@@ -1,0 +1,60 @@
+graph TB
+    subgraph Azure["☁️ Microsoft Azure"]
+        subgraph RG["📦 Resource Group"]
+            subgraph COMPUTE["⚡ Compute"]
+                AzureHybridBenefit["🔧 Azure Hybrid Benefit"]
+                SpotVMs["🔧 Spot VMs"]
+                agwprodeastus001["🔧 agw-prod-eastus-001"]
+                appprodeastus001["🔧 app-prod-eastus-001"]
+                AzureActiveDirectory["🔧 Azure Active Directory"]
+                ReservedInstances["🔧 Reserved Instances"]
+                AppServices["🌐 App Services"]
+            end
+            subgraph DATABASE["🗄️ Database"]
+                AzureCacheforRedis["🔧 Azure Cache for Redis"]
+                sqldbprodeastus001["🔧 sqldb-prod-eastus-001"]
+            end
+            subgraph NETWORKING["🌐 Networking"]
+                NetworkSecurityGroups["🔧 Network Security Groups"]
+                ApplicationGateway["🚪 Application Gateway"]
+                AzureFirewall["🔧 Azure Firewall"]
+                AzureCDN["🔧 Azure CDN"]
+            end
+            subgraph SECURITY["🔒 Security"]
+                AzureKeyVault["🔐 Azure Key Vault"]
+                KeyVault["🔐 Key Vault"]
+            end
+            subgraph AI_+_ML["🤖 AI + ML"]
+                MachineLearning["🔧 Machine Learning"]
+            end
+            subgraph MONITORING["📈 Monitoring"]
+                AzureMonitor["🔧 Azure Monitor"]
+            end
+        end
+    end
+
+    %% Service Connections
+    AzureHybridBenefit --> NetworkSecurityGroups
+    NetworkSecurityGroups --> AzureCacheforRedis
+    AzureCacheforRedis --> SpotVMs
+    SpotVMs --> agwprodeastus001
+    agwprodeastus001 --> appprodeastus001
+    appprodeastus001 --> ApplicationGateway
+    ApplicationGateway --> MachineLearning
+    MachineLearning --> AzureFirewall
+    AzureFirewall --> AzureActiveDirectory
+    AzureActiveDirectory --> ReservedInstances
+    ReservedInstances --> AppServices
+    AppServices --> sqldbprodeastus001
+    sqldbprodeastus001 --> AzureMonitor
+    AzureMonitor --> AzureCDN
+    AzureCDN --> AzureKeyVault
+    AzureKeyVault --> KeyVault
+
+    %% Azure Styling
+    classDef azure fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff
+    classDef compute fill:#ff6b35,stroke:#e55100,stroke-width:2px,color:#fff
+    classDef storage fill:#00bcf2,stroke:#0288d1,stroke-width:2px,color:#fff
+    classDef database fill:#ba68c8,stroke:#8e24aa,stroke-width:2px,color:#fff
+    classDef networking fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
+    classDef security fill:#f44336,stroke:#d32f2f,stroke-width:2px,color:#fff

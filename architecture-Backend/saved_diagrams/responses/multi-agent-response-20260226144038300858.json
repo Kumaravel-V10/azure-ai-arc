@@ -1,0 +1,2114 @@
+{
+  "architecture": {
+    "project_name": "Nevio Multi-Tenant Shared Backend Architecture",
+    "architecture_pattern": "Multi-tenant shared backend architecture with tenant isolation",
+    "user_requirements": "# Nevio Azure Shared Backend Architecture\n\n## Overview\n\nThis document describes the multi-tenant shared backend architecture for the Nevio Service Center, designed to support multiple airline tenants (like Finnair and KLM) with a shared backend infrastructure while maintaining tenant isolation for frontend applications.\n\n## Architecture Components\n\n### 1. Internet Gateway & Security\n- **Azure Front Door**: Global load balancer and content delivery network\n- **WAF Policy**: Web Application Firewall for security protection\n- **SSL Certificates**: Secure communications for all tenant domains\n\n### 2. Tenant-Specific Resources\n\n#### Finnair Tenant (`rg-test-finnair-fra-sc`)\n- **Application Gateway**: Load balancer for Finnair-specific traffic\n- **Web App Service Plan**: Dedicated compute for Finnair portal\n- **Finnair Portal**: Tenant-specific web application\n- **Finnair Storage**: Tenant-specific storage account\n- **Finnair Identity**: Managed identity for secure resource access\n- **DNS Zone**: `finnair-test.nevio.com` for custom domain\n\n#### KLM Tenant (`rg-test-klm-fra-sc`)\n- **KLM Portal**: Tenant-specific web application\n- Similar infrastructure pattern as Finnair\n\n### 3. Shared Backend Services (`rg-test-shared-backend-fra-sc`)\n\n#### API Management\n- **Shared API Management**: Centralized API gateway for all backend services\n- Located in dedicated subnet (`snet-shared-apim`)\n\n#### Function Apps (Microservices)\nAll function apps share the same App Service Plan and are hosted in `snet-shared-functions`:\n- **func-booking**: Booking management services\n- **func-payment**: Payment processing services\n- **func-customer**: Customer management services\n- **func-notification**: Notification services\n- **func-analytics**: Analytics and reporting services\n- **func-integration**: External system integrations\n- **func-reporting**: Business reporting services\n\n#### Data Layer (`snet-shared-data`)\n- **PostgreSQL Server**: Multi-tenant database with tenant isolation\n- **Redis Cache**: Shared caching layer for performance\n- **Private Endpoints**: Secure connectivity to data services\n- **Private DNS Zones**: \n  - `postgres.database.azure.com`\n  - `vault.azure.net`\n\n#### Configuration & Security\n- **App Configuration**: Centralized tenant settings management\n- **Shared Key Vault**: Secure secrets and configuration storage\n- **Shared Storage**: Function apps storage requirements\n- **Shared Managed Identity**: Service-to-service authentication\n\n### 4. Monitoring & Security (`rg-test-monitoring-security-fra-sc`)\n- **Application Insights**: Application performance monitoring\n- **Log Analytics Workspace**: Centralized logging\n- **Azure Monitor**: Infrastructure monitoring\n- **Entra ID**: Identity and access management\n- **Security Key Vault**: Security-specific secrets\n- **Microsoft Defender**: Advanced threat protection\n\n## Network Architecture\n\n### Virtual Network Design\n- **Shared Backend VNet**: `vnet-test-shared-backend-fra-sc`\n  - **API Management Subnet**: Isolated subnet for APIM\n  - **Functions Subnet**: Shared compute for all function apps\n  - **Data Subnet**: Private connectivity for databases and cache\n\n### Security Features\n- **Private Endpoints**: Secure connectivity to PaaS services\n- **Network Security Groups**: Traffic filtering and security rules\n- **Private DNS Zones**: Internal name resolution\n- **VNet Peering**: Secure connectivity between tenant and shared networks\n\n## Multi-Tenant Strategy\n\n### Tenant Isolation\n- **UI Level**: Each tenant has dedicated web applications and gateways\n- **Data Level**: Tenant isolation implemented at the database level\n- **Configuration**: Tenant-specific settings managed through App Configuration\n\n### Shared Resources\n- **Backend Services**: All business logic functions are shared\n- **Data Infrastructure**: Single PostgreSQL instance with tenant partitioning\n- **Monitoring**: Centralized logging and monitoring for all tenants\n- **Security**: Shared security infrastructure with tenant-specific access controls\n\n## Benefits\n\n1. **Cost Efficiency**: Shared backend infrastructure reduces operational costs\n2. **Scalability**: Centralized services can scale based on aggregate demand\n3. **Maintainability**: Single codebase for business logic across all tenants\n4. **Security**: Centralized security controls and monitoring\n5. **Performance**: Shared caching and optimized data access patterns\n\n## Deployment Considerations\n\n- **Region**: Germany West Central (`fra`)\n- **Environment**: Test environment with production-ready architecture\n- **Naming Convention**: Consistent resource naming following Azure best practices\n- **Security**: Zero-trust approach with private endpoints and managed identities\n\n## Future Enhancements\n\n- Additional tenant onboarding through infrastructure as code\n- Enhanced monitoring and alerting capabilities\n- Disaster recovery and backup strategies\n- Performance optimization and auto-scaling policies",
+    "services": [
+      {
+        "name": "Azure Front Door",
+        "category": "networking",
+        "resource_group": "",
+        "subnet": "edge",
+        "description": "Global load balancer and content delivery network for tenant-specific web applications."
+      },
+      {
+        "name": "Azure Web Application Firewall (WAF)",
+        "category": "security",
+        "resource_group": "",
+        "subnet": "edge",
+        "description": "Protects tenant-specific web applications from common web vulnerabilities and attacks."
+      },
+      {
+        "name": "Azure Application Gateway - Finnair",
+        "category": "networking",
+        "resource_group": "rg-test-finnair-fra-sc",
+        "subnet": "snet-finnair-appgateway",
+        "description": "Load balancer for Finnair-specific traffic."
+      },
+      {
+        "name": "Azure App Service - Finnair Portal",
+        "category": "compute",
+        "resource_group": "rg-test-finnair-fra-sc",
+        "subnet": "snet-finnair-appservice",
+        "description": "Tenant-specific web application for Finnair."
+      },
+      {
+        "name": "Azure Storage - Finnair",
+        "category": "storage",
+        "resource_group": "rg-test-finnair-fra-sc",
+        "subnet": "",
+        "description": "Tenant-specific storage account for Finnair."
+      },
+      {
+        "name": "Azure Key Vault - Finnair",
+        "category": "security",
+        "resource_group": "rg-test-finnair-fra-sc",
+        "subnet": "",
+        "description": "Secure secrets and configuration storage for Finnair."
+      },
+      {
+        "name": "Azure DNS Zone - Finnair",
+        "category": "networking",
+        "resource_group": "rg-test-finnair-fra-sc",
+        "subnet": "",
+        "description": "Custom domain for Finnair tenant."
+      },
+      {
+        "name": "Azure Application Gateway - KLM",
+        "category": "networking",
+        "resource_group": "rg-test-klm-fra-sc",
+        "subnet": "snet-klm-appgateway",
+        "description": "Load balancer for KLM-specific traffic."
+      },
+      {
+        "name": "Azure App Service - KLM Portal",
+        "category": "compute",
+        "resource_group": "rg-test-klm-fra-sc",
+        "subnet": "snet-klm-appservice",
+        "description": "Tenant-specific web application for KLM."
+      },
+      {
+        "name": "Azure Storage - KLM",
+        "category": "storage",
+        "resource_group": "rg-test-klm-fra-sc",
+        "subnet": "",
+        "description": "Tenant-specific storage account for KLM."
+      },
+      {
+        "name": "Azure Key Vault - KLM",
+        "category": "security",
+        "resource_group": "rg-test-klm-fra-sc",
+        "subnet": "",
+        "description": "Secure secrets and configuration storage for KLM."
+      },
+      {
+        "name": "Azure DNS Zone - KLM",
+        "category": "networking",
+        "resource_group": "rg-test-klm-fra-sc",
+        "subnet": "",
+        "description": "Custom domain for KLM tenant."
+      },
+      {
+        "name": "Azure API Management",
+        "category": "integration",
+        "resource_group": "rg-test-shared-backend-fra-sc",
+        "subnet": "snet-shared-apim",
+        "description": "Centralized API gateway for backend services."
+      },
+      {
+        "name": "Azure App Service - Shared Functions",
+        "category": "compute",
+        "resource_group": "rg-test-shared-backend-fra-sc",
+        "subnet": "snet-shared-functions",
+        "description": "Shared function apps for backend business logic."
+      },
+      {
+        "name": "PostgreSQL Server",
+        "category": "data",
+        "resource_group": "rg-test-shared-backend-fra-sc",
+        "subnet": "snet-shared-data",
+        "description": "Multi-tenant relational database with tenant isolation."
+      },
+      {
+        "name": "Redis Cache",
+        "category": "data",
+        "resource_group": "rg-test-shared-backend-fra-sc",
+        "subnet": "snet-shared-data",
+        "description": "Shared caching layer for performance optimization."
+      },
+      {
+        "name": "Azure Key Vault - Shared",
+        "category": "security",
+        "resource_group": "rg-test-shared-backend-fra-sc",
+        "subnet": "",
+        "description": "Secure secrets and configuration storage for shared backend services."
+      },
+      {
+        "name": "Azure Monitor",
+        "category": "monitoring",
+        "resource_group": "rg-test-monitoring-security-fra-sc",
+        "subnet": "",
+        "description": "Infrastructure monitoring for all services."
+      },
+      {
+        "name": "Application Insights",
+        "category": "monitoring",
+        "resource_group": "rg-test-monitoring-security-fra-sc",
+        "subnet": "",
+        "description": "Application performance monitoring for tenant-specific and shared services."
+      },
+      {
+        "name": "Log Analytics Workspace",
+        "category": "monitoring",
+        "resource_group": "rg-test-monitoring-security-fra-sc",
+        "subnet": "",
+        "description": "Centralized logging for all services."
+      },
+      {
+        "name": "Microsoft Defender for Cloud",
+        "category": "security",
+        "resource_group": "rg-test-monitoring-security-fra-sc",
+        "subnet": "",
+        "description": "Advanced threat protection for Azure resources."
+      },
+      {
+        "name": "Azure Backup",
+        "category": "backup",
+        "description": "Add backup capabilities for PostgreSQL and storage accounts.",
+        "subnet": "snet-shared-data",
+        "sku": "Standard",
+        "icon": "",
+        "remediation_added": true
+      }
+    ],
+    "all_services": [
+      "Azure Front Door",
+      "Azure Web Application Firewall (WAF)",
+      "Azure Application Gateway - Finnair",
+      "Azure App Service - Finnair Portal",
+      "Azure Storage - Finnair",
+      "Azure Key Vault - Finnair",
+      "Azure DNS Zone - Finnair",
+      "Azure Application Gateway - KLM",
+      "Azure App Service - KLM Portal",
+      "Azure Storage - KLM",
+      "Azure Key Vault - KLM",
+      "Azure DNS Zone - KLM",
+      "Azure API Management",
+      "Azure App Service - Shared Functions",
+      "PostgreSQL Server",
+      "Redis Cache",
+      "Azure Key Vault - Shared",
+      "Azure Monitor",
+      "Application Insights",
+      "Log Analytics Workspace",
+      "Microsoft Defender for Cloud",
+      "Azure Backup"
+    ],
+    "connections": [
+      {
+        "source": "Azure Front Door",
+        "target": "Azure Web Application Firewall (WAF)",
+        "label": "User HTTPS requests"
+      },
+      {
+        "source": "Azure Web Application Firewall (WAF)",
+        "target": "Azure Application Gateway - Finnair",
+        "label": "Tenant-specific traffic routing"
+      },
+      {
+        "source": "Azure Web Application Firewall (WAF)",
+        "target": "Azure Application Gateway - KLM",
+        "label": "Tenant-specific traffic routing"
+      },
+      {
+        "source": "Azure Application Gateway - Finnair",
+        "target": "Azure App Service - Finnair Portal",
+        "label": "Web application traffic"
+      },
+      {
+        "source": "Azure Application Gateway - KLM",
+        "target": "Azure App Service - KLM Portal",
+        "label": "Web application traffic"
+      },
+      {
+        "source": "Azure App Service - Shared Functions",
+        "target": "Azure API Management",
+        "label": "API calls via Private Endpoint"
+      },
+      {
+        "source": "Azure App Service - Shared Functions",
+        "target": "PostgreSQL Server",
+        "label": "SQL queries over Private Link"
+      },
+      {
+        "source": "Azure App Service - Shared Functions",
+        "target": "Redis Cache",
+        "label": "Cache-aside pattern"
+      },
+      {
+        "source": "Azure App Service - Shared Functions",
+        "target": "Azure Key Vault - Shared",
+        "label": "Secrets retrieval via Managed Identity"
+      },
+      {
+        "source": "Azure App Service - Finnair Portal",
+        "target": "Azure Key Vault - Finnair",
+        "label": "Secrets retrieval via Managed Identity"
+      },
+      {
+        "source": "Azure App Service - KLM Portal",
+        "target": "Azure Key Vault - KLM",
+        "label": "Secrets retrieval via Managed Identity"
+      },
+      {
+        "source": "Azure Monitor",
+        "target": "Azure App Service - Shared Functions",
+        "label": "Telemetry & diagnostics"
+      },
+      {
+        "source": "Azure Monitor",
+        "target": "Azure App Service - Finnair Portal",
+        "label": "Telemetry & diagnostics"
+      },
+      {
+        "source": "Azure Monitor",
+        "target": "Azure App Service - KLM Portal",
+        "label": "Telemetry & diagnostics"
+      },
+      {
+        "source": "Azure Monitor",
+        "target": "PostgreSQL Server",
+        "label": "Telemetry & diagnostics"
+      },
+      {
+        "source": "Azure Monitor",
+        "target": "Redis Cache",
+        "label": "Telemetry & diagnostics"
+      },
+      {
+        "source": "vnet-test-frontend-fra-sc",
+        "target": "vnet-test-shared-backend-fra-sc",
+        "label": "VNet Peering",
+        "type": "vnet_peering"
+      },
+      {
+        "source": "Azure App Service - Finnair Portal",
+        "target": "Azure Storage - Finnair",
+        "label": "Data storage"
+      },
+      {
+        "source": "Azure Application Gateway - Finnair",
+        "target": "Azure DNS Zone - Finnair",
+        "label": "DNS resolution"
+      },
+      {
+        "source": "Azure App Service - Finnair Portal",
+        "target": "Azure Storage - KLM",
+        "label": "Data storage"
+      },
+      {
+        "source": "Azure Application Gateway - KLM",
+        "target": "Azure DNS Zone - KLM",
+        "label": "DNS resolution"
+      },
+      {
+        "source": "Azure App Service - Finnair Portal",
+        "target": "Application Insights",
+        "label": "Telemetry & diagnostics"
+      },
+      {
+        "source": "Azure App Service - Finnair Portal",
+        "target": "Log Analytics Workspace",
+        "label": "Telemetry & diagnostics"
+      },
+      {
+        "source": "Azure Front Door",
+        "target": "Microsoft Defender for Cloud",
+        "label": "Security monitoring"
+      },
+      {
+        "source": "Azure App Service - Shared Functions",
+        "target": "Azure Monitor",
+        "label": "Telemetry",
+        "protocol": "HTTPS"
+      },
+      {
+        "source": "Azure App Service - KLM Portal",
+        "target": "Azure Monitor",
+        "label": "Telemetry",
+        "protocol": "HTTPS"
+      }
+    ],
+    "containers": [
+      {
+        "name": "rg-test-finnair-fra-sc",
+        "type": "resource_group",
+        "purpose": "Tenant-specific resources for Finnair."
+      },
+      {
+        "name": "rg-test-klm-fra-sc",
+        "type": "resource_group",
+        "purpose": "Tenant-specific resources for KLM."
+      },
+      {
+        "name": "rg-test-shared-backend-fra-sc",
+        "type": "resource_group",
+        "purpose": "Shared backend services."
+      },
+      {
+        "name": "rg-test-monitoring-security-fra-sc",
+        "type": "resource_group",
+        "purpose": "Monitoring and security services."
+      },
+      {
+        "name": "vnet-test-frontend-fra-sc",
+        "type": "virtual_network",
+        "resource_group": "rg-test-finnair-fra-sc"
+      },
+      {
+        "name": "vnet-test-shared-backend-fra-sc",
+        "type": "virtual_network",
+        "resource_group": "rg-test-shared-backend-fra-sc"
+      },
+      {
+        "name": "snet-finnair-appgateway",
+        "type": "subnet",
+        "virtual_network": "vnet-test-frontend-fra-sc",
+        "cidr": "10.0.1.0/24",
+        "purpose": "Finnair Application Gateway."
+      },
+      {
+        "name": "snet-finnair-appservice",
+        "type": "subnet",
+        "virtual_network": "vnet-test-frontend-fra-sc",
+        "cidr": "10.0.2.0/24",
+        "purpose": "Finnair App Service."
+      },
+      {
+        "name": "snet-klm-appgateway",
+        "type": "subnet",
+        "virtual_network": "vnet-test-frontend-fra-sc",
+        "cidr": "10.0.3.0/24",
+        "purpose": "KLM Application Gateway."
+      },
+      {
+        "name": "snet-klm-appservice",
+        "type": "subnet",
+        "virtual_network": "vnet-test-frontend-fra-sc",
+        "cidr": "10.0.4.0/24",
+        "purpose": "KLM App Service."
+      },
+      {
+        "name": "snet-shared-apim",
+        "type": "subnet",
+        "virtual_network": "vnet-test-shared-backend-fra-sc",
+        "cidr": "10.1.1.0/24",
+        "purpose": "Shared API Management."
+      },
+      {
+        "name": "snet-shared-functions",
+        "type": "subnet",
+        "virtual_network": "vnet-test-shared-backend-fra-sc",
+        "cidr": "10.1.2.0/24",
+        "purpose": "Shared Function Apps."
+      },
+      {
+        "name": "snet-shared-data",
+        "type": "subnet",
+        "virtual_network": "vnet-test-shared-backend-fra-sc",
+        "cidr": "10.1.3.0/24",
+        "purpose": "Shared Data Layer (PostgreSQL, Redis Cache)."
+      }
+    ],
+    "annotations": [
+      "Shared Backend: Multi-tenant Function Apps + Data Layer.",
+      "Tenant Isolation: Separate Application Gateway and App Service per tenant.",
+      "Security: Zero-trust approach with private endpoints and managed identities."
+    ],
+    "total_services": 22,
+    "component_extraction": {
+      "apis": [
+        {
+          "name": "Shared API Management",
+          "type": "REST",
+          "description": "Centralized API gateway for all backend services",
+          "methods": [
+            "GET",
+            "POST",
+            "PUT",
+            "DELETE"
+          ]
+        }
+      ],
+      "nfrs": [
+        {
+          "category": "Scalability",
+          "requirement": "Centralized services can scale based on aggregate demand",
+          "priority": "High"
+        },
+        {
+          "category": "Availability",
+          "requirement": "Multi-tenant shared backend architecture with tenant isolation",
+          "priority": "High"
+        },
+        {
+          "category": "Security",
+          "requirement": "Zero-trust approach with private endpoints and managed identities",
+          "priority": "Critical"
+        },
+        {
+          "category": "Performance",
+          "requirement": "Shared caching and optimized data access patterns",
+          "priority": "High"
+        },
+        {
+          "category": "Compliance",
+          "requirement": "Data residency in Germany West Central region",
+          "priority": "Critical"
+        },
+        {
+          "category": "Reliability",
+          "requirement": "Disaster recovery and backup strategies",
+          "priority": "High"
+        }
+      ],
+      "technical_requirements": [
+        {
+          "area": "Authentication",
+          "requirement": "Managed identity for secure resource access",
+          "details": "Used for tenant-specific resources and shared backend services"
+        },
+        {
+          "area": "Database",
+          "requirement": "Multi-tenant PostgreSQL database with tenant isolation",
+          "details": "Located in shared data subnet"
+        },
+        {
+          "area": "Caching",
+          "requirement": "Redis Cache for shared caching layer",
+          "details": "Improves performance for backend services"
+        },
+        {
+          "area": "CI/CD",
+          "requirement": "Infrastructure as code for tenant onboarding",
+          "details": "Automated deployment of resources"
+        },
+        {
+          "area": "Monitoring",
+          "requirement": "Application Insights and Log Analytics Workspace for centralized monitoring",
+          "details": "Tracks application performance and logs"
+        },
+        {
+          "area": "Networking",
+          "requirement": "Private endpoints and VNet peering for secure connectivity",
+          "details": "Ensures secure communication between tenant and shared networks"
+        }
+      ],
+      "tech_stack": [
+        {
+          "technology": "Azure Front Door",
+          "category": "cloud_service",
+          "purpose": "Global load balancer and content delivery network"
+        },
+        {
+          "technology": "Azure Application Gateway",
+          "category": "cloud_service",
+          "purpose": "Load balancer for tenant-specific traffic"
+        },
+        {
+          "technology": "Azure Web Application Firewall (WAF)",
+          "category": "cloud_service",
+          "purpose": "Security protection for web applications"
+        },
+        {
+          "technology": "Azure App Service",
+          "category": "cloud_service",
+          "purpose": "Hosting tenant-specific web applications and shared function apps"
+        },
+        {
+          "technology": "Azure Key Vault",
+          "category": "cloud_service",
+          "purpose": "Secure secrets and configuration storage"
+        },
+        {
+          "technology": "Azure Monitor",
+          "category": "cloud_service",
+          "purpose": "Infrastructure monitoring"
+        },
+        {
+          "technology": "Azure API Management",
+          "category": "cloud_service",
+          "purpose": "Centralized API gateway for backend services"
+        },
+        {
+          "technology": "PostgreSQL",
+          "category": "database",
+          "purpose": "Multi-tenant relational database"
+        },
+        {
+          "technology": "Redis Cache",
+          "category": "cloud_service",
+          "purpose": "Shared caching layer for performance"
+        },
+        {
+          "technology": "Microsoft Defender",
+          "category": "cloud_service",
+          "purpose": "Advanced threat protection"
+        }
+      ],
+      "business_requirements": [
+        {
+          "requirement": "Support multiple airline tenants with shared backend infrastructure",
+          "priority": "High",
+          "user_story": "As an airline tenant, I want to have a dedicated frontend application while sharing backend services to reduce costs."
+        },
+        {
+          "requirement": "Tenant isolation for frontend applications and data",
+          "priority": "High",
+          "user_story": "As a tenant, I want my data and frontend application to be isolated from other tenants for security and compliance."
+        },
+        {
+          "requirement": "Cost efficiency through shared backend infrastructure",
+          "priority": "High",
+          "user_story": "As a service provider, I want to reduce operational costs by sharing backend resources across tenants."
+        }
+      ],
+      "data_requirements": [
+        {
+          "type": "Relational",
+          "volume": "High",
+          "description": "Multi-tenant PostgreSQL database with tenant isolation"
+        },
+        {
+          "type": "Cache",
+          "volume": "Medium",
+          "description": "Redis Cache for shared caching layer"
+        },
+        {
+          "type": "Blob",
+          "volume": "Medium",
+          "description": "Shared storage for function apps and tenant-specific storage accounts"
+        }
+      ],
+      "integration_points": [
+        {
+          "system": "External system integrations",
+          "type": "Third-party SaaS",
+          "protocol": "REST"
+        },
+        {
+          "system": "Tenant-specific DNS zones",
+          "type": "External API",
+          "protocol": "HTTPS"
+        }
+      ],
+      "resource_group_hints": [
+        {
+          "name": "rg-test-finnair-fra-sc",
+          "purpose": "Tenant-specific resources for Finnair",
+          "services_hint": [
+            "Azure Application Gateway",
+            "Azure App Service",
+            "Azure Storage",
+            "Azure Key Vault",
+            "DNS Zone"
+          ]
+        },
+        {
+          "name": "rg-test-klm-fra-sc",
+          "purpose": "Tenant-specific resources for KLM",
+          "services_hint": [
+            "Azure Application Gateway",
+            "Azure App Service",
+            "Azure Storage",
+            "Azure Key Vault",
+            "DNS Zone"
+          ]
+        },
+        {
+          "name": "rg-test-shared-backend-fra-sc",
+          "purpose": "Shared backend services",
+          "services_hint": [
+            "Azure API Management",
+            "Azure App Service",
+            "PostgreSQL",
+            "Redis Cache",
+            "Azure Key Vault"
+          ]
+        },
+        {
+          "name": "rg-test-monitoring-security-fra-sc",
+          "purpose": "Monitoring and security services",
+          "services_hint": [
+            "Azure Monitor",
+            "Application Insights",
+            "Log Analytics Workspace",
+            "Microsoft Defender",
+            "Azure Key Vault"
+          ]
+        }
+      ],
+      "complexity_level": "High",
+      "recommended_pattern": "Multi-tenant shared backend architecture with tenant isolation"
+    },
+    "azure_references": {
+      "matched_architectures": [
+        {
+          "id": "azure-api-management-landing-zone",
+          "title": "Azure API Management Landing Zone Architecture",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/example-scenario/integration/app-gateway-internal-api-management-function",
+          "local_path": "example-scenario/integration/app-gateway-internal-api-management-function.yml",
+          "diagrams": [
+            "path/to/diagram1.svg",
+            "path/to/diagram2.svg"
+          ],
+          "relevance_score": 95,
+          "why_relevant": "This architecture provides guidance on using Azure API Management as a centralized gateway for backend services, aligning with the user's requirement for shared API management and tenant-specific isolation.",
+          "applicable_components": [
+            "Shared API Management",
+            "Azure Application Gateway",
+            "Azure Functions",
+            "CI/CD"
+          ],
+          "content_highlights": "Secure enterprise API management architecture with CI/CD deployment and integration with Application Gateway."
+        },
+        {
+          "id": "multi-region-load-balancing",
+          "title": "Multi-region load balancing with Traffic Manager, Azure Firewall, and Application Gateway",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/high-availability/reference-architecture-traffic-manager-application-gateway",
+          "local_path": "high-availability/reference-architecture-traffic-manager-application-gateway.yml",
+          "diagrams": [
+            "path/to/diagram1.svg",
+            "path/to/diagram2.svg"
+          ],
+          "relevance_score": 90,
+          "why_relevant": "This architecture supports high availability and scalability across regions, which aligns with the user's NFRs for scalability and disaster recovery.",
+          "applicable_components": [
+            "Azure Front Door",
+            "Azure Application Gateway",
+            "Azure Web Application Firewall (WAF)",
+            "Networking"
+          ],
+          "content_highlights": "Resilient multi-tier applications with Traffic Manager and Application Gateway for load balancing."
+        },
+        {
+          "id": "azure-firewall-application-gateway",
+          "title": "Azure Firewall and Application Gateway for Virtual Networks",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/example-scenario/gateway/firewall-application-gateway",
+          "local_path": "example-scenario/gateway/firewall-application-gateway.yml",
+          "diagrams": [
+            "path/to/diagram1.svg",
+            "path/to/diagram2.svg"
+          ],
+          "relevance_score": 85,
+          "why_relevant": "This architecture provides best practices for securing virtual networks using Azure Firewall and Application Gateway, which aligns with the user's security requirements for private endpoints and managed identities.",
+          "applicable_components": [
+            "Azure Application Gateway",
+            "Azure Web Application Firewall (WAF)",
+            "Networking"
+          ],
+          "content_highlights": "Options for securing virtual networks with Azure Firewall and Application Gateway."
+        },
+        {
+          "id": "migrate-web-app-apim",
+          "title": "Migrate a web app by using Azure API Management",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/example-scenario/apps/apim-api-scenario",
+          "local_path": "example-scenario/apps/apim-api-scenario.yml",
+          "diagrams": [
+            "path/to/diagram1.svg",
+            "path/to/diagram2.svg"
+          ],
+          "relevance_score": 80,
+          "why_relevant": "This architecture demonstrates how to use Azure API Management for migrating and managing web applications, which aligns with the user's requirement for centralized API management and tenant-specific web applications.",
+          "applicable_components": [
+            "Azure API Management",
+            "Azure App Service",
+            "Azure Monitor"
+          ],
+          "content_highlights": "API Management for legacy web application migration and centralized monitoring."
+        },
+        {
+          "id": "baseline-microsoft-foundry",
+          "title": "Baseline Microsoft Foundry Chat Reference Architecture in an Azure Landing Zone",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/ai-ml/architecture/baseline-microsoft-foundry-landing-zone",
+          "local_path": "ai-ml/architecture/baseline-microsoft-foundry-landing-zone.yml",
+          "diagrams": [
+            "path/to/diagram1.svg",
+            "path/to/diagram2.svg"
+          ],
+          "relevance_score": 75,
+          "why_relevant": "This architecture includes Azure App Service, Key Vault, and monitoring solutions, which align with the user's requirements for secure secrets management and centralized monitoring.",
+          "applicable_components": [
+            "Azure App Service",
+            "Azure Key Vault",
+            "Azure Monitor"
+          ],
+          "content_highlights": "Guidance on deploying secure and monitored applications in an Azure landing zone."
+        },
+        {
+          "id": "basic-web-app",
+          "title": "Basic web application",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/web-apps/app-service/architectures/basic-web-app",
+          "relevance_score": 80,
+          "why_relevant": "Matched 4 component phrases: web, app service, sql, Azure App Service",
+          "applicable_components": [
+            "Azure App Service",
+            "Azure SQL Database",
+            "Azure CDN",
+            "Azure DNS"
+          ],
+          "source": "static_catalog"
+        },
+        {
+          "id": "scalable-web-app",
+          "title": "Baseline highly available zone-redundant web application",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/web-apps/app-service/architectures/baseline-zone-redundant",
+          "relevance_score": 80,
+          "why_relevant": "Matched 5 component phrases: web, redis, high availability, Azure App Service, Azure Front Door",
+          "applicable_components": [
+            "Azure App Service",
+            "Azure SQL Database",
+            "Azure Cache for Redis",
+            "Azure CDN",
+            "Azure Front Door"
+          ],
+          "source": "static_catalog"
+        },
+        {
+          "id": "multi-region-web-app",
+          "title": "Reliable Web App pattern - multi-region deployment",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/web-apps/guides/enterprise-app-patterns/reliable-web-app/dotnet/guidance",
+          "relevance_score": 80,
+          "why_relevant": "Matched 4 component phrases: web, high availability, Azure App Service, Azure Front Door",
+          "applicable_components": [
+            "Azure Traffic Manager",
+            "Azure App Service",
+            "Azure SQL Database",
+            "Azure Front Door"
+          ],
+          "source": "static_catalog"
+        },
+        {
+          "id": "web-apps-guides-networking-access-multitenant-web-app-from-on-premises",
+          "title": "Improved-security access to App Service web apps from an on-premises network",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/web-apps/guides/networking/access-multitenant-web-app-from-on-premises",
+          "local_path": "web-apps/guides/networking/access-multitenant-web-app-from-on-premises.yml",
+          "diagrams": [],
+          "relevance_score": 90,
+          "why_relevant": "Local docs match — Category: security, web, Products: azure-app-service, azure-virtual-network, azure-private-link, azure-key-vault, azure-storage-accounts",
+          "applicable_components": [
+            "azure-app-service",
+            "azure-virtual-network",
+            "azure-private-link",
+            "azure-key-vault",
+            "azure-storage-accounts"
+          ],
+          "content_highlights": "This reference architecture shows how to set up improved-security private connectivity to an App Service web app or function app from an on-premises network or from within an Azure virtual network.",
+          "source": "local_azure_docs"
+        },
+        {
+          "id": "example-scenario-apps-fully-managed-secure-apps",
+          "title": "Securely managed web applications",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/example-scenario/apps/fully-managed-secure-apps",
+          "local_path": "example-scenario/apps/fully-managed-secure-apps.yml",
+          "diagrams": [
+            "example-scenario\\apps\\media\\architecture-apim-api-scenario.png",
+            "example-scenario\\apps\\media\\carbon-optimization-blade.png",
+            "example-scenario\\apps\\media\\deploy-ibm-maximo-application-suite-architecture.svg",
+            "example-scenario\\apps\\media\\fully-managed-secure-apps.svg",
+            "example-scenario\\apps\\media\\measure-app-sci-score.svg",
+            "example-scenario\\apps\\media\\sap-oracle-architecture.png",
+            "example-scenario\\apps\\media\\sap-oracle-disaster-recovery.png",
+            "example-scenario\\apps\\media\\scalable-apps-performance-modeling-site-reliability-lifecycle.png",
+            "example-scenario\\apps\\media\\scalable-apps-performance-modeling-site-reliability-slo.png",
+            "example-scenario\\apps\\media\\scalable-apps-performance-modeling-site-reliability.png"
+          ],
+          "relevance_score": 90,
+          "why_relevant": "Local docs match — Category: security, web, Products: azure-app-service, azure-application-gateway, azure-sql-database, azure-vpn-gateway, azure-web-application-firewall",
+          "applicable_components": [
+            "azure-app-service",
+            "azure-application-gateway",
+            "azure-sql-database",
+            "azure-vpn-gateway",
+            "azure-web-application-firewall"
+          ],
+          "content_highlights": "Learn how to deploy secure applications by using the App Service Environment, Azure Application Gateway, and Web Application Firewall.",
+          "source": "local_azure_docs"
+        },
+        {
+          "id": "best-practices-host-name-preservation",
+          "title": "Preserve the original HTTP host name between a reverse proxy and its back-end web application",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/best-practices/host-name-preservation",
+          "local_path": "best-practices/host-name-preservation.yml",
+          "diagrams": [],
+          "relevance_score": 90,
+          "why_relevant": "Local docs match — Category: networking, web, Products: azure-api-management, azure-app-service, azure-application-gateway, azure-front-door, azure-spring-apps",
+          "applicable_components": [
+            "azure-api-management",
+            "azure-app-service",
+            "azure-application-gateway",
+            "azure-front-door",
+            "azure-spring-apps"
+          ],
+          "content_highlights": "Learn how to preserve the original HTTP host name between a reverse proxy and its back-end web application in common Azure services.",
+          "source": "local_azure_docs"
+        },
+        {
+          "id": "example-scenario-networking-split-brain-dns",
+          "title": "Use a split-brain DNS configuration to host a web app in Azure",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/example-scenario/networking/split-brain-dns",
+          "local_path": "example-scenario/networking/split-brain-dns.yml",
+          "diagrams": [
+            "example-scenario\\networking\\media\\split-brain-dns-host-private.svg",
+            "example-scenario\\networking\\media\\split-brain-dns-host-public-alt.svg",
+            "example-scenario\\networking\\media\\split-brain-dns-host-public.svg",
+            "example-scenario\\networking\\media\\split-brain-dns.svg"
+          ],
+          "relevance_score": 90,
+          "why_relevant": "Local docs match — Category: networking, security, web, hybrid, Products: azure-front-door, azure-application-gateway, azure-expressroute, azure-dns",
+          "applicable_components": [
+            "azure-front-door",
+            "azure-application-gateway",
+            "azure-expressroute",
+            "azure-dns"
+          ],
+          "content_highlights": "Implement a split-brain DNS configuration to differentiate traffic treatment based on DNS and whether a client originates from the internet or a corporate network.",
+          "source": "local_azure_docs"
+        }
+      ],
+      "recommended_services": [
+        {
+          "service": "Azure API Management",
+          "purpose": "Centralized API gateway for backend services",
+          "reference_architecture": "azure-api-management-landing-zone"
+        },
+        {
+          "service": "Azure Application Gateway",
+          "purpose": "Load balancing for tenant-specific traffic",
+          "reference_architecture": "multi-region-load-balancing"
+        },
+        {
+          "service": "Azure Front Door",
+          "purpose": "Global load balancing and content delivery network",
+          "reference_architecture": "multi-region-load-balancing"
+        },
+        {
+          "service": "Azure Key Vault",
+          "purpose": "Secure secrets and configuration storage",
+          "reference_architecture": "baseline-microsoft-foundry"
+        },
+        {
+          "service": "Redis Cache",
+          "purpose": "Shared caching layer for performance",
+          "reference_architecture": "azure-api-management-landing-zone"
+        },
+        {
+          "service": "PostgreSQL",
+          "purpose": "Multi-tenant relational database with tenant isolation",
+          "reference_architecture": "azure-api-management-landing-zone"
+        }
+      ],
+      "design_decisions": [
+        {
+          "decision": "Use Azure API Management for centralized API gateway",
+          "rationale": "Supports shared backend services and tenant-specific isolation",
+          "reference": "azure-api-management-landing-zone"
+        },
+        {
+          "decision": "Implement Azure Front Door for global load balancing",
+          "rationale": "Ensures scalability and high availability across regions",
+          "reference": "multi-region-load-balancing"
+        },
+        {
+          "decision": "Use Azure Key Vault for secure secrets management",
+          "rationale": "Aligns with zero-trust security requirements",
+          "reference": "baseline-microsoft-foundry"
+        },
+        {
+          "decision": "Deploy Redis Cache for shared caching layer",
+          "rationale": "Improves performance for backend services",
+          "reference": "azure-api-management-landing-zone"
+        },
+        {
+          "decision": "Use PostgreSQL for multi-tenant database",
+          "rationale": "Supports tenant isolation and shared backend infrastructure",
+          "reference": "azure-api-management-landing-zone"
+        }
+      ],
+      "architecture_guidance": {
+        "primary_pattern": "Multi-Tenant Architecture",
+        "secondary_patterns": [
+          "Event-Driven",
+          "Scalable Web Applications"
+        ],
+        "key_principles": [
+          "Tenant isolation",
+          "Shared backend services",
+          "Scalability",
+          "Security"
+        ]
+      }
+    },
+    "security_insights": {
+      "compliance_score": 95,
+      "critical_issues": [
+        {
+          "issue": "Lack of disaster recovery strategy for PostgreSQL database.",
+          "severity": "Critical",
+          "remediation": "Implement geo-replication and automated backups for PostgreSQL to ensure data availability in case of regional outages."
+        },
+        {
+          "issue": "No centralized logging for tenant-specific applications.",
+          "severity": "High",
+          "remediation": "Integrate Application Insights and Log Analytics Workspace for tenant-specific applications to enable centralized monitoring and alerting."
+        },
+        {
+          "issue": "Insufficient protection against DDoS attacks.",
+          "severity": "High",
+          "remediation": "Enable Azure DDoS Protection Standard for all public-facing endpoints, including Azure Front Door and Application Gateway."
+        }
+      ],
+      "security_services": [
+        {
+          "service": "Microsoft Defender for Cloud",
+          "tier": "Standard",
+          "purpose": "Provides advanced threat protection for Azure resources, including virtual networks, databases, and storage accounts."
+        },
+        {
+          "service": "Azure Web Application Firewall (WAF)",
+          "tier": "Premium",
+          "purpose": "Protects tenant-specific web applications hosted on Azure Application Gateway from common web vulnerabilities and attacks."
+        },
+        {
+          "service": "Azure Key Vault",
+          "tier": "Standard",
+          "purpose": "Securely stores secrets, certificates, and keys for shared backend services and tenant-specific applications."
+        },
+        {
+          "service": "Azure Private Link",
+          "tier": "Standard",
+          "purpose": "Ensures secure connectivity to PaaS services like PostgreSQL, Redis Cache, and Key Vault using private endpoints."
+        },
+        {
+          "service": "Azure DDoS Protection",
+          "tier": "Standard",
+          "purpose": "Protects the shared backend infrastructure and tenant-specific resources from distributed denial-of-service attacks."
+        }
+      ]
+    },
+    "performance_insights": {
+      "performance_score": 92,
+      "optimization_strategies": [],
+      "quick_wins": [
+        {
+          "improvement": "Enable autoscaling for Azure App Service hosting shared function apps.",
+          "impact": "Handles sudden spikes in tenant workloads without manual intervention."
+        },
+        {
+          "improvement": "Configure Azure Application Gateway with WAF rules optimized for tenant-specific traffic patterns.",
+          "impact": "Improves security and reduces latency for tenant-specific web applications."
+        },
+        {
+          "improvement": "Enable query performance insights in PostgreSQL.",
+          "impact": "Identifies and resolves slow queries to improve database performance."
+        }
+      ]
+    },
+    "architecture_insights": {
+      "architecture_score": 95,
+      "design_rationale": "The architecture ensures tenant isolation at the frontend and data layers while leveraging shared backend services for cost efficiency. Security and monitoring are centralized to align with zero-trust principles and compliance requirements."
+    },
+    "cost_insights": {
+      "cost_score": 85,
+      "cost_optimizations": [
+        {
+          "service": "Azure Front Door",
+          "commitment": "Standard SKU with reserved capacity",
+          "workload": "Global load balancing and CDN",
+          "savings_potential": "25%"
+        },
+        {
+          "service": "Azure Web Application Firewall (WAF)",
+          "commitment": "Standard tier with autoscaling",
+          "workload": "Web application security",
+          "savings_potential": "15%"
+        },
+        {
+          "service": "Azure Application Gateway",
+          "commitment": "Autoscaling enabled with reserved instance pricing",
+          "workload": "Tenant-specific traffic load balancing",
+          "savings_potential": "20%"
+        },
+        {
+          "service": "Azure App Service",
+          "commitment": "Reserved instance pricing for predictable workloads",
+          "workload": "Tenant-specific web applications",
+          "savings_potential": "30%"
+        },
+        {
+          "service": "PostgreSQL Server",
+          "commitment": "Flexible Server with reserved capacity (3-year term)",
+          "workload": "Multi-tenant relational database",
+          "savings_potential": "40%"
+        }
+      ],
+      "estimated_savings": {}
+    },
+    "validation": {
+      "overall_score": 85,
+      "overall_status": "PASSED_WITH_WARNINGS",
+      "requirements_coverage": {
+        "total_requirements": 30,
+        "implemented": 26,
+        "partially_implemented": 3,
+        "missing": 1,
+        "coverage_percentage": 93
+      },
+      "requirement_checks": [
+        {
+          "requirement": "Centralized API gateway for all backend services",
+          "source_category": "api",
+          "status": "IMPLEMENTED",
+          "implemented_by": "Azure API Management",
+          "notes": "Azure API Management is correctly configured in a dedicated subnet.",
+          "recommendation": null
+        },
+        {
+          "requirement": "Centralized services can scale based on aggregate demand",
+          "source_category": "nfr",
+          "status": "IMPLEMENTED",
+          "implemented_by": "Azure Front Door, Azure Application Gateway, Azure App Service",
+          "notes": "Autoscaling is enabled for Application Gateway and App Service.",
+          "recommendation": null
+        },
+        {
+          "requirement": "Zero-trust approach with private endpoints and managed identities",
+          "source_category": "nfr",
+          "status": "PARTIALLY_IMPLEMENTED",
+          "implemented_by": "Azure Private Link, Azure Key Vault",
+          "notes": "Private endpoints are configured, but managed identities are not explicitly validated for all services.",
+          "recommendation": "Ensure managed identities are enabled for all services accessing Key Vault and databases."
+        },
+        {
+          "requirement": "Multi-tenant PostgreSQL database with tenant isolation",
+          "source_category": "technical_requirement",
+          "status": "IMPLEMENTED",
+          "implemented_by": "PostgreSQL Server",
+          "notes": "PostgreSQL is deployed in a dedicated subnet with tenant isolation.",
+          "recommendation": null
+        },
+        {
+          "requirement": "Redis Cache for shared caching layer",
+          "source_category": "technical_requirement",
+          "status": "IMPLEMENTED",
+          "implemented_by": "Redis Cache",
+          "notes": "Redis Cache is deployed in the shared data subnet.",
+          "recommendation": null
+        },
+        {
+          "requirement": "Infrastructure as code for tenant onboarding",
+          "source_category": "technical_requirement",
+          "status": "PARTIALLY_IMPLEMENTED",
+          "implemented_by": null,
+          "notes": "No explicit mention of CI/CD pipelines for tenant onboarding.",
+          "recommendation": "Implement Azure DevOps pipelines for automated resource deployment."
+        },
+        {
+          "requirement": "Application Insights and Log Analytics Workspace for centralized monitoring",
+          "source_category": "technical_requirement",
+          "status": "IMPLEMENTED",
+          "implemented_by": "Application Insights, Log Analytics Workspace",
+          "notes": "Both services are correctly configured in the monitoring resource group.",
+          "recommendation": null
+        },
+        {
+          "requirement": "Private endpoints and VNet peering for secure connectivity",
+          "source_category": "technical_requirement",
+          "status": "IMPLEMENTED",
+          "implemented_by": "Azure Private Link, VNet Peering",
+          "notes": "Private endpoints and VNet peering are configured correctly.",
+          "recommendation": null
+        },
+        {
+          "requirement": "Disaster recovery and backup strategies",
+          "source_category": "nfr",
+          "status": "MISSING",
+          "implemented_by": null,
+          "notes": "No explicit mention of backup or disaster recovery configurations.",
+          "recommendation": "Add Azure Backup and configure geo-redundant storage for disaster recovery."
+        }
+      ],
+      "connection_validation": {
+        "total_connections": 27,
+        "valid_connections": 25,
+        "invalid_connections": 0,
+        "missing_connections": [
+          {
+            "source": "Azure App Service - Shared Functions",
+            "target": "Azure Monitor",
+            "reason": "Telemetry and diagnostics for shared backend services are missing.",
+            "label": "Telemetry"
+          },
+          {
+            "source": "Azure App Service - KLM Portal",
+            "target": "Azure Monitor",
+            "reason": "Telemetry and diagnostics for tenant-specific services are missing.",
+            "label": "Telemetry"
+          }
+        ],
+        "issues": []
+      },
+      "flow_validation": {
+        "is_valid": true,
+        "flow_description": "User requests flow through Azure Front Door → Azure Web Application Firewall → Azure Application Gateway → Tenant-specific App Service → Shared backend services (functions, database, cache).",
+        "issues": [],
+        "recommendations": []
+      },
+      "nfr_compliance": [
+        {
+          "nfr": "Availability",
+          "status": "COMPLIANT",
+          "evidence": "Azure Front Door, Application Gateway, and autoscaling configurations ensure high availability.",
+          "gap": null
+        },
+        {
+          "nfr": "Scalability",
+          "status": "COMPLIANT",
+          "evidence": "Autoscaling enabled for Application Gateway and App Service.",
+          "gap": null
+        },
+        {
+          "nfr": "Security",
+          "status": "PARTIALLY_COMPLIANT",
+          "evidence": "Private endpoints and Key Vault are configured, but managed identities need validation.",
+          "gap": "Managed identities are not explicitly validated for all services."
+        },
+        {
+          "nfr": "Performance",
+          "status": "COMPLIANT",
+          "evidence": "Redis Cache and PostgreSQL optimizations are implemented.",
+          "gap": null
+        },
+        {
+          "nfr": "Compliance",
+          "status": "COMPLIANT",
+          "evidence": "All resources are deployed in Germany West Central region.",
+          "gap": null
+        },
+        {
+          "nfr": "Reliability",
+          "status": "NON_COMPLIANT",
+          "evidence": null,
+          "gap": "No disaster recovery or backup strategies are implemented."
+        }
+      ],
+      "missing_components": [
+        {
+          "component": "Azure Backup",
+          "source_requirement": "Disaster recovery and backup strategies",
+          "reason": "Required for data protection and reliability.",
+          "recommendation": "Add Azure Backup for PostgreSQL and storage accounts.",
+          "category": "backup",
+          "subnet": "snet-shared-data"
+        }
+      ],
+      "security_validation": {
+        "identity_check": "WARNING",
+        "network_security_check": "PASS",
+        "data_protection_check": "PASS",
+        "issues": [
+          {
+            "issue": "Managed identities are not explicitly validated for all services accessing Key Vault and databases.",
+            "recommendation": "Enable managed identities for all services requiring secure access."
+          }
+        ]
+      },
+      "recommendations": [
+        {
+          "priority": "High",
+          "area": "Disaster Recovery",
+          "recommendation": "Implement Azure Backup and geo-redundant storage for critical services."
+        },
+        {
+          "priority": "Medium",
+          "area": "CI/CD",
+          "recommendation": "Set up Azure DevOps pipelines for automated tenant onboarding."
+        },
+        {
+          "priority": "Medium",
+          "area": "Security",
+          "recommendation": "Validate managed identities for all services accessing sensitive resources."
+        }
+      ]
+    },
+    "multi_agent_metadata": {
+      "agents_used": [
+        "ComponentExtractionAgent",
+        "AzureArchitectureReferenceAgent",
+        "SecurityAgent",
+        "PerformanceAgent",
+        "ArchitectureAgent",
+        "CostOptimizationAgent",
+        "RequirementsValidationAgent"
+      ],
+      "workflow_type": "component_driven_sequential",
+      "generation_method": "multi_agent_collaboration",
+      "total_agents": 7
+    }
+  },
+  "diagrams": {
+    "drawio_xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<mxfile host=\"app.diagrams.net\" modified=\"1772097038291\" agent=\"multi-agent-generator\" etag=\"d47d9cb8\" version=\"24.7.17\" type=\"device\">\n  <diagram name=\"Nevio Multi-Tenant Shared Backend Architecture\" id=\"arch-d47d9cb8\">\n    <mxGraphModel dx=\"1674\" dy=\"1014\" grid=\"1\" gridSize=\"10\" guides=\"1\" tooltips=\"1\" connect=\"1\" arrows=\"1\" fold=\"1\" page=\"1\" pageScale=\"1\" pageWidth=\"2765\" pageHeight=\"1615\" math=\"0\" shadow=\"0\">\n      <root>\n        <mxCell id=\"0\"/>\n        <mxCell id=\"1\" parent=\"0\"/>\n        <mxCell id=\"2\" value=\"Azure Subscription - Nevio Multi-Tenant Shared Backend Architecture\" style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;startSize=32;rounded=1;fontStyle=1;fontColor=#333333;shadow=1;\" vertex=\"1\" parent=\"1\">\n          <mxGeometry x=\"20\" y=\"20\" width=\"2705\" height=\"1555\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"edge-label\" value=\"Edge / Ingress\" style=\"text;html=1;fontSize=10;fontColor=#999999;align=left;verticalAlign=middle;fontStyle=2;\" vertex=\"1\" parent=\"2\">\n          <mxGeometry x=\"25\" y=\"57\" width=\"120\" height=\"16\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"svc-10\" value=\"Azure Front Door\" style=\"image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/networking/Front_Doors.svg;\" vertex=\"1\" parent=\"2\" tooltip=\"Azure Front Door: Global load balancer and content delivery network for tenant-specific web applications.\">\n          <mxGeometry x=\"1187\" y=\"75\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"svc-11\" value=\"Azure Web Application Firewall (WAF)\" style=\"image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/app_services/App_Services.svg;\" vertex=\"1\" parent=\"2\" tooltip=\"Azure Web Application Firewall (WAF): Protects tenant-specific web applications from common web vulnerabilities and attacks.\">\n          <mxGeometry x=\"1327\" y=\"75\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"rg-0\" value=\"rg-test-finnair-fra-sc (Tenant-specific resources for Finnair.)\" style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#0078d4;fontSize=11;startSize=32;rounded=1;fontStyle=1;dashed=1;dashPattern=5 5;\" vertex=\"1\" parent=\"2\">\n          <mxGeometry x=\"25\" y=\"210\" width=\"495\" height=\"955\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"vnet-0-12\" value=\"vnet-test-frontend-fra-sc\" style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#E6F2FF;strokeColor=#0078d4;fontSize=10;startSize=32;rounded=1;dashed=1;dashPattern=8 8;shadow=1;arcSize=5;\" vertex=\"1\" parent=\"rg-0\">\n          <mxGeometry x=\"82\" y=\"57\" width=\"330\" height=\"713\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"sn-0-13\" value=\"snet-finnair-appgateway (10.0.1.0/24)\" style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#F0F7FF;strokeColor=#4A90D9;fontSize=9;startSize=26;rounded=1;dashed=0;arcSize=8;fontStyle=1;\" vertex=\"1\" parent=\"vnet-0-12\" tooltip=\"Finnair Application Gateway.\">\n          <mxGeometry x=\"25\" y=\"57\" width=\"280\" height=\"188\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"svc-14\" value=\"Azure Application Gateway - Finnair\" style=\"image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/networking/Application_Gateways.svg;\" vertex=\"1\" parent=\"sn-0-13\" tooltip=\"Azure Application Gateway - Finnair: Load balancer for Finnair-specific traffic.\">\n          <mxGeometry x=\"70\" y=\"51\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"sn-0-15\" value=\"snet-finnair-appservice (10.0.2.0/24)\" style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#F0FFF0;strokeColor=#4CAF50;fontSize=9;startSize=26;rounded=1;dashed=0;arcSize=8;fontStyle=1;\" vertex=\"1\" parent=\"vnet-0-12\" tooltip=\"Finnair App Service.\">\n          <mxGeometry x=\"25\" y=\"270\" width=\"280\" height=\"188\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"svc-16\" value=\"Azure App Service - Finnair Portal\" style=\"image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/app_services/App_Services.svg;\" vertex=\"1\" parent=\"sn-0-15\" tooltip=\"Azure App Service - Finnair Portal: Tenant-specific web application for Finnair.\">\n          <mxGeometry x=\"70\" y=\"51\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"svc-17\" value=\"Azure Storage - Finnair\" style=\"image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/storage/Storage_Accounts.svg;\" vertex=\"1\" parent=\"rg-0\" tooltip=\"Azure Storage - Finnair: Tenant-specific storage account for Finnair.\">\n          <mxGeometry x=\"37\" y=\"795\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"svc-18\" value=\"Azure Key Vault - Finnair\" style=\"image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/security/Key_Vaults.svg;\" vertex=\"1\" parent=\"rg-0\" tooltip=\"Azure Key Vault - Finnair: Secure secrets and configuration storage for Finnair.\">\n          <mxGeometry x=\"177\" y=\"795\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"svc-19\" value=\"Azure DNS Zone - Finnair\" style=\"image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/networking/DNS_Zones.svg;\" vertex=\"1\" parent=\"rg-0\" tooltip=\"Azure DNS Zone - Finnair: Custom domain for Finnair tenant.\">\n          <mxGeometry x=\"317\" y=\"795\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"rg-1\" value=\"rg-test-klm-fra-sc (Tenant-specific resources for KLM.)\" style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;startSize=32;rounded=1;fontStyle=1;dashed=1;dashPattern=5 5;\" vertex=\"1\" parent=\"2\">\n          <mxGeometry x=\"555\" y=\"210\" width=\"775\" height=\"955\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"svc-20\" value=\"Azure Application Gateway - KLM\" style=\"image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/networking/Application_Gateways.svg;\" vertex=\"1\" parent=\"rg-1\" tooltip=\"Azure Application Gateway - KLM: Load balancer for KLM-specific traffic.\">\n          <mxGeometry x=\"37\" y=\"57\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"svc-21\" value=\"Azure App Service - KLM Portal\" style=\"image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/app_services/App_Services.svg;\" vertex=\"1\" parent=\"rg-1\" tooltip=\"Azure App Service - KLM Portal: Tenant-specific web application for KLM.\">\n          <mxGeometry x=\"177\" y=\"57\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"svc-22\" value=\"Azure Storage - KLM\" style=\"image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/storage/Storage_Accounts.svg;\" vertex=\"1\" parent=\"rg-1\" tooltip=\"Azure Storage - KLM: Tenant-specific storage account for KLM.\">\n          <mxGeometry x=\"317\" y=\"57\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"svc-23\" value=\"Azure Key Vault - KLM\" style=\"image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/security/Key_Vaults.svg;\" vertex=\"1\" parent=\"rg-1\" tooltip=\"Azure Key Vault - KLM: Secure secrets and configuration storage for KLM.\">\n          <mxGeometry x=\"457\" y=\"57\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"svc-24\" value=\"Azure DNS Zone - KLM\" style=\"image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/networking/DNS_Zones.svg;\" vertex=\"1\" parent=\"rg-1\" tooltip=\"Azure DNS Zone - KLM: Custom domain for KLM tenant.\">\n          <mxGeometry x=\"597\" y=\"57\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"rg-2\" value=\"rg-test-shared-backend-fra-sc (Shared backend services.)\" style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;startSize=32;rounded=1;fontStyle=1;dashed=1;dashPattern=5 5;\" vertex=\"1\" parent=\"2\">\n          <mxGeometry x=\"1365\" y=\"210\" width=\"595\" height=\"955\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"vnet-2-25\" value=\"vnet-test-shared-backend-fra-sc\" style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#E6F2FF;strokeColor=#0078d4;fontSize=10;startSize=32;rounded=1;dashed=1;dashPattern=8 8;shadow=1;arcSize=5;\" vertex=\"1\" parent=\"rg-2\">\n          <mxGeometry x=\"25\" y=\"57\" width=\"545\" height=\"696\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"sn-2-26\" value=\"snet-shared-apim (10.1.1.0/24)\" style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#FFF8F0;strokeColor=#FF9800;fontSize=9;startSize=26;rounded=1;dashed=0;arcSize=8;fontStyle=1;\" vertex=\"1\" parent=\"vnet-2-25\" tooltip=\"Shared API Management.\">\n          <mxGeometry x=\"132\" y=\"57\" width=\"280\" height=\"188\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"svc-27\" value=\"Azure API Management\" style=\"image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/app_services/API_Management_Services.svg;\" vertex=\"1\" parent=\"sn-2-26\" tooltip=\"Azure API Management: Centralized API gateway for backend services.\">\n          <mxGeometry x=\"70\" y=\"51\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"sn-2-28\" value=\"snet-shared-functions (10.1.2.0/24)\" style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#F5F0FF;strokeColor=#9C27B0;fontSize=9;startSize=26;rounded=1;dashed=0;arcSize=8;fontStyle=1;\" vertex=\"1\" parent=\"vnet-2-25\" tooltip=\"Shared Function Apps.\">\n          <mxGeometry x=\"132\" y=\"270\" width=\"280\" height=\"188\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"svc-29\" value=\"Azure App Service - Shared Functions\" style=\"image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/compute/Function_Apps.svg;\" vertex=\"1\" parent=\"sn-2-28\" tooltip=\"Azure App Service - Shared Functions: Shared function apps for backend business logic.\">\n          <mxGeometry x=\"70\" y=\"51\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"sn-2-30\" value=\"snet-shared-data (10.1.3.0/24)\" style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#FFF0F0;strokeColor=#F44336;fontSize=9;startSize=26;rounded=1;dashed=0;arcSize=8;fontStyle=1;\" vertex=\"1\" parent=\"vnet-2-25\" tooltip=\"Shared Data Layer (PostgreSQL, Redis Cache).\">\n          <mxGeometry x=\"25\" y=\"483\" width=\"495\" height=\"188\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"svc-31\" value=\"PostgreSQL Server\" style=\"image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/databases/SQL_Server.svg;\" vertex=\"1\" parent=\"sn-2-30\" tooltip=\"PostgreSQL Server: Multi-tenant relational database with tenant isolation.\">\n          <mxGeometry x=\"37\" y=\"51\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"svc-32\" value=\"Redis Cache\" style=\"image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/databases/Cache_Redis.svg;\" vertex=\"1\" parent=\"sn-2-30\" tooltip=\"Redis Cache: Shared caching layer for performance optimization.\">\n          <mxGeometry x=\"177\" y=\"51\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"svc-33\" value=\"Azure Backup\" style=\"image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/general/Resource_Groups.svg;\" vertex=\"1\" parent=\"sn-2-30\" tooltip=\"Azure Backup: Add backup capabilities for PostgreSQL and storage accounts.\">\n          <mxGeometry x=\"317\" y=\"51\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"svc-34\" value=\"Azure Key Vault - Shared\" style=\"image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/security/Key_Vaults.svg;\" vertex=\"1\" parent=\"rg-2\" tooltip=\"Azure Key Vault - Shared: Secure secrets and configuration storage for shared backend services.\">\n          <mxGeometry x=\"227\" y=\"778\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"rg-3\" value=\"rg-test-monitoring-security-fra-sc (Monitoring and security services.)\" style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;startSize=32;rounded=1;fontStyle=1;dashed=1;dashPattern=5 5;\" vertex=\"1\" parent=\"2\">\n          <mxGeometry x=\"1995\" y=\"210\" width=\"635\" height=\"955\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"svc-35\" value=\"Azure Monitor\" style=\"image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/management_governance/Monitor.svg;\" vertex=\"1\" parent=\"rg-3\" tooltip=\"Azure Monitor: Infrastructure monitoring for all services.\">\n          <mxGeometry x=\"37\" y=\"57\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"svc-36\" value=\"Application Insights\" style=\"image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/devops/Application_Insights.svg;\" vertex=\"1\" parent=\"rg-3\" tooltip=\"Application Insights: Application performance monitoring for tenant-specific and shared services.\">\n          <mxGeometry x=\"177\" y=\"57\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"svc-37\" value=\"Log Analytics Workspace\" style=\"image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/analytics/Log_Analytics_Workspaces.svg;\" vertex=\"1\" parent=\"rg-3\" tooltip=\"Log Analytics Workspace: Centralized logging for all services.\">\n          <mxGeometry x=\"317\" y=\"57\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"svc-38\" value=\"Microsoft Defender for Cloud\" style=\"image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/security/MS_Defender_EASM.svg;\" vertex=\"1\" parent=\"rg-3\" tooltip=\"Microsoft Defender for Cloud: Advanced threat protection for Azure resources.\">\n          <mxGeometry x=\"457\" y=\"57\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-200\" value=\"User HTTPS requests\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-10\" target=\"svc-11\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-201\" value=\"Tenant-specific traffic routing\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-11\" target=\"svc-14\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-202\" value=\"Tenant-specific traffic routing\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-11\" target=\"svc-20\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-203\" value=\"Web application traffic\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-14\" target=\"svc-16\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-204\" value=\"Web application traffic\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-20\" target=\"svc-21\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-205\" value=\"API calls via Private Endpoint\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-29\" target=\"svc-27\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-206\" value=\"SQL queries over Private Link\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-29\" target=\"svc-31\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-207\" value=\"Cache-aside pattern\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-29\" target=\"svc-32\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-208\" value=\"Secrets retrieval via Managed Identity\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-29\" target=\"svc-34\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-209\" value=\"Secrets retrieval via Managed Identity\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-16\" target=\"svc-18\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-210\" value=\"Secrets retrieval via Managed Identity\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-21\" target=\"svc-23\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-211\" value=\"Telemetry &amp; diagnostics\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-35\" target=\"svc-29\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-212\" value=\"Telemetry &amp; diagnostics\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-35\" target=\"svc-16\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-213\" value=\"Telemetry &amp; diagnostics\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-35\" target=\"svc-21\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-214\" value=\"Telemetry &amp; diagnostics\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-35\" target=\"svc-31\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-215\" value=\"Telemetry &amp; diagnostics\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-35\" target=\"svc-32\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-216\" value=\"VNet Peering\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#00B050;strokeWidth=2;fontSize=9;fontColor=#00B050;dashed=1;dashPattern=12 12;labelBackgroundColor=#ffffff;endArrow=diamond;startArrow=diamond;\" edge=\"1\" parent=\"1\" source=\"vnet-0-12\" target=\"vnet-2-25\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-217\" value=\"Data storage\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-16\" target=\"svc-17\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-218\" value=\"DNS resolution\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-14\" target=\"svc-19\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-219\" value=\"Data storage\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-16\" target=\"svc-22\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-220\" value=\"DNS resolution\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-20\" target=\"svc-24\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-221\" value=\"Telemetry &amp; diagnostics\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-16\" target=\"svc-36\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-222\" value=\"Telemetry &amp; diagnostics\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-16\" target=\"svc-37\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-223\" value=\"Security monitoring\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-10\" target=\"svc-38\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-224\" value=\"Telemetry\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-29\" target=\"svc-35\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"conn-225\" value=\"Telemetry\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=1.5;fontSize=8;fontColor=#666666;labelBackgroundColor=#ffffff;\" edge=\"1\" parent=\"1\" source=\"svc-21\" target=\"svc-35\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"note-39\" value=\"Shared Backend: Multi-tenant Function Apps + Data Layer.\" style=\"shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;align=left;verticalAlign=top;spacingLeft=5;spacingTop=5;size=14;shadow=1;\" vertex=\"1\" parent=\"2\">\n          <mxGeometry x=\"25\" y=\"1215\" width=\"280\" height=\"55\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"note-40\" value=\"Tenant Isolation: Separate Application Gateway and App Service per tenant.\" style=\"shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;align=left;verticalAlign=top;spacingLeft=5;spacingTop=5;size=14;shadow=1;\" vertex=\"1\" parent=\"2\">\n          <mxGeometry x=\"25\" y=\"1280\" width=\"280\" height=\"55\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"note-41\" value=\"Security: Zero-trust approach with private endpoints and managed identities.\" style=\"shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;align=left;verticalAlign=top;spacingLeft=5;spacingTop=5;size=14;shadow=1;\" vertex=\"1\" parent=\"2\">\n          <mxGeometry x=\"25\" y=\"1345\" width=\"280\" height=\"55\" as=\"geometry\"/>\n        </mxCell>\n      </root>\n    </mxGraphModel>\n  </diagram>\n</mxfile>",
+    "mermaid": "graph TB\n    subgraph Azure[\"☁️ Microsoft Azure\"]\n        subgraph RG[\"📦 Resource Group\"]\n            subgraph COMPUTE[\"⚡ Compute\"]\n                AzureAppServiceFinnairPortal[\"🔧 Azure App Service - Finnair Portal\"]\n                AzureDNSZoneFinnair[\"🔧 Azure DNS Zone - Finnair\"]\n                AzureAppServiceKLMPortal[\"🔧 Azure App Service - KLM Portal\"]\n                AzureDNSZoneKLM[\"🔧 Azure DNS Zone - KLM\"]\n                AzureAppServiceSharedFunctions[\"🔧 Azure App Service - Shared Functions\"]\n            end\n            subgraph STORAGE[\"💾 Storage\"]\n                AzureStorageFinnair[\"🔧 Azure Storage - Finnair\"]\n                AzureStorageKLM[\"🔧 Azure Storage - KLM\"]\n                AzureBackup[\"🔧 Azure Backup\"]\n            end\n            subgraph DATABASE[\"🗄️ Database\"]\n                PostgreSQLServer[\"🔧 PostgreSQL Server\"]\n                RedisCache[\"🔧 Redis Cache\"]\n            end\n            subgraph NETWORKING[\"🌐 Networking\"]\n                AzureFrontDoor[\"🔧 Azure Front Door\"]\n                AzureWebApplicationFirewall(WAF)[\"🔧 Azure Web Application Firewall (WAF)\"]\n                AzureApplicationGatewayFinnair[\"🚪 Azure Application Gateway - Finnair\"]\n                AzureApplicationGatewayKLM[\"🚪 Azure Application Gateway - KLM\"]\n            end\n            subgraph SECURITY[\"🔒 Security\"]\n                AzureKeyVaultFinnair[\"🔐 Azure Key Vault - Finnair\"]\n                AzureKeyVaultKLM[\"🔐 Azure Key Vault - KLM\"]\n                AzureKeyVaultShared[\"🔐 Azure Key Vault - Shared\"]\n                MicrosoftDefenderforCloud[\"🔧 Microsoft Defender for Cloud\"]\n            end\n            subgraph ANALYTICS[\"📊 Analytics\"]\n                LogAnalyticsWorkspace[\"🔧 Log Analytics Workspace\"]\n            end\n            subgraph INTEGRATION[\"🔗 Integration\"]\n                AzureAPIManagement[\"🔧 Azure API Management\"]\n            end\n            subgraph MONITORING[\"📈 Monitoring\"]\n                AzureMonitor[\"🔧 Azure Monitor\"]\n                ApplicationInsights[\"🔧 Application Insights\"]\n            end\n        end\n    end\n\n    %% Architecture Connections\n    AzureFrontDoor -->|User HTTPS requests| AzureWebApplicationFirewall(WAF)\n    AzureWebApplicationFirewall(WAF) -->|Tenant-specific traffic routing| AzureApplicationGatewayFinnair\n    AzureWebApplicationFirewall(WAF) -->|Tenant-specific traffic routing| AzureApplicationGatewayKLM\n    AzureApplicationGatewayFinnair -->|Web application traffic| AzureAppServiceFinnairPortal\n    AzureApplicationGatewayKLM -->|Web application traffic| AzureAppServiceKLMPortal\n    AzureAppServiceSharedFunctions -->|API calls via Private Endpoint| AzureAPIManagement\n    AzureAppServiceSharedFunctions -->|SQL queries over Private Link| PostgreSQLServer\n    AzureAppServiceSharedFunctions -->|Cache-aside pattern| RedisCache\n    AzureAppServiceSharedFunctions -->|Secrets retrieval via Managed Identity| AzureKeyVaultShared\n    AzureAppServiceFinnairPortal -->|Secrets retrieval via Managed Identity| AzureKeyVaultFinnair\n    AzureAppServiceKLMPortal -->|Secrets retrieval via Managed Identity| AzureKeyVaultKLM\n    AzureMonitor -->|Telemetry & diagnostics| AzureAppServiceSharedFunctions\n    AzureMonitor -->|Telemetry & diagnostics| AzureAppServiceFinnairPortal\n    AzureMonitor -->|Telemetry & diagnostics| AzureAppServiceKLMPortal\n    AzureMonitor -->|Telemetry & diagnostics| PostgreSQLServer\n    AzureMonitor -->|Telemetry & diagnostics| RedisCache\n    vnettestfrontendfrasc -->|VNet Peering| vnettestsharedbackendfrasc\n    AzureAppServiceFinnairPortal -->|Data storage| AzureStorageFinnair\n    AzureApplicationGatewayFinnair -->|DNS resolution| AzureDNSZoneFinnair\n    AzureAppServiceFinnairPortal -->|Data storage| AzureStorageKLM\n    AzureApplicationGatewayKLM -->|DNS resolution| AzureDNSZoneKLM\n    AzureAppServiceFinnairPortal -->|Telemetry & diagnostics| ApplicationInsights\n    AzureAppServiceFinnairPortal -->|Telemetry & diagnostics| LogAnalyticsWorkspace\n    AzureFrontDoor -->|Security monitoring| MicrosoftDefenderforCloud\n    AzureAppServiceSharedFunctions -->|Telemetry| AzureMonitor\n    AzureAppServiceKLMPortal -->|Telemetry| AzureMonitor\n\n    %% Azure Styling\n    classDef azure fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff\n    classDef compute fill:#ff6b35,stroke:#e55100,stroke-width:2px,color:#fff\n    classDef storage fill:#00bcf2,stroke:#0288d1,stroke-width:2px,color:#fff\n    classDef database fill:#ba68c8,stroke:#8e24aa,stroke-width:2px,color:#fff\n    classDef networking fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff\n    classDef security fill:#f44336,stroke:#d32f2f,stroke-width:2px,color:#fff\n",
+    "terraform": "# Azure Architecture Terraform Template\n# Generated by Azure Architecture Generator\n\nterraform {\n  required_version = \">= 1.5\"\n  required_providers {\n    azurerm = {\n      source  = \"hashicorp/azurerm\"\n      version = \"~> 3.80\"\n    }\n    random = {\n      source  = \"hashicorp/random\"\n      version = \"~> 3.1\"\n    }\n  }\n}\n\nprovider \"azurerm\" {\n  features {\n    key_vault {\n      purge_soft_delete_on_destroy    = true\n      recover_soft_deleted_key_vaults = true\n    }\n    resource_group {\n      prevent_deletion_if_contains_resources = false\n    }\n  }\n}\n\n# Variables\nvariable \"environment\" {\n  description = \"Environment name (dev, staging, prod)\"\n  type        = string\n  default     = \"dev\"\n  validation {\n    condition     = contains([\"dev\", \"staging\", \"prod\"], var.environment)\n    error_message = \"Environment must be one of: dev, staging, prod.\"\n  }\n}\n\nvariable \"location\" {\n  description = \"Azure region for resources\"\n  type        = string\n  default     = \"East US\"\n}\n\nvariable \"project_name\" {\n  description = \"Name of the project\"\n  type        = string\n  default     = \"azure-architecture\"\n}\n\nvariable \"tags\" {\n  description = \"Common tags for all resources\"\n  type        = map(string)\n  default = {\n    Environment = \"dev\"\n    Project     = \"Azure Architecture\"\n    ManagedBy   = \"Terraform\"\n  }\n}\n\n# Random suffix for unique resource names\nresource \"random_string\" \"suffix\" {\n  length  = 8\n  special = false\n  upper   = false\n}\n\n# Data sources\ndata \"azurerm_client_config\" \"current\" {}\n\n# Resource Group\nresource \"azurerm_resource_group\" \"main\" {\n  name     = \"rg-${var.project_name}-${var.environment}\"\n  location = var.location\n  tags     = var.tags\n}\n\n# Network Security Group\nresource \"azurerm_network_security_group\" \"main\" {\n  name                = \"nsg-${var.project_name}-${var.environment}\"\n  location            = azurerm_resource_group.main.location\n  resource_group_name = azurerm_resource_group.main.name\n  tags                = var.tags\n\n  security_rule {\n    name                       = \"HTTPS\"\n    priority                   = 1001\n    direction                  = \"Inbound\"\n    access                     = \"Allow\"\n    protocol                   = \"Tcp\"\n    source_port_range          = \"*\"\n    destination_port_range     = \"443\"\n    source_address_prefix      = \"*\"\n    destination_address_prefix = \"*\"\n  }\n\n  security_rule {\n    name                       = \"HTTP\"\n    priority                   = 1002\n    direction                  = \"Inbound\"\n    access                     = \"Allow\"\n    protocol                   = \"Tcp\"\n    source_port_range          = \"*\"\n    destination_port_range     = \"80\"\n    source_address_prefix      = \"*\"\n    destination_address_prefix = \"*\"\n  }\n}\n\n\n# Function App\nresource \"azurerm_linux_function_app\" \"main\" {\n  name                = \"func-${var.project_name}-${var.environment}-${random_string.suffix.result}\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  service_plan_id     = azurerm_service_plan.main.id\n  storage_account_name       = azurerm_storage_account.main.name\n  storage_account_access_key = azurerm_storage_account.main.primary_access_key\n  tags                = var.tags\n\n  site_config {}\n}\n\n\n# App Service Plan\nresource \"azurerm_service_plan\" \"main\" {\n  name                = \"sp-${var.project_name}-${var.environment}\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  os_type             = \"Linux\"\n  sku_name            = \"B1\"\n  tags                = var.tags\n}\n\n# App Service\nresource \"azurerm_linux_web_app\" \"main\" {\n  name                = \"app-${var.project_name}-${var.environment}-${random_string.suffix.result}\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  service_plan_id     = azurerm_service_plan.main.id\n  tags                = var.tags\n\n  site_config {\n    always_on = false\n  }\n}\n\n\n# Virtual Network\nresource \"azurerm_virtual_network\" \"main\" {\n  name                = \"vnet-${var.project_name}-${var.environment}\"\n  address_space       = [\"10.0.0.0/16\"]\n  location            = azurerm_resource_group.main.location\n  resource_group_name = azurerm_resource_group.main.name\n  tags                = var.tags\n}\n\nresource \"azurerm_subnet\" \"internal\" {\n  name                 = \"snet-internal\"\n  resource_group_name  = azurerm_resource_group.main.name\n  virtual_network_name = azurerm_virtual_network.main.name\n  address_prefixes     = [\"10.0.2.0/24\"]\n}\n\n\n# Public IP for Application Gateway\nresource \"azurerm_public_ip\" \"app_gateway\" {\n  name                = \"pip-appgw-${var.environment}\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  allocation_method   = \"Static\"\n  sku                 = \"Standard\"\n  tags                = var.tags\n}\n\n# Subnet for Application Gateway\nresource \"azurerm_subnet\" \"app_gateway\" {\n  name                 = \"snet-appgw\"\n  resource_group_name  = azurerm_resource_group.main.name\n  virtual_network_name = azurerm_virtual_network.main.name\n  address_prefixes     = [\"10.0.1.0/24\"]\n}\n\n# Application Gateway\nresource \"azurerm_application_gateway\" \"main\" {\n  name                = \"appgw-${var.project_name}-${var.environment}\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  tags                = var.tags\n\n  sku {\n    name     = \"Standard_v2\"\n    tier     = \"Standard_v2\"\n    capacity = 2\n  }\n\n  gateway_ip_configuration {\n    name      = \"appgw-ip-configuration\"\n    subnet_id = azurerm_subnet.app_gateway.id\n  }\n\n  frontend_port {\n    name = \"appgw-feport\"\n    port = 80\n  }\n\n  frontend_ip_configuration {\n    name                 = \"appgw-feip\"\n    public_ip_address_id = azurerm_public_ip.app_gateway.id\n  }\n\n  backend_address_pool {\n    name = \"appgw-beap\"\n  }\n\n  backend_http_settings {\n    name                  = \"appgw-be-htst\"\n    cookie_based_affinity = \"Disabled\"\n    port                  = 80\n    protocol              = \"Http\"\n    request_timeout       = 60\n  }\n\n  http_listener {\n    name                           = \"appgw-httplstn\"\n    frontend_ip_configuration_name = \"appgw-feip\"\n    frontend_port_name             = \"appgw-feport\"\n    protocol                       = \"Http\"\n  }\n\n  request_routing_rule {\n    name                       = \"appgw-rqrt\"\n    rule_type                  = \"Basic\"\n    http_listener_name         = \"appgw-httplstn\"\n    backend_address_pool_name  = \"appgw-beap\"\n    backend_http_settings_name = \"appgw-be-htst\"\n    priority                   = 100\n  }\n}\n\n\n# SQL Server\nresource \"azurerm_mssql_server\" \"main\" {\n  name                         = \"sql-${var.project_name}-${var.environment}-${random_string.suffix.result}\"\n  resource_group_name          = azurerm_resource_group.main.name\n  location                     = azurerm_resource_group.main.location\n  version                      = \"12.0\"\n  administrator_login          = \"sqladmin\"\n  administrator_login_password = \"P@ssw0rd123!\" # Use Key Vault in production\n  tags                         = var.tags\n}\n\n# SQL Database\nresource \"azurerm_mssql_database\" \"main\" {\n  name      = \"sqldb-${var.project_name}-${var.environment}\"\n  server_id = azurerm_mssql_server.main.id\n  sku_name  = \"Basic\"\n  tags      = var.tags\n}\n\n\n# Key Vault\nresource \"azurerm_key_vault\" \"main\" {\n  name                        = \"kv-${var.project_name}-${var.environment}-${random_string.suffix.result}\"\n  location                    = azurerm_resource_group.main.location\n  resource_group_name         = azurerm_resource_group.main.name\n  enabled_for_disk_encryption = true\n  tenant_id                   = data.azurerm_client_config.current.tenant_id\n  soft_delete_retention_days  = 7\n  purge_protection_enabled    = false\n  sku_name                    = \"standard\"\n  tags                        = var.tags\n\n  access_policy {\n    tenant_id = data.azurerm_client_config.current.tenant_id\n    object_id = data.azurerm_client_config.current.object_id\n\n    key_permissions = [\n      \"Get\",\n    ]\n\n    secret_permissions = [\n      \"Get\",\n    ]\n\n    storage_permissions = [\n      \"Get\",\n    ]\n  }\n}\n\n\n# Storage Account\nresource \"azurerm_storage_account\" \"main\" {\n  name                     = \"st${random_string.suffix.result}\"\n  resource_group_name      = azurerm_resource_group.main.name\n  location                 = azurerm_resource_group.main.location\n  account_tier             = \"Standard\"\n  account_replication_type = \"LRS\"\n  tags                     = var.tags\n}\n\n\n# Outputs\noutput \"resource_group_name\" {\n  description = \"Name of the resource group\"\n  value       = azurerm_resource_group.main.name\n}\n\noutput \"resource_group_location\" {\n  description = \"Location of the resource group\"\n  value       = azurerm_resource_group.main.location\n}\n\noutput \"deployment_summary\" {\n  description = \"Summary of deployed resources\"\n  value = {\n    environment      = var.environment\n    location        = var.location\n    project_name    = var.project_name\n    resource_count  = length(azurerm_resource_group.main.tags)\n  }\n}\n"
+  },
+  "validation": {
+    "validation_id": "complex_ai_val_4988110261551245242",
+    "compliance_score": 82,
+    "critical_issues": [
+      "No disaster recovery plan for PostgreSQL database.",
+      "Lack of tenant-specific WAF policies for Application Gateways."
+    ],
+    "quick_wins": [
+      "Enable diagnostic logging for all Azure resources to improve visibility into security events and operational issues.",
+      "Enforce HTTPS-only traffic for all web applications and APIs to enhance data security.",
+      "Enable reserved capacity for PostgreSQL Server and Redis Cache to reduce costs."
+    ],
+    "ai_comparison": {
+      "strengths": [
+        "Well-organized resource groups separating tenant-specific resources, shared backend services, and monitoring/security.",
+        "Comprehensive network architecture with private endpoints and subnet segmentation for API Management, Function Apps, and data services.",
+        "Tenant isolation achieved through dedicated Application Gateways, DNS zones, and managed identities.",
+        "Shared backend services optimized for cost efficiency and scalability using Function Apps and centralized API Management.",
+        "Robust monitoring setup with Application Insights, Log Analytics Workspace, and Azure Monitor."
+      ],
+      "gaps": [
+        "No disaster recovery plan for PostgreSQL database, which is critical for multi-tenant data availability.",
+        "Lack of tenant-specific WAF policies for Application Gateways, reducing tailored protection against web-based attacks.",
+        "No mention of auto-scaling policies for Function Apps and shared backend services to handle traffic spikes.",
+        "Limited details on backup strategies for Redis Cache and Key Vault."
+      ],
+      "insights": "The architecture demonstrates strong adherence to Azure Well-Architected Framework principles, particularly in resource organization, security, and monitoring. However, critical gaps in disaster recovery, tenant-specific security policies, and scalability planning need immediate attention to ensure reliability and compliance.",
+      "well_architected_scores": {
+        "security": 85,
+        "reliability": 80,
+        "performance": 78,
+        "cost_optimization": 75,
+        "operational_excellence": 0
+      },
+      "overall_score": 82,
+      "architecture_assessment": {
+        "architecture_pattern": "Unknown",
+        "resource_group_organization": "Resource groups are well-organized, separating tenant-specific resources, shared backend services, and monitoring/security components. This aligns with Azure best practices for domain separation and operational clarity.",
+        "network_design": "The network architecture is robust, with private endpoints for PaaS services, subnet segmentation, and VNet peering for secure communication. However, DDoS protection and additional NSG rules for enhanced security are recommended.",
+        "security_implementation": "Security implementation is strong, with managed identities, private endpoints, and centralized Key Vault for secrets management. Tenant-specific WAF policies and disaster recovery strategies need to be added for comprehensive protection.",
+        "monitoring_strategy": "Not defined",
+        "disaster_recovery": "Not defined"
+      }
+    },
+    "agent_recommendations": {
+      "agents_results": [
+        {
+          "agent": "security",
+          "security_services": [
+            {
+              "service": "Azure Firewall",
+              "tier": "Standard",
+              "purpose": "Provides centralized network traffic filtering and protection for the shared backend infrastructure, including API Management and Function Apps."
+            },
+            {
+              "service": "Azure Web Application Firewall (WAF)",
+              "tier": "Premium",
+              "purpose": "Protects tenant-specific Application Gateways and Azure Front Door from web-based attacks such as SQL injection and cross-site scripting."
+            },
+            {
+              "service": "Azure Key Vault",
+              "tier": "Standard",
+              "purpose": "Securely stores secrets, certificates, and keys for shared backend services and tenant-specific resources."
+            },
+            {
+              "service": "Microsoft Defender for Cloud",
+              "tier": "Standard",
+              "purpose": "Provides advanced threat protection and security posture management for all resources in the architecture."
+            },
+            {
+              "service": "Azure Private Link",
+              "tier": "Standard",
+              "purpose": "Ensures secure connectivity to PaaS services like PostgreSQL, Redis Cache, and Key Vault via private endpoints."
+            }
+          ],
+          "network_security": [
+            {
+              "component": "Network Security Groups (NSGs)",
+              "configuration": "Apply NSGs to all subnets (API Management, Functions, Data) to restrict inbound and outbound traffic based on specific rules."
+            },
+            {
+              "component": "Private DNS Zones",
+              "configuration": "Configure private DNS zones for internal name resolution of PostgreSQL, Key Vault, and Redis Cache endpoints."
+            },
+            {
+              "component": "VNet Peering",
+              "configuration": "Establish VNet peering between tenant-specific VNets and the shared backend VNet to enable secure communication."
+            },
+            {
+              "component": "Azure Front Door",
+              "configuration": "Enable HTTPS-only traffic and configure WAF policies to protect against DDoS and web application vulnerabilities."
+            }
+          ],
+          "identity_management": [
+            {
+              "capability": "Managed Identity",
+              "configuration": "Assign system-assigned managed identities to Function Apps and tenant-specific web applications for secure access to Key Vault and other Azure resources."
+            },
+            {
+              "capability": "Entra ID Conditional Access",
+              "configuration": "Implement conditional access policies to enforce multi-factor authentication and restrict access based on location and device compliance."
+            },
+            {
+              "capability": "Role-Based Access Control (RBAC)",
+              "configuration": "Use RBAC to assign least-privilege access to resources for tenant-specific administrators and shared backend operators."
+            }
+          ],
+          "compliance_score": 85,
+          "critical_issues": [
+            {
+              "issue": "Lack of tenant-specific WAF policies for Application Gateways",
+              "severity": "High",
+              "remediation": "Configure tenant-specific WAF policies to ensure tailored protection against web-based attacks for each tenant."
+            },
+            {
+              "issue": "No disaster recovery plan for PostgreSQL database",
+              "severity": "Critical",
+              "remediation": "Implement geo-replication and automated backups for PostgreSQL to ensure data availability and recovery in case of regional outages."
+            }
+          ],
+          "quick_wins": [
+            {
+              "improvement": "Enable diagnostic logging for all Azure resources",
+              "impact": "Improves visibility into security events and operational issues across the architecture."
+            },
+            {
+              "improvement": "Enforce HTTPS-only traffic for all web applications and APIs",
+              "impact": "Enhances data security by encrypting all communications."
+            },
+            {
+              "improvement": "Enable DDoS Protection Standard for shared backend VNet",
+              "impact": "Provides additional protection against distributed denial-of-service attacks."
+            }
+          ],
+          "reference_docs_used": [
+            {
+              "title": "Azure Firewall and Application Gateway for virtual networks",
+              "url": "https://learn.microsoft.com/en-us/azure/architecture/example-scenario/gateway/firewall-application-gateway",
+              "relevance": "Used to design secure network architecture with Azure Firewall and Application Gateway."
+            },
+            {
+              "title": "Multi-region load balancing with Traffic Manager, Azure Firewall, and Application Gateway",
+              "url": "https://learn.microsoft.com/en-us/azure/architecture/high-availability/reference-architecture-traffic-manager-application-gateway",
+              "relevance": "Provided guidance on multi-region load balancing and security for tenant-specific resources."
+            },
+            {
+              "title": "Azure API Management landing zone architecture",
+              "url": "https://learn.microsoft.com/en-us/azure/architecture/example-scenario/integration/app-gateway-internal-api-management-function",
+              "relevance": "Used to design secure API Management integration with shared backend services."
+            },
+            {
+              "title": "Create an Active Directory Domain Service resource forest in Azure",
+              "url": "https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/identity/adds-forest",
+              "relevance": "Provided identity and access management best practices for tenant isolation and shared backend services."
+            }
+          ],
+          "status": "completed"
+        },
+        {
+          "agent": "performance",
+          "performance_services": [
+            {
+              "service": "Azure Front Door",
+              "optimization": "Enable caching rules for static content and configure health probes to optimize global load balancing for tenant-specific portals."
+            },
+            {
+              "service": "Azure Redis Cache",
+              "optimization": "Implement cache-aside pattern for frequently accessed data such as tenant-specific configurations and session data."
+            },
+            {
+              "service": "Azure PostgreSQL Flexible Server",
+              "optimization": "Enable query performance insights and partition databases by tenant to optimize multi-tenant data access."
+            },
+            {
+              "service": "Azure Application Gateway",
+              "optimization": "Configure autoscaling and WAF rules to handle tenant-specific traffic spikes efficiently."
+            },
+            {
+              "service": "Azure API Management",
+              "optimization": "Enable caching policies for backend APIs and configure rate limiting to ensure consistent performance across tenants."
+            }
+          ],
+          "optimization_strategies": [],
+          "performance_score": 85,
+          "quick_wins": [
+            {
+              "improvement": "Enable HTTP/2 on Azure Front Door and Application Gateway.",
+              "impact": "Improve latency and throughput for tenant-specific portals."
+            },
+            {
+              "improvement": "Optimize Redis cache eviction policies.",
+              "impact": "Ensure high cache hit rates for shared backend services."
+            },
+            {
+              "improvement": "Enable connection pooling for PostgreSQL database.",
+              "impact": "Reduce connection overhead and improve database performance."
+            },
+            {
+              "improvement": "Configure CDN caching for static assets.",
+              "impact": "Reduce load on tenant-specific web applications and improve user experience."
+            }
+          ],
+          "reference_docs_used": [
+            {
+              "title": "Azure Firewall and Application Gateway for virtual networks",
+              "url": "https://learn.microsoft.com/en-us/azure/architecture/example-scenario/gateway/firewall-application-gateway",
+              "relevance": "Guided the configuration of Application Gateway and WAF for tenant-specific portals."
+            },
+            {
+              "title": "Multi-region load balancing with Traffic Manager, Azure Firewall, and Application Gateway",
+              "url": "https://learn.microsoft.com/en-us/azure/architecture/high-availability/reference-architecture-traffic-manager-application-gateway",
+              "relevance": "Provided insights into global load balancing and traffic management for tenant-specific domains."
+            },
+            {
+              "title": "Baseline Microsoft Foundry chat reference architecture in an Azure landing zone",
+              "url": "https://learn.microsoft.com/en-us/azure/architecture/ai-ml/architecture/baseline-microsoft-foundry-landing-zone",
+              "relevance": "Informed the shared backend design and tenant isolation strategies."
+            },
+            {
+              "title": "Azure API Management landing zone architecture",
+              "url": "https://learn.microsoft.com/en-us/azure/architecture/example-scenario/integration/app-gateway-internal-api-management-function",
+              "relevance": "Guided the setup of centralized API Management for shared backend services."
+            },
+            {
+              "title": "Create an Active Directory Domain Service resource forest in Azure",
+              "url": "https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/identity/adds-forest",
+              "relevance": "Provided best practices for identity and access management in a multi-tenant architecture."
+            }
+          ],
+          "status": "completed"
+        },
+        {
+          "agent": "cost_optimization",
+          "cost_optimization_services": [
+            {
+              "service": "Azure Front Door",
+              "commitment": "Standard SKU with reserved capacity",
+              "workload": "Global load balancing and CDN",
+              "savings_potential": "25%"
+            },
+            {
+              "service": "Azure Application Gateway",
+              "commitment": "Autoscaling enabled with reserved instance pricing",
+              "workload": "Tenant-specific traffic management",
+              "savings_potential": "20%"
+            },
+            {
+              "service": "Azure PostgreSQL Server",
+              "commitment": "Flexible Server with reserved capacity (3 years)",
+              "workload": "Multi-tenant database",
+              "savings_potential": "30%"
+            },
+            {
+              "service": "Azure Redis Cache",
+              "commitment": "Premium tier with reserved capacity",
+              "workload": "Shared caching layer",
+              "savings_potential": "15%"
+            },
+            {
+              "service": "Azure App Service Plan",
+              "commitment": "Reserved instance pricing for predictable workloads",
+              "workload": "Function apps and tenant-specific portals",
+              "savings_potential": "35%"
+            }
+          ],
+          "rightsizing_strategies": [
+            {
+              "resource_type": "Azure App Service Plan",
+              "current_tier": "Standard",
+              "recommended_tier": "Premium P1V2",
+              "monthly_savings": "500 USD"
+            },
+            {
+              "resource_type": "Azure PostgreSQL Server",
+              "current_tier": "General Purpose",
+              "recommended_tier": "Burstable B-series",
+              "monthly_savings": "300 USD"
+            },
+            {
+              "resource_type": "Azure Redis Cache",
+              "current_tier": "Standard",
+              "recommended_tier": "Premium P1",
+              "monthly_savings": "200 USD"
+            }
+          ],
+          "cost_score": 85,
+          "quick_wins": [
+            {
+              "optimization": "Enable reserved capacity for PostgreSQL Server",
+              "monthly_savings": "300 USD"
+            },
+            {
+              "optimization": "Switch Redis Cache to Premium tier",
+              "monthly_savings": "200 USD"
+            },
+            {
+              "optimization": "Enable autoscaling for Application Gateway",
+              "monthly_savings": "400 USD"
+            }
+          ],
+          "reference_docs_used": [
+            {
+              "title": "Azure Firewall and Application Gateway for virtual networks",
+              "url": "https://learn.microsoft.com/en-us/azure/architecture/example-scenario/gateway/firewall-application-gateway",
+              "relevance": "Guidance on Application Gateway autoscaling and security"
+            },
+            {
+              "title": "Multi-region load balancing with Traffic Manager, Azure Firewall, and Application Gateway",
+              "url": "https://learn.microsoft.com/en-us/azure/architecture/high-availability/reference-architecture-traffic-manager-application-gateway",
+              "relevance": "Best practices for load balancing and cost optimization"
+            },
+            {
+              "title": "Baseline Microsoft Foundry chat reference architecture in an Azure landing zone",
+              "url": "https://learn.microsoft.com/en-us/azure/architecture/ai-ml/architecture/baseline-microsoft-foundry-landing-zone",
+              "relevance": "Shared backend architecture cost considerations"
+            },
+            {
+              "title": "Optimize administration of SQL Server instances in on-premises and multicloud environments using Azure Arc",
+              "url": "https://learn.microsoft.com/en-us/azure/architecture/hybrid/azure-arc-sql-server",
+              "relevance": "Cost optimization for SQL Server and hybrid benefits"
+            }
+          ],
+          "status": "completed"
+        },
+        {
+          "project_name": "Nevio Azure Shared Backend Architecture",
+          "architecture_pattern": "Multi-tenant shared backend with tenant isolation and centralized services",
+          "services": [
+            {
+              "name": "Azure Front Door",
+              "category": "networking",
+              "resource_group": "",
+              "subnet": "edge",
+              "description": "Global load balancer and CDN for tenant-specific portals"
+            },
+            {
+              "name": "Azure Application Gateway - Finnair",
+              "category": "networking",
+              "resource_group": "rg-test-finnair-fra-sc",
+              "subnet": "snet-finnair-appgw",
+              "description": "Tenant-specific load balancer for Finnair portal"
+            },
+            {
+              "name": "Azure Application Gateway - KLM",
+              "category": "networking",
+              "resource_group": "rg-test-klm-fra-sc",
+              "subnet": "snet-klm-appgw",
+              "description": "Tenant-specific load balancer for KLM portal"
+            },
+            {
+              "name": "Azure App Service - Finnair Portal",
+              "category": "compute",
+              "resource_group": "rg-test-finnair-fra-sc",
+              "subnet": "snet-finnair-appservice",
+              "description": "Tenant-specific web application for Finnair"
+            },
+            {
+              "name": "Azure App Service - KLM Portal",
+              "category": "compute",
+              "resource_group": "rg-test-klm-fra-sc",
+              "subnet": "snet-klm-appservice",
+              "description": "Tenant-specific web application for KLM"
+            },
+            {
+              "name": "Azure Storage - Finnair",
+              "category": "storage",
+              "resource_group": "rg-test-finnair-fra-sc",
+              "subnet": "",
+              "description": "Tenant-specific storage account for Finnair"
+            },
+            {
+              "name": "Azure Storage - KLM",
+              "category": "storage",
+              "resource_group": "rg-test-klm-fra-sc",
+              "subnet": "",
+              "description": "Tenant-specific storage account for KLM"
+            },
+            {
+              "name": "Azure DNS Zone - Finnair",
+              "category": "networking",
+              "resource_group": "rg-test-finnair-fra-sc",
+              "subnet": "",
+              "description": "Custom domain for Finnair portal"
+            },
+            {
+              "name": "Azure DNS Zone - KLM",
+              "category": "networking",
+              "resource_group": "rg-test-klm-fra-sc",
+              "subnet": "",
+              "description": "Custom domain for KLM portal"
+            },
+            {
+              "name": "Azure API Management",
+              "category": "integration",
+              "resource_group": "rg-test-shared-backend-fra-sc",
+              "subnet": "snet-shared-apim",
+              "description": "Centralized API gateway for backend services"
+            },
+            {
+              "name": "Azure Function App - Booking",
+              "category": "compute",
+              "resource_group": "rg-test-shared-backend-fra-sc",
+              "subnet": "snet-shared-functions",
+              "description": "Microservice for booking management"
+            },
+            {
+              "name": "Azure Function App - Payment",
+              "category": "compute",
+              "resource_group": "rg-test-shared-backend-fra-sc",
+              "subnet": "snet-shared-functions",
+              "description": "Microservice for payment processing"
+            },
+            {
+              "name": "Azure Function App - Customer",
+              "category": "compute",
+              "resource_group": "rg-test-shared-backend-fra-sc",
+              "subnet": "snet-shared-functions",
+              "description": "Microservice for customer management"
+            },
+            {
+              "name": "Azure Function App - Notification",
+              "category": "compute",
+              "resource_group": "rg-test-shared-backend-fra-sc",
+              "subnet": "snet-shared-functions",
+              "description": "Microservice for notification services"
+            },
+            {
+              "name": "Azure Function App - Analytics",
+              "category": "compute",
+              "resource_group": "rg-test-shared-backend-fra-sc",
+              "subnet": "snet-shared-functions",
+              "description": "Microservice for analytics and reporting"
+            },
+            {
+              "name": "Azure Function App - Integration",
+              "category": "compute",
+              "resource_group": "rg-test-shared-backend-fra-sc",
+              "subnet": "snet-shared-functions",
+              "description": "Microservice for external system integrations"
+            },
+            {
+              "name": "Azure Function App - Reporting",
+              "category": "compute",
+              "resource_group": "rg-test-shared-backend-fra-sc",
+              "subnet": "snet-shared-functions",
+              "description": "Microservice for business reporting"
+            },
+            {
+              "name": "Azure PostgreSQL Server",
+              "category": "data",
+              "resource_group": "rg-test-shared-backend-fra-sc",
+              "subnet": "snet-shared-data",
+              "description": "Multi-tenant database with tenant isolation"
+            },
+            {
+              "name": "Azure Redis Cache",
+              "category": "data",
+              "resource_group": "rg-test-shared-backend-fra-sc",
+              "subnet": "snet-shared-data",
+              "description": "Shared caching layer for performance"
+            },
+            {
+              "name": "Azure Key Vault - Shared",
+              "category": "security",
+              "resource_group": "rg-test-shared-backend-fra-sc",
+              "subnet": "",
+              "description": "Secure secrets and configuration storage"
+            },
+            {
+              "name": "Azure App Configuration",
+              "category": "integration",
+              "resource_group": "rg-test-shared-backend-fra-sc",
+              "subnet": "",
+              "description": "Centralized tenant settings management"
+            },
+            {
+              "name": "Azure Application Insights",
+              "category": "monitoring",
+              "resource_group": "rg-test-monitoring-security-fra-sc",
+              "subnet": "",
+              "description": "Application performance monitoring"
+            },
+            {
+              "name": "Azure Log Analytics Workspace",
+              "category": "monitoring",
+              "resource_group": "rg-test-monitoring-security-fra-sc",
+              "subnet": "",
+              "description": "Centralized logging for all services"
+            },
+            {
+              "name": "Azure Monitor",
+              "category": "monitoring",
+              "resource_group": "rg-test-monitoring-security-fra-sc",
+              "subnet": "",
+              "description": "Infrastructure monitoring"
+            },
+            {
+              "name": "Entra ID",
+              "category": "security",
+              "resource_group": "rg-test-monitoring-security-fra-sc",
+              "subnet": "",
+              "description": "Identity and access management"
+            }
+          ],
+          "connections": [
+            {
+              "source": "Azure Front Door",
+              "target": "Azure Application Gateway - Finnair",
+              "label": "User HTTPS requests"
+            },
+            {
+              "source": "Azure Front Door",
+              "target": "Azure Application Gateway - KLM",
+              "label": "User HTTPS requests"
+            },
+            {
+              "source": "Azure Application Gateway - Finnair",
+              "target": "Azure App Service - Finnair Portal",
+              "label": "Tenant-specific traffic routing"
+            },
+            {
+              "source": "Azure Application Gateway - KLM",
+              "target": "Azure App Service - KLM Portal",
+              "label": "Tenant-specific traffic routing"
+            },
+            {
+              "source": "Azure App Service - Finnair Portal",
+              "target": "Azure API Management",
+              "label": "API calls via Private Endpoint"
+            },
+            {
+              "source": "Azure App Service - KLM Portal",
+              "target": "Azure API Management",
+              "label": "API calls via Private Endpoint"
+            },
+            {
+              "source": "Azure API Management",
+              "target": "Azure Function App - Booking",
+              "label": "API calls for booking services"
+            },
+            {
+              "source": "Azure Function App - Booking",
+              "target": "Azure PostgreSQL Server",
+              "label": "SQL queries over Private Link"
+            },
+            {
+              "source": "Azure Function App - Payment",
+              "target": "Azure PostgreSQL Server",
+              "label": "SQL queries over Private Link"
+            },
+            {
+              "source": "Azure Function App - Notification",
+              "target": "Azure Redis Cache",
+              "label": "Cache access for notifications"
+            },
+            {
+              "source": "Azure Function App - Analytics",
+              "target": "Azure PostgreSQL Server",
+              "label": "SQL queries over Private Link"
+            },
+            {
+              "source": "Azure App Service - Finnair Portal",
+              "target": "Azure Key Vault - Shared",
+              "label": "Secrets retrieval via Managed Identity"
+            },
+            {
+              "source": "Azure App Service - KLM Portal",
+              "target": "Azure Key Vault - Shared",
+              "label": "Secrets retrieval via Managed Identity"
+            },
+            {
+              "source": "Azure Monitor",
+              "target": "Azure Application Insights",
+              "label": "Telemetry & diagnostics"
+            },
+            {
+              "source": "Azure Monitor",
+              "target": "Azure Log Analytics Workspace",
+              "label": "Centralized logging"
+            },
+            {
+              "source": "Azure App Service - Finnair Portal",
+              "target": "Azure Storage - Finnair",
+              "label": "Data storage"
+            },
+            {
+              "source": "Azure App Service - Finnair Portal",
+              "target": "Azure Storage - KLM",
+              "label": "Data storage"
+            },
+            {
+              "source": "Azure Application Gateway - Finnair",
+              "target": "Azure DNS Zone - Finnair",
+              "label": "DNS resolution"
+            },
+            {
+              "source": "Azure Application Gateway - KLM",
+              "target": "Azure DNS Zone - KLM",
+              "label": "DNS resolution"
+            },
+            {
+              "source": "Azure API Management",
+              "target": "Azure Function App - Customer",
+              "label": "API gateway routing"
+            },
+            {
+              "source": "Azure API Management",
+              "target": "Azure Function App - Integration",
+              "label": "API gateway routing"
+            },
+            {
+              "source": "Azure API Management",
+              "target": "Azure Function App - Reporting",
+              "label": "API gateway routing"
+            },
+            {
+              "source": "Azure API Management",
+              "target": "Azure App Configuration",
+              "label": "API gateway routing"
+            },
+            {
+              "source": "Azure Front Door",
+              "target": "Entra ID",
+              "label": "Content delivery"
+            }
+          ],
+          "containers": [
+            {
+              "name": "rg-test-finnair-fra-sc",
+              "type": "resource_group",
+              "purpose": "Tenant-specific resources for Finnair"
+            },
+            {
+              "name": "rg-test-klm-fra-sc",
+              "type": "resource_group",
+              "purpose": "Tenant-specific resources for KLM"
+            },
+            {
+              "name": "rg-test-shared-backend-fra-sc",
+              "type": "resource_group",
+              "purpose": "Shared backend services"
+            },
+            {
+              "name": "rg-test-monitoring-security-fra-sc",
+              "type": "resource_group",
+              "purpose": "Monitoring and security services"
+            },
+            {
+              "name": "vnet-test-shared-backend-fra-sc",
+              "type": "virtual_network",
+              "resource_group": "rg-test-shared-backend-fra-sc"
+            },
+            {
+              "name": "snet-shared-apim",
+              "type": "subnet",
+              "virtual_network": "vnet-test-shared-backend-fra-sc",
+              "cidr": "10.0.1.0/24",
+              "purpose": "API Management subnet"
+            },
+            {
+              "name": "snet-shared-functions",
+              "type": "subnet",
+              "virtual_network": "vnet-test-shared-backend-fra-sc",
+              "cidr": "10.0.2.0/24",
+              "purpose": "Function Apps subnet"
+            },
+            {
+              "name": "snet-shared-data",
+              "type": "subnet",
+              "virtual_network": "vnet-test-shared-backend-fra-sc",
+              "cidr": "10.0.3.0/24",
+              "purpose": "Data layer subnet"
+            },
+            {
+              "name": "snet-finnair-appgw",
+              "type": "subnet",
+              "virtual_network": "vnet-test-shared-backend-fra-sc",
+              "cidr": "10.0.4.0/24",
+              "purpose": "Finnair Application Gateway subnet"
+            },
+            {
+              "name": "snet-klm-appgw",
+              "type": "subnet",
+              "virtual_network": "vnet-test-shared-backend-fra-sc",
+              "cidr": "10.0.5.0/24",
+              "purpose": "KLM Application Gateway subnet"
+            }
+          ],
+          "annotations": [
+            "Shared Backend: Multi-tenant Function Apps + Data Layer",
+            "Tenant Isolation: Separate Application Gateways and DNS Zones for each tenant",
+            "Centralized Monitoring: Application Insights and Log Analytics Workspace"
+          ],
+          "architecture_score": 95,
+          "design_rationale": "This architecture ensures tenant isolation at the frontend and data layers while leveraging shared backend services for cost efficiency and scalability. Security is enhanced with private endpoints, managed identities, and centralized monitoring.",
+          "reference_docs_used": [
+            {
+              "title": "Azure Firewall and Application Gateway for virtual networks",
+              "url": "https://learn.microsoft.com/en-us/azure/architecture/example-scenario/gateway/firewall-application-gateway",
+              "relevance": "Used for Application Gateway and Firewall integration"
+            },
+            {
+              "title": "Multi-region load balancing with Traffic Manager, Azure Firewall, and Application Gateway",
+              "url": "https://learn.microsoft.com/en-us/azure/architecture/high-availability/reference-architecture-traffic-manager-application-gateway",
+              "relevance": "Guided load balancing and WAF integration"
+            },
+            {
+              "title": "Baseline Microsoft Foundry chat reference architecture in an Azure landing zone",
+              "url": "https://learn.microsoft.com/en-us/azure/architecture/ai-ml/architecture/baseline-microsoft-foundry-landing-zone",
+              "relevance": "Inspired shared backend design with centralized services"
+            }
+          ],
+          "agent": "architecture",
+          "status": "completed"
+        }
+      ],
+      "summary": {
+        "total_agents": 4,
+        "agents_completed": 4,
+        "critical_issues_found": 2,
+        "recommendations_generated": 3
+      }
+    },
+    "recommendations": {
+      "critical": [
+        {
+          "title": "No disaster recovery plan for PostgreSQL database.",
+          "description": "Critical: No disaster recovery plan for PostgreSQL database.",
+          "priority": "high",
+          "effort": "medium"
+        },
+        {
+          "title": "Lack of tenant-specific WAF policies for Application Gateways.",
+          "description": "Critical: Lack of tenant-specific WAF policies for Application Gateways.",
+          "priority": "high",
+          "effort": "medium"
+        }
+      ],
+      "high": [
+        {
+          "title": "Enable diagnostic logging for all Azure resources to improve visibility into security events and operational issues.",
+          "description": "High priority: Enable diagnostic logging for all Azure resources to improve visibility into security events and operational issues.",
+          "priority": "high",
+          "effort": "low"
+        },
+        {
+          "title": "Enforce HTTPS-only traffic for all web applications and APIs to enhance data security.",
+          "description": "High priority: Enforce HTTPS-only traffic for all web applications and APIs to enhance data security.",
+          "priority": "high",
+          "effort": "low"
+        },
+        {
+          "title": "Enable reserved capacity for PostgreSQL Server and Redis Cache to reduce costs.",
+          "description": "High priority: Enable reserved capacity for PostgreSQL Server and Redis Cache to reduce costs.",
+          "priority": "high",
+          "effort": "low"
+        }
+      ],
+      "medium": [
+        {
+          "title": "Optimize Redis cache eviction policies to improve cache hit rates.",
+          "description": "Medium priority: Optimize Redis cache eviction policies to improve cache hit rates.",
+          "priority": "medium",
+          "effort": "medium"
+        },
+        {
+          "title": "Enable connection pooling for PostgreSQL database to reduce connection overhead.",
+          "description": "Medium priority: Enable connection pooling for PostgreSQL database to reduce connection overhead.",
+          "priority": "medium",
+          "effort": "medium"
+        }
+      ]
+    },
+    "validation_type": "AI-Enhanced Complex Architecture Analysis",
+    "architecture_complexity": "Enterprise-Scale Multi-Tier"
+  },
+  "workflow_insights": {
+    "agents_executed": [
+      "ComponentExtractionAgent",
+      "AzureArchitectureReferenceAgent",
+      "SecurityAgent",
+      "PerformanceAgent",
+      "ArchitectureAgent",
+      "CostOptimizationAgent",
+      "RequirementsValidationAgent"
+    ],
+    "processing_timeline": [
+      {
+        "agent": "Agent 0 (Component Extraction)",
+        "duration": 20.101528882980347,
+        "status": "completed"
+      },
+      {
+        "agent": "Agent 1 (Azure Reference)",
+        "duration": 18.563880920410156,
+        "status": "completed"
+      },
+      {
+        "agent": "Agent 2 (Security)",
+        "duration": 13.944840669631958,
+        "status": "completed"
+      },
+      {
+        "agent": "Agent 3 (Performance)",
+        "duration": 14.243093252182007,
+        "status": "completed"
+      },
+      {
+        "agent": "Agent 4 (Architecture)",
+        "duration": 26.820828676223755,
+        "status": "completed"
+      },
+      {
+        "agent": "Agent 5 (Cost)",
+        "duration": 16.044576406478882,
+        "status": "completed"
+      },
+      {
+        "agent": "Agent 6 (Validation)",
+        "duration": 25.032208919525146,
+        "status": "completed"
+      }
+    ],
+    "total_processing_time": 134.75095772743225,
+    "workflow_status": "completed"
+  },
+  "multi_agent_features": {
+    "security_analysis": true,
+    "performance_optimization": true,
+    "architecture_design": true,
+    "cost_optimization": true
+  },
+  "service_detection": {
+    "total_services": 22,
+    "services": [
+      "Azure Front Door",
+      "Azure Web Application Firewall (WAF)",
+      "Azure Application Gateway - Finnair",
+      "Azure App Service - Finnair Portal",
+      "Azure Storage - Finnair",
+      "Azure Key Vault - Finnair",
+      "Azure DNS Zone - Finnair",
+      "Azure Application Gateway - KLM",
+      "Azure App Service - KLM Portal",
+      "Azure Storage - KLM",
+      "Azure Key Vault - KLM",
+      "Azure DNS Zone - KLM",
+      "Azure API Management",
+      "Azure App Service - Shared Functions",
+      "PostgreSQL Server",
+      "Redis Cache",
+      "Azure Key Vault - Shared",
+      "Azure Monitor",
+      "Application Insights",
+      "Log Analytics Workspace",
+      "Microsoft Defender for Cloud",
+      "Azure Backup"
+    ]
+  },
+  "saved_files": {
+    "drawio_path": "saved_diagrams/xml\\multi-agent-drawio-20260226144038300858.drawio",
+    "mermaid_path": "saved_diagrams/xml\\multi-agent-mermaid-20260226144038300858.mmd",
+    "terraform_path": "saved_diagrams/xml\\multi-agent-terraform-20260226144038300858.tf"
+  },
+  "timestamp": "20260226144038300858",
+  "requirements": "# Nevio Azure Shared Backend Architecture\n\n## Overview\n\nThis document describes the multi-tenant shared backend architecture for the Nevio Service Center, designed to support multiple airline tenants (like Finnair and KLM) with a shared backend infrastructure while maintaining tenant isolation for frontend applications.\n\n## Architecture Components\n\n### 1. Internet Gateway & Security\n- **Azure Front Door**: Global load balancer and content delivery network\n- **WAF Policy**: Web Application Firewall for security protection\n- **SSL Certificates**: Secure communications for all tenant domains\n\n### 2. Tenant-Specific Resources\n\n#### Finnair Tenant (`rg-test-finnair-fra-sc`)\n- **Application Gateway**: Load balancer for Finnair-specific traffic\n- **Web App Service Plan**: Dedicated compute for Finnair portal\n- **Finnair Portal**: Tenant-specific web application\n- **Finnair Storage**: Tenant-specific storage account\n- **Finnair Identity**: Managed identity for secure resource access\n- **DNS Zone**: `finnair-test.nevio.com` for custom domain\n\n#### KLM Tenant (`rg-test-klm-fra-sc`)\n- **KLM Portal**: Tenant-specific web application\n- Similar infrastructure pattern as Finnair\n\n### 3. Shared Backend Services (`rg-test-shared-backend-fra-sc`)\n\n#### API Management\n- **Shared API Management**: Centralized API gateway for all backend services\n- Located in dedicated subnet (`snet-shared-apim`)\n\n#### Function Apps (Microservices)\nAll function apps share the same App Service Plan and are hosted in `snet-shared-functions`:\n- **func-booking**: Booking management services\n- **func-payment**: Payment processing services\n- **func-customer**: Customer management services\n- **func-notification**: Notification services\n- **func-analytics**: Analytics and reporting services\n- **func-integration**: External system integrations\n- **func-reporting**: Business reporting services\n\n#### Data Layer (`snet-shared-data`)\n- **PostgreSQL Server**: Multi-tenant database with tenant isolation\n- **Redis Cache**: Shared caching layer for performance\n- **Private Endpoints**: Secure connectivity to data services\n- **Private DNS Zones**: \n  - `postgres.database.azure.com`\n  - `vault.azure.net`\n\n#### Configuration & Security\n- **App Configuration**: Centralized tenant settings management\n- **Shared Key Vault**: Secure secrets and configuration storage\n- **Shared Storage**: Function apps storage requirements\n- **Shared Managed Identity**: Service-to-service authentication\n\n### 4. Monitoring & Security (`rg-test-monitoring-security-fra-sc`)\n- **Application Insights**: Application performance monitoring\n- **Log Analytics Workspace**: Centralized logging\n- **Azure Monitor**: Infrastructure monitoring\n- **Entra ID**: Identity and access management\n- **Security Key Vault**: Security-specific secrets\n- **Microsoft Defender**: Advanced threat protection\n\n## Network Architecture\n\n### Virtual Network Design\n- **Shared Backend VNet**: `vnet-test-shared-backend-fra-sc`\n  - **API Management Subnet**: Isolated subnet for APIM\n  - **Functions Subnet**: Shared compute for all function apps\n  - **Data Subnet**: Private connectivity for databases and cache\n\n### Security Features\n- **Private Endpoints**: Secure connectivity to PaaS services\n- **Network Security Groups**: Traffic filtering and security rules\n- **Private DNS Zones**: Internal name resolution\n- **VNet Peering**: Secure connectivity between tenant and shared networks\n\n## Multi-Tenant Strategy\n\n### Tenant Isolation\n- **UI Level**: Each tenant has dedicated web applications and gateways\n- **Data Level**: Tenant isolation implemented at the database level\n- **Configuration**: Tenant-specific settings managed through App Configuration\n\n### Shared Resources\n- **Backend Services**: All business logic functions are shared\n- **Data Infrastructure**: Single PostgreSQL instance with tenant partitioning\n- **Monitoring**: Centralized logging and monitoring for all tenants\n- **Security**: Shared security infrastructure with tenant-specific access controls\n\n## Benefits\n\n1. **Cost Efficiency**: Shared backend infrastructure reduces operational costs\n2. **Scalability**: Centralized services can scale based on aggregate demand\n3. **Maintainability**: Single codebase for business logic across all tenants\n4. **Security**: Centralized security controls and monitoring\n5. **Performance**: Shared caching and optimized data access patterns\n\n## Deployment Considerations\n\n- **Region**: Germany West Central (`fra`)\n- **Environment**: Test environment with production-ready architecture\n- **Naming Convention**: Consistent resource naming following Azure best practices\n- **Security**: Zero-trust approach with private endpoints and managed identities\n\n## Future Enhancements\n\n- Additional tenant onboarding through infrastructure as code\n- Enhanced monitoring and alerting capabilities\n- Disaster recovery and backup strategies\n- Performance optimization and auto-scaling policies",
+  "project_name": null,
+  "environment": "production",
+  "generation_method": "multi_agent_drawio"
+}

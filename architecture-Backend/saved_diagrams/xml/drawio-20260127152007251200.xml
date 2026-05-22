@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="1769507407248" agent="azure-architecture-generator" etag="8535ae7b" version="24.7.17">
+  <diagram name="Azure Architecture Diagram" id="azure-architecture">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- Azure Cloud Header -->
+        <mxCell id="azure-header" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0078d4;strokeColor=none;fontSize=16;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="1089" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="azure-logo" value="" style="image;sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%220%200%2040%2040%22%3E%0A%3Cpath%20d%3D%22M20%202L38%2036H2L20%202z%22%20fill%3D%22%230078d4%22/%3E%0A%3Ctext%20x%3D%2220%22%20y%3D%2225%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Arial%22%3EAz%3C/text%3E%0A%3C/svg%3E;" vertex="1" parent="1">
+          <mxGeometry x="50" y="25" width="40" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="azure-title" value="Microsoft Azure Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="30" width="300" height="30" as="geometry"/>
+        </mxCell>
+        
+        <!-- Azure Subscription Container -->
+        <mxCell id="subscription" value="Azure Subscription" style="swimlane;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=14;startSize=30;rounded=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="90" width="1049" height="720" as="geometry"/>
+        </mxCell>
+        
+        <!-- Resource Group Container -->
+        <mxCell id="resource-group" value="Resource Group" style="swimlane;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;startSize=26;rounded=1;dashed=1;dashPattern=5 5;" vertex="1" parent="subscription">
+          <mxGeometry x="30" y="40" width="989" height="650" as="geometry"/>
+        </mxCell>
+        
+        
+        <mxCell id="cat-compute" value="⚡ Compute" style="swimlane;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ff9800;fontSize=12;startSize=26;rounded=1;" vertex="1" parent="resource-group">
+          <mxGeometry x="20" y="60" width="949" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-app-services" value="App Services" style="sketch=0;aspect=fixed;html=1;points=[];align=center;image;fontSize=10;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%228%22%20fill%3D%22%230078d4%22%20stroke%3D%22%23005a9e%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2232%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%227%22%20font-family%3D%22Segoe%20UI%22%3EPortal%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2244%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EIcon%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2256%22%20text-anchor%3D%22middle%22%20fill%3D%22%2387ceeb%22%20font-size%3D%225%22%20font-family%3D%22Segoe%20UI%22%3ELive%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;" vertex="1" parent="cat-compute">
+          <mxGeometry x="50" y="40" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-azure-app-service" value="Azure App Service" style="sketch=0;aspect=fixed;html=1;points=[];align=center;image;fontSize=10;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20id%3D%22fd454f1c-5506-44b8-874e-8814b8b2f70b%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2218%22%20height%3D%2218%22%20viewBox%3D%220%200%2018%2018%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22f34d9569-2bd0-4002-8f16-3d01d8106cb5%22%20x1%3D%228.88%22%20y1%3D%2212.21%22%20x2%3D%228.88%22%20y2%3D%220.21%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%230078d4%22%20/%3E%3Cstop%20offset%3D%220.82%22%20stop-color%3D%22%235ea0ef%22%20/%3E%3C/linearGradient%3E%3ClinearGradient%20id%3D%22bdb45a0b-eb58-4970-a60a-fb2ce314f866%22%20x1%3D%228.88%22%20y1%3D%2216.84%22%20x2%3D%228.88%22%20y2%3D%2212.21%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%3Cstop%20offset%3D%220.15%22%20stop-color%3D%22%23ccc%22%20/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23707070%22%20/%3E%3C/linearGradient%3E%3C/defs%3E%3Ctitle%3EIcon-compute-21%3C/title%3E%3Crect%20x%3D%22-0.12%22%20y%3D%220.21%22%20width%3D%2218%22%20height%3D%2212%22%20rx%3D%220.6%22%20fill%3D%22url%28%23f34d9569-2bd0-4002-8f16-3d01d8106cb5%29%22%20/%3E%3Cpolygon%20points%3D%2211.88%204.46%2011.88%207.95%208.88%209.71%208.88%206.21%2011.88%204.46%22%20fill%3D%22%2350e6ff%22%20/%3E%3Cpolygon%20points%3D%2211.88%204.46%208.88%206.22%205.88%204.46%208.88%202.71%2011.88%204.46%22%20fill%3D%22%23c3f1ff%22%20/%3E%3Cpolygon%20points%3D%228.88%206.22%208.88%209.71%205.88%207.95%205.88%204.46%208.88%206.22%22%20fill%3D%22%239cebff%22%20/%3E%3Cpolygon%20points%3D%225.88%207.95%208.88%206.21%208.88%209.71%205.88%207.95%22%20fill%3D%22%23c3f1ff%22%20/%3E%3Cpolygon%20points%3D%2211.88%207.95%208.88%206.21%208.88%209.71%2011.88%207.95%22%20fill%3D%22%239cebff%22%20/%3E%3Cpath%20d%3D%22M12.49%2C15.84c-1.78-.28-1.85-1.56-1.85-3.63H7.11c0%2C2.07-.06%2C3.35-1.84%2C3.63a1%2C1%2C0%2C0%2C0-.89%2C1h9A1%2C1%2C0%2C0%2C0%2C12.49%2C15.84Z%22%20fill%3D%22url%28%23bdb45a0b-eb58-4970-a60a-fb2ce314f866%29%22%20/%3E%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;" vertex="1" parent="cat-compute">
+          <mxGeometry x="160" y="40" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="cat-storage" value="💾 Storage" style="swimlane;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#2196f3;fontSize=12;startSize=26;rounded=1;" vertex="1" parent="resource-group">
+          <mxGeometry x="20" y="300" width="949" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-azure-blob-storage" value="Azure Blob Storage" style="sketch=0;aspect=fixed;html=1;points=[];align=center;image;fontSize=10;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20id%3D%22f2f04349-8aee-4413-84c9-a9053611b319%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2218%22%20height%3D%2218%22%20viewBox%3D%220%200%2018%2018%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22ad4c4f96-09aa-4f91-ba10-5cb8ad530f74%22%20x1%3D%229%22%20y1%3D%2215.83%22%20x2%3D%229%22%20y2%3D%225.79%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23b3b3b3%22%20/%3E%3Cstop%20offset%3D%220.26%22%20stop-color%3D%22%23c1c1c1%22%20/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e6e6e6%22%20/%3E%3C/linearGradient%3E%3C/defs%3E%3Ctitle%3EIcon-storage-86%3C/title%3E%3Cpath%20d%3D%22M.5%2C5.79h17a0%2C0%2C0%2C0%2C1%2C0%2C0v9.48a.57.57%2C0%2C0%2C1-.57.57H1.07a.57.57%2C0%2C0%2C1-.57-.57V5.79A0%2C0%2C0%2C0%2C1%2C.5%2C5.79Z%22%20fill%3D%22url%28%23ad4c4f96-09aa-4f91-ba10-5cb8ad530f74%29%22%20/%3E%3Cpath%20d%3D%22M1.07%2C2.17H16.93a.57.57%2C0%2C0%2C1%2C.57.57V5.79a0%2C0%2C0%2C0%2C1%2C0%2C0H.5a0%2C0%2C0%2C0%2C1%2C0%2C0V2.73A.57.57%2C0%2C0%2C1%2C1.07%2C2.17Z%22%20fill%3D%22%2337c2b1%22%20/%3E%3Cpath%20d%3D%22M2.81%2C6.89H15.18a.27.27%2C0%2C0%2C1%2C.26.27v1.4a.27.27%2C0%2C0%2C1-.26.27H2.81a.27.27%2C0%2C0%2C1-.26-.27V7.16A.27.27%2C0%2C0%2C1%2C2.81%2C6.89Z%22%20fill%3D%22%23fff%22%20/%3E%3Cpath%20d%3D%22M2.82%2C9.68H15.19a.27.27%2C0%2C0%2C1%2C.26.27v1.41a.27.27%2C0%2C0%2C1-.26.27H2.82a.27.27%2C0%2C0%2C1-.26-.27V10A.27.27%2C0%2C0%2C1%2C2.82%2C9.68Z%22%20fill%3D%22%2337c2b1%22%20/%3E%3Cpath%20d%3D%22M2.82%2C12.5H15.19a.27.27%2C0%2C0%2C1%2C.26.27v1.41a.27.27%2C0%2C0%2C1-.26.27H2.82a.27.27%2C0%2C0%2C1-.26-.27V12.77A.27.27%2C0%2C0%2C1%2C2.82%2C12.5Z%22%20fill%3D%22%23258277%22%20/%3E%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;" vertex="1" parent="cat-storage">
+          <mxGeometry x="50" y="40" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-blob-storage" value="Blob Storage" style="sketch=0;aspect=fixed;html=1;points=[];align=center;image;fontSize=10;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%228%22%20fill%3D%22%230078d4%22%20stroke%3D%22%23005a9e%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2232%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%227%22%20font-family%3D%22Segoe%20UI%22%3EPortal%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2244%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EIcon%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2256%22%20text-anchor%3D%22middle%22%20fill%3D%22%2387ceeb%22%20font-size%3D%225%22%20font-family%3D%22Segoe%20UI%22%3ELive%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;" vertex="1" parent="cat-storage">
+          <mxGeometry x="160" y="40" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="cat-database" value="🗄️ Database" style="swimlane;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#9c27b0;fontSize=12;startSize=26;rounded=1;" vertex="1" parent="resource-group">
+          <mxGeometry x="20" y="540" width="949" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-azure-sql-database" value="Azure SQL Database" style="sketch=0;aspect=fixed;html=1;points=[];align=center;image;fontSize=10;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20id%3D%22a96792b7-ce28-4ca3-9767-4e065ef4820f%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2218%22%20height%3D%2218%22%20viewBox%3D%220%200%2018%2018%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22ef16bf9d-a8b6-4181-b6cd-66fc5203f956%22%20x1%3D%222.59%22%20y1%3D%2210.16%22%20x2%3D%2215.41%22%20y2%3D%2210.16%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23005ba1%22%20/%3E%3Cstop%20offset%3D%220.07%22%20stop-color%3D%22%230060a9%22%20/%3E%3Cstop%20offset%3D%220.36%22%20stop-color%3D%22%230071c8%22%20/%3E%3Cstop%20offset%3D%220.52%22%20stop-color%3D%22%230078d4%22%20/%3E%3Cstop%20offset%3D%220.64%22%20stop-color%3D%22%230074cd%22%20/%3E%3Cstop%20offset%3D%220.82%22%20stop-color%3D%22%23006abb%22%20/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23005ba1%22%20/%3E%3C/linearGradient%3E%3CradialGradient%20id%3D%22bf3846c3-4d74-4743-ab9a-f334c248bd92%22%20cx%3D%229.36%22%20cy%3D%2210.57%22%20r%3D%227.07%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23f2f2f2%22%20/%3E%3Cstop%20offset%3D%220.58%22%20stop-color%3D%22%23eee%22%20/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e6e6e6%22%20/%3E%3C/radialGradient%3E%3C/defs%3E%3Ctitle%3EIcon-databases-130%3C/title%3E%3Cpath%20d%3D%22M9%2C5.14c-3.54%2C0-6.41-1-6.41-2.32V15.18c0%2C1.27%2C2.82%2C2.3%2C6.32%2C2.32H9c3.54%2C0%2C6.41-1%2C6.41-2.32V2.82C15.41%2C4.11%2C12.54%2C5.14%2C9%2C5.14Z%22%20fill%3D%22url%28%23ef16bf9d-a8b6-4181-b6cd-66fc5203f956%29%22%20/%3E%3Cpath%20d%3D%22M15.41%2C2.82c0%2C1.29-2.87%2C2.32-6.41%2C2.32s-6.41-1-6.41-2.32S5.46.5%2C9%2C.5s6.41%2C1%2C6.41%2C2.32%22%20fill%3D%22%23e8e8e8%22%20/%3E%3Cpath%20d%3D%22M13.92%2C2.63c0%2C.82-2.21%2C1.48-4.92%2C1.48S4.08%2C3.45%2C4.08%2C2.63%2C6.29%2C1.16%2C9%2C1.16s4.92.66%2C4.92%2C1.47%22%20fill%3D%22%2350e6ff%22%20/%3E%3Cpath%20d%3D%22M9%2C3a11.55%2C11.55%2C0%2C0%2C0-3.89.57A11.42%2C11.42%2C0%2C0%2C0%2C9%2C4.11a11.15%2C11.15%2C0%2C0%2C0%2C3.89-.58A11.84%2C11.84%2C0%2C0%2C0%2C9%2C3Z%22%20fill%3D%22%23198ab3%22%20/%3E%3Cpath%20d%3D%22M12.9%2C11.4V8H12v4.13h2.46V11.4ZM5.76%2C9.73a1.83%2C1.83%2C0%2C0%2C1-.51-.31.44.44%2C0%2C0%2C1-.12-.32.34.34%2C0%2C0%2C1%2C.15-.3.68.68%2C0%2C0%2C1%2C.42-.12%2C1.62%2C1.62%2C0%2C0%2C1%2C1%2C.29V8.11a2.58%2C2.58%2C0%2C0%2C0-1-.16%2C1.64%2C1.64%2C0%2C0%2C0-1.09.34%2C1.08%2C1.08%2C0%2C0%2C0-.42.89c0%2C.51.32.91%2C1%2C1.21a2.88%2C2.88%2C0%2C0%2C1%2C.62.36.42.42%2C0%2C0%2C1%2C.15.32.38.38%2C0%2C0%2C1-.16.31.81.81%2C0%2C0%2C1-.45.11%2C1.66%2C1.66%2C0%2C0%2C1-1.09-.42V12a2.17%2C2.17%2C0%2C0%2C0%2C1.07.24%2C1.88%2C1.88%2C0%2C0%2C0%2C1.18-.33A1.08%2C1.08%2C0%2C0%2C0%2C6.84%2C11a1.05%2C1.05%2C0%2C0%2C0-.25-.7A2.42%2C2.42%2C0%2C0%2C0%2C5.76%2C9.73ZM11%2C11.32a2.34%2C2.34%2C0%2C0%2C0%2C.33-1.26A2.32%2C2.32%2C0%2C0%2C0%2C11%2C9a1.81%2C1.81%2C0%2C0%2C0-.7-.75%2C2%2C2%2C0%2C0%2C0-1-.26%2C2.11%2C2.11%2C0%2C0%2C0-1.08.27A1.86%2C1.86%2C0%2C0%2C0%2C7.49%2C9a2.46%2C2.46%2C0%2C0%2C0-.26%2C1.14%2C2.26%2C2.26%2C0%2C0%2C0%2C.24%2C1%2C1.76%2C1.76%2C0%2C0%2C0%2C.69.74%2C2.06%2C2.06%2C0%2C0%2C0%2C1%2C.3l.86%2C1h1.21L10%2C12.08A1.79%2C1.79%2C0%2C0%2C0%2C11%2C11.32ZM10%2C11.07a.94.94%2C0%2C0%2C1-.76.35.92.92%2C0%2C0%2C1-.76-.36%2C1.52%2C1.52%2C0%2C0%2C1-.29-1%2C1.53%2C1.53%2C0%2C0%2C1%2C.29-1%2C1%2C1%2C0%2C0%2C1%2C.78-.37.87.87%2C0%2C0%2C1%2C.75.37%2C1.62%2C1.62%2C0%2C0%2C1%2C.27%2C1A1.46%2C1.46%2C0%2C0%2C1%2C10%2C11.07Z%22%20fill%3D%22url%28%23bf3846c3-4d74-4743-ab9a-f334c248bd92%29%22%20/%3E%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;" vertex="1" parent="cat-database">
+          <mxGeometry x="50" y="40" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="cat-other" value="🔧 Other" style="swimlane;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#9e9e9e;fontSize=12;startSize=26;rounded=1;" vertex="1" parent="resource-group">
+          <mxGeometry x="20" y="700" width="949" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-azure-active-directory" value="Azure Active Directory" style="sketch=0;aspect=fixed;html=1;points=[];align=center;image;fontSize=10;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%228%22%20fill%3D%22%230078d4%22%20stroke%3D%22%23005a9e%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2232%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%227%22%20font-family%3D%22Segoe%20UI%22%3EPortal%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2244%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EIcon%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2256%22%20text-anchor%3D%22middle%22%20fill%3D%22%2387ceeb%22%20font-size%3D%225%22%20font-family%3D%22Segoe%20UI%22%3ELive%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;" vertex="1" parent="cat-other">
+          <mxGeometry x="50" y="40" width="64" height="64" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="conn_0" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#0078d4;strokeWidth=2;" edge="1" parent="1" source="service_0" target="service_1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="300" as="sourcePoint"/>
+            <mxPoint x="450" y="250" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conn_1" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#0078d4;strokeWidth=2;" edge="1" parent="1" source="service_1" target="service_2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="300" as="sourcePoint"/>
+            <mxPoint x="450" y="250" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conn_2" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#0078d4;strokeWidth=2;" edge="1" parent="1" source="service_2" target="service_3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="300" as="sourcePoint"/>
+            <mxPoint x="450" y="250" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conn_3" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#0078d4;strokeWidth=2;" edge="1" parent="1" source="service_3" target="service_4">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="300" as="sourcePoint"/>
+            <mxPoint x="450" y="250" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conn_4" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#0078d4;strokeWidth=2;" edge="1" parent="1" source="service_4" target="service_5">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="300" as="sourcePoint"/>
+            <mxPoint x="450" y="250" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conn-0" value="" style="endArrow=classic;html=1;rounded=1;strokeColor=#0078d4;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="resource-group" source="service-azure-sql-database" target="service-app-services">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="300" as="sourcePoint"/>
+            <mxPoint x="450" y="250" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conn-1" value="" style="endArrow=classic;html=1;rounded=1;strokeColor=#0078d4;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="resource-group" source="service-app-services" target="service-azure-blob-storage">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="300" as="sourcePoint"/>
+            <mxPoint x="450" y="250" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conn-2" value="" style="endArrow=classic;html=1;rounded=1;strokeColor=#0078d4;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="resource-group" source="service-azure-blob-storage" target="service-azure-active-directory">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="300" as="sourcePoint"/>
+            <mxPoint x="450" y="250" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conn-3" value="" style="endArrow=classic;html=1;rounded=1;strokeColor=#0078d4;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="resource-group" source="service-azure-active-directory" target="service-blob-storage">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="300" as="sourcePoint"/>
+            <mxPoint x="450" y="250" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conn-4" value="" style="endArrow=classic;html=1;rounded=1;strokeColor=#0078d4;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="resource-group" source="service-blob-storage" target="service-azure-app-service">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="300" as="sourcePoint"/>
+            <mxPoint x="450" y="250" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Architecture Legend -->
+        <mxCell id="legend" value="" style="swimlane;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#dee2e6;fontSize=12;startSize=26;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="1150" y="90" width="200" height="300" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend-title" value="Azure Services Legend" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="10" width="180" height="30" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

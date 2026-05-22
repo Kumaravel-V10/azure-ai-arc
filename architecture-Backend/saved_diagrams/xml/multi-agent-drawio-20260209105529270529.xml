@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="1770614729268" agent="professional-azure-generator" etag="bf759d4c" version="24.7.17">
+  <diagram name="Azure Architecture" id="azure-arch-professional">
+    <mxGraphModel dx="1674" dy="1014" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        
+        <!-- Azure Subscription Header -->
+        <mxCell id="subscription-header" value="Azure Subscription - East US Region" 
+               style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0078d4;strokeColor=none;fontSize=14;fontColor=#ffffff;fontStyle=1;align=left;spacingLeft=20;" 
+               vertex="1" parent="1">
+          <mxGeometry x="30" y="20" width="1340" height="40" as="geometry"/>
+        </mxCell>
+        
+        <!-- Resource Group Container -->
+        <mxCell id="main-resource-group" value="aiagentsarchitecture-rg (Resource Group)" 
+               style="swimlane;whiteSpace=wrap;html=1;fillColor=#e8f4fd;strokeColor=#004578;fontSize=11;startSize=28;rounded=1;dashed=1;dashPattern=8 8;fontStyle=1;" 
+               vertex="1" parent="1">
+          <mxGeometry x="50" y="80" width="1300" height="650" as="geometry"/>
+        </mxCell>
+        
+        <!-- Virtual Network Container -->
+        <mxCell id="vnet-container" value="aiagentsarchitectureVNet (10.0.0.0/16)" 
+               style="swimlane;whiteSpace=wrap;html=1;fillColor=#e6f3ff;strokeColor=#0078d4;fontSize=10;startSize=24;rounded=1;dashed=1;dashPattern=5 5;" 
+               vertex="1" parent="main-resource-group">
+          <mxGeometry x="30" y="40" width="1030" height="580" as="geometry"/>
+        </mxCell>
+        
+        <!-- API Management Container -->
+        <mxCell id="container-api-management" value="🌐 API Management" 
+               style="swimlane;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#004578;fontSize=11;startSize=26;rounded=1;fontStyle=1;" 
+               vertex="1" parent="vnet-container">
+          <mxGeometry x="40" y="50" width="680" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-azure-cache-for-redis" value="Azure Cache for Redis" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%230078d4%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%E2%9A%99%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EService%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="container-api-management">
+          <mxGeometry x="20" y="35" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-application-gateway-v2" value="Application Gateway v2" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%234CAF50%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%F0%9F%8C%90%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EWeb%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="container-api-management">
+          <mxGeometry x="135" y="35" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-azure-private-endpoints" value="Azure Private Endpoints" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%230078d4%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%E2%9A%99%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EService%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="container-api-management">
+          <mxGeometry x="250" y="35" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-azure-kubernetes-service" value="Azure Kubernetes Service" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%230078d4%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%E2%9A%99%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EService%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="container-api-management">
+          <mxGeometry x="365" y="35" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-azure-reserved-instances" value="Azure Reserved Instances" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%230078d4%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%E2%9A%99%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EService%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="container-api-management">
+          <mxGeometry x="480" y="35" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-azure-front-door" value="Azure Front Door" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%230078d4%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%E2%9A%99%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EService%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="container-api-management">
+          <mxGeometry x="595" y="35" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <!-- Data Layer Container -->
+        <mxCell id="container-data-layer" value="💾 Data Layer" 
+               style="swimlane;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#004578;fontSize=11;startSize=26;rounded=1;fontStyle=1;" 
+               vertex="1" parent="vnet-container">
+          <mxGeometry x="40" y="430" width="680" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-azure-sql-database" value="Azure SQL Database" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%232196F3%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%F0%9F%92%BE%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EData%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="container-data-layer">
+          <mxGeometry x="20" y="35" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-azure-storage-tiers" value="Azure Storage Tiers" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%232196F3%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%F0%9F%92%BE%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EData%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="container-data-layer">
+          <mxGeometry x="135" y="35" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <!-- Virtual Machines Container -->
+        <mxCell id="container-virtual-machines" value="🖥️ Virtual Machines" 
+               style="swimlane;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#004578;fontSize=11;startSize=26;rounded=1;fontStyle=1;" 
+               vertex="1" parent="vnet-container">
+          <mxGeometry x="750" y="50" width="250" height="400" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-azure-spot-vms" value="Azure Spot VMs" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%230078d4%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%E2%9A%99%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EService%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="container-virtual-machines">
+          <mxGeometry x="20" y="35" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <!-- Security & Identity Container -->
+        <mxCell id="container-security-&-identity" value="🔒 Security & Identity" 
+               style="swimlane;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#004578;fontSize=11;startSize=26;rounded=1;fontStyle=1;" 
+               vertex="1" parent="vnet-container">
+          <mxGeometry x="40" y="480" width="680" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-azure-key-vault" value="Azure Key Vault" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%239C27B0%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%F0%9F%94%92%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3ESecurity%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="container-security-&-identity">
+          <mxGeometry x="20" y="35" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-azure-active-directory" value="Azure Active Directory" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%230078d4%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%E2%9A%99%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EService%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="container-security-&-identity">
+          <mxGeometry x="135" y="35" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-azure-firewall" value="Azure Firewall" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%23FF9800%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%F0%9F%94%97%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3ENetwork%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="container-security-&-identity">
+          <mxGeometry x="250" y="35" width="64" height="64" as="geometry"/>
+        </mxCell>
+        
+        <!-- Architecture Notes Panel -->
+        <mxCell id="notes-panel" value="Architecture Notes" 
+               style="swimlane;whiteSpace=wrap;html=1;fillColor=#e6f3ff;strokeColor=#004578;fontSize=12;startSize=26;rounded=1;fontStyle=1;" 
+               vertex="1" parent="1">
+          <mxGeometry x="1080" y="150" width="280" height="350" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="notes-content" value="• API Management serves as the gateway for all function apps
+• Function apps provide microservices functionality
+• Web apps handle UI components (Azure/PowerShell)
+• Data storage uses multiple Azure Database services
+• Redis cache for session management and caching
+• Automation account for resource management
+• Application Insights for monitoring and telemetry" 
+               style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontFamily=Segoe UI;spacing=5;spacingLeft=10;spacingTop=5;" 
+               vertex="1" parent="notes-panel">
+          <mxGeometry x="10" y="35" width="260" height="300" as="geometry"/>
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

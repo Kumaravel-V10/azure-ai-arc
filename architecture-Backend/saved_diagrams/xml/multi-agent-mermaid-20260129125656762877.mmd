@@ -1,0 +1,54 @@
+graph TB
+    subgraph Azure["☁️ Microsoft Azure"]
+        subgraph RG["📦 Resource Group"]
+            subgraph COMPUTE["⚡ Compute"]
+                appprodeastus001["🔧 app-prod-eastus-001"]
+                AzureSpotVMs["🔧 Azure Spot VMs"]
+                AzureReservedInstances["🔧 Azure Reserved Instances"]
+                AzurePrivateEndpoints["🔧 Azure Private Endpoints"]
+                agwprodeastus001["🔧 agw-prod-eastus-001"]
+                AzureActiveDirectory["🔧 Azure Active Directory"]
+                AppServices["🌐 App Services"]
+            end
+            subgraph STORAGE["💾 Storage"]
+                AzureStorageTiers["🔧 Azure Storage Tiers"]
+            end
+            subgraph DATABASE["🗄️ Database"]
+                AzureCacheforRedis["🔧 Azure Cache for Redis"]
+                sqldbprodeastus001["🔧 sqldb-prod-eastus-001"]
+            end
+            subgraph NETWORKING["🌐 Networking"]
+                AzureCDN["🔧 Azure CDN"]
+                ApplicationGateway["🚪 Application Gateway"]
+                ApplicationGatewayv2["🚪 Application Gateway v2"]
+                AzureFirewall["🔧 Azure Firewall"]
+            end
+            subgraph SECURITY["🔒 Security"]
+                AzureKeyVault["🔐 Azure Key Vault"]
+            end
+        end
+    end
+
+    %% Service Connections
+    AzureCacheforRedis --> appprodeastus001
+    appprodeastus001 --> AzureSpotVMs
+    AzureSpotVMs --> AzureKeyVault
+    AzureKeyVault --> AzureReservedInstances
+    AzureReservedInstances --> AzureCDN
+    AzureCDN --> ApplicationGateway
+    ApplicationGateway --> AzurePrivateEndpoints
+    AzurePrivateEndpoints --> agwprodeastus001
+    agwprodeastus001 --> AzureStorageTiers
+    AzureStorageTiers --> AzureActiveDirectory
+    AzureActiveDirectory --> ApplicationGatewayv2
+    ApplicationGatewayv2 --> AppServices
+    AppServices --> sqldbprodeastus001
+    sqldbprodeastus001 --> AzureFirewall
+
+    %% Azure Styling
+    classDef azure fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff
+    classDef compute fill:#ff6b35,stroke:#e55100,stroke-width:2px,color:#fff
+    classDef storage fill:#00bcf2,stroke:#0288d1,stroke-width:2px,color:#fff
+    classDef database fill:#ba68c8,stroke:#8e24aa,stroke-width:2px,color:#fff
+    classDef networking fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
+    classDef security fill:#f44336,stroke:#d32f2f,stroke-width:2px,color:#fff

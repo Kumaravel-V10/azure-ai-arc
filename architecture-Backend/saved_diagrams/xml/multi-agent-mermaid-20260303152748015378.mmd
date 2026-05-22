@@ -1,0 +1,70 @@
+graph TB
+    subgraph Azure["☁️ Microsoft Azure"]
+        subgraph RG["📦 Resource Group"]
+            subgraph COMPUTE["⚡ Compute"]
+                Users["🔧 Users"]
+                AzureAppServicePlanFinnair["🔧 Azure App Service Plan - Finnair"]
+                AzureAppServicePlanKLM["🔧 Azure App Service Plan - KLM"]
+                AzureFunctions["🔧 Azure Functions"]
+                AzureDDoSProtection["🔧 Azure DDoS Protection"]
+                AzureAppConfiguration["🔧 Azure App Configuration"]
+                AzureTrafficManager["🔧 Azure Traffic Manager"]
+            end
+            subgraph STORAGE["💾 Storage"]
+                AzureBackup["🔧 Azure Backup"]
+            end
+            subgraph DATABASE["🗄️ Database"]
+                AzurePostgreSQL["🔧 Azure PostgreSQL"]
+                AzureRedisCache["🔧 Azure Redis Cache"]
+            end
+            subgraph NETWORKING["🌐 Networking"]
+                AzureFrontDoor["🔧 Azure Front Door"]
+                AzureApplicationGatewayFinnair["🚪 Azure Application Gateway - Finnair"]
+                AzureApplicationGatewayKLM["🚪 Azure Application Gateway - KLM"]
+                AzureFirewallPremium["🔧 Azure Firewall Premium"]
+            end
+            subgraph SECURITY["🔒 Security"]
+                AzureKeyVault["🔐 Azure Key Vault"]
+                MicrosoftDefenderforCloud["🔧 Microsoft Defender for Cloud"]
+                MicrosoftSentinel["🔧 Microsoft Sentinel"]
+            end
+            subgraph ANALYTICS["📊 Analytics"]
+                AzureLogAnalyticsWorkspace["🔧 Azure Log Analytics Workspace"]
+            end
+            subgraph INTEGRATION["🔗 Integration"]
+                AzureAPIManagement["🔧 Azure API Management"]
+            end
+            subgraph MONITORING["📈 Monitoring"]
+                AzureApplicationInsights["🔧 Azure Application Insights"]
+                AzureMonitor["🔧 Azure Monitor"]
+            end
+        end
+    end
+
+    %% Architecture Connections
+    Users -->|User requests| AzureFrontDoor
+    AzureFrontDoor -->|HTTPS routing for Finnair| AzureApplicationGatewayFinnair
+    AzureFrontDoor -->|HTTPS routing for KLM| AzureApplicationGatewayKLM
+    AzureApplicationGatewayFinnair -->|Backend routing for Finnair| AzureAppServicePlanFinnair
+    AzureApplicationGatewayKLM -->|Backend routing for KLM| AzureAppServicePlanKLM
+    AzureAPIManagement -->|API calls to backend services| AzureFunctions
+    AzureFunctions -->|Database queries| AzurePostgreSQL
+    AzureFunctions -->|Cache queries| AzureRedisCache
+    AzureFunctions -->|Secrets retrieval| AzureKeyVault
+    AzureAppServicePlanFinnair -->|Telemetry for Finnair| AzureApplicationInsights
+    AzureAppServicePlanKLM -->|Telemetry for KLM| AzureApplicationInsights
+    AzureAppServicePlanFinnair -->|Telemetry & diagnostics| AzureLogAnalyticsWorkspace
+    AzureAppServicePlanFinnair -->|Telemetry & diagnostics| AzureMonitor
+    AzureFrontDoor -->|Security monitoring| MicrosoftDefenderforCloud
+    AzureFirewallPremium -->|Telemetry & diagnostics| AzureApplicationInsights
+    AzureFrontDoor -->|Security monitoring| MicrosoftSentinel
+    AzureFrontDoor -->|Content delivery| AzureDDoSProtection
+    AzureAppServicePlanFinnair -->|SQL queries| AzurePostgreSQL
+
+    %% Azure Styling
+    classDef azure fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff
+    classDef compute fill:#ff6b35,stroke:#e55100,stroke-width:2px,color:#fff
+    classDef storage fill:#00bcf2,stroke:#0288d1,stroke-width:2px,color:#fff
+    classDef database fill:#ba68c8,stroke:#8e24aa,stroke-width:2px,color:#fff
+    classDef networking fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
+    classDef security fill:#f44336,stroke:#d32f2f,stroke-width:2px,color:#fff

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="1770101913396" agent="multi-agent-generator" etag="891b123b" version="24.7.17">
+  <diagram name="AI Agents Architecture" id="arch-891b123b">
+    <mxGraphModel dx="1674" dy="1014" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        
+        <!-- Azure Subscription Container -->
+        <mxCell id="subscription-container" value="Azure Subscription - AI Agents Architecture" 
+               style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0078d4;strokeColor=none;fontSize=14;fontColor=#ffffff;fontStyle=1;align=left;spacingLeft=20;" 
+               vertex="1" parent="1">
+          <mxGeometry x="30" y="20" width="1340" height="40" as="geometry"/>
+        </mxCell>
+        
+        <!-- Main Resource Group -->
+        <mxCell id="main-rg-container" value="rg-ai-agents-architecture (Resource Group)" 
+               style="swimlane;whiteSpace=wrap;html=1;fillColor=#e8f4fd;strokeColor=#004578;fontSize=11;startSize=28;rounded=1;dashed=1;dashPattern=8 8;fontStyle=1;" 
+               vertex="1" parent="1">
+          <mxGeometry x="50" y="80" width="1300" height="750" as="geometry"/>
+        </mxCell>
+        
+        <!-- Virtual Network -->
+        <mxCell id="vnet-container" value="vnet-ai-agents-architecture (10.0.0.0/16)" 
+               style="swimlane;whiteSpace=wrap;html=1;fillColor=#e6f3ff;strokeColor=#0078d4;fontSize=10;startSize=24;rounded=1;dashed=1;dashPattern=5 5;" 
+               vertex="1" parent="main-rg-container">
+          <mxGeometry x="30" y="40" width="1240" height="680" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="service-azure-active-directory-0" value="Azure Active Directory" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=img/lib/azure2/compute/Function_Apps.svg;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="vnet-container">
+          <mxGeometry x="100" y="100" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-azure-firewall-1" value="Azure Firewall" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=img/lib/azure2/compute/Function_Apps.svg;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="vnet-container">
+          <mxGeometry x="250" y="100" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-application-gateway-v2-2" value="Application Gateway v2" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=img/lib/azure2/app_services/App_Services.svg;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="vnet-container">
+          <mxGeometry x="400" y="100" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-azure-key-vault-3" value="Azure Key Vault" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=img/lib/azure2/compute/Function_Apps.svg;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="vnet-container">
+          <mxGeometry x="550" y="100" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-azure-private-endpoints-4" value="Azure Private Endpoints" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=img/lib/azure2/compute/Function_Apps.svg;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="vnet-container">
+          <mxGeometry x="700" y="100" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-azure-cdn-5" value="Azure CDN" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=img/lib/azure2/compute/Function_Apps.svg;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="vnet-container">
+          <mxGeometry x="850" y="100" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-azure-cache-for-redis-6" value="Azure Cache for Redis" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=img/lib/azure2/compute/Function_Apps.svg;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="vnet-container">
+          <mxGeometry x="100" y="220" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-application-gateway-7" value="Application Gateway" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=img/lib/azure2/networking/Application_Gateways.svg;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="vnet-container">
+          <mxGeometry x="250" y="220" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-app-prod-eastus-001-8" value="app-prod-eastus-001" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=img/lib/azure2/general/Azure.svg;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="vnet-container">
+          <mxGeometry x="400" y="220" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-sqldb-prod-eastus-001-9" value="sqldb-prod-eastus-001" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=img/lib/azure2/general/Azure.svg;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="vnet-container">
+          <mxGeometry x="550" y="220" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-agw-prod-eastus-001-10" value="agw-prod-eastus-001" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=img/lib/azure2/general/Azure.svg;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="vnet-container">
+          <mxGeometry x="700" y="220" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-azure-reserved-instances-11" value="Azure Reserved Instances" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=img/lib/azure2/compute/Function_Apps.svg;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="vnet-container">
+          <mxGeometry x="850" y="220" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-azure-spot-vms-12" value="Azure Spot VMs" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=img/lib/azure2/compute/Function_Apps.svg;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="vnet-container">
+          <mxGeometry x="100" y="340" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="service-azure-storage-tiers-13" value="Azure Storage Tiers" 
+               style="sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=img/lib/azure2/compute/Function_Apps.svg;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;" 
+               vertex="1" parent="vnet-container">
+          <mxGeometry x="250" y="340" width="64" height="64" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="conn-1" value="" 
+               style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=2;" 
+               edge="1" parent="vnet-container" source="service-application-gateway-7" target="service-azure-storage-tiers-13">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn-2" value="" 
+               style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=2;" 
+               edge="1" parent="vnet-container" source="service-azure-storage-tiers-13" target="service-azure-key-vault-3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn-3" value="" 
+               style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=2;" 
+               edge="1" parent="vnet-container" source="service-azure-cache-for-redis-6" target="service-application-gateway-7">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn-4" value="" 
+               style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0078d4;strokeWidth=2;" 
+               edge="1" parent="vnet-container" source="service-application-gateway-7" target="service-azure-storage-tiers-13">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

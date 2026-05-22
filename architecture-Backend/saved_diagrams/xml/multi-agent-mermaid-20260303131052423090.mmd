@@ -1,0 +1,83 @@
+graph TB
+    subgraph Azure["☁️ Microsoft Azure"]
+        subgraph RG["📦 Resource Group"]
+            subgraph COMPUTE["⚡ Compute"]
+                Users["🔧 Users"]
+                AzureAppServicePlanFinnair["🔧 Azure App Service Plan - Finnair"]
+                AzureAppServicePlanKLM["🔧 Azure App Service Plan - KLM"]
+                AzureFunctions["🔧 Azure Functions"]
+                AzureAppConfiguration["🔧 Azure App Configuration"]
+                AzureDDoSProtection["🔧 Azure DDoS Protection"]
+                PrivateEndpoint["🔧 Private Endpoint"]
+            end
+            subgraph STORAGE["💾 Storage"]
+                AzureStorageAccountFinnair["💾 Azure Storage Account - Finnair"]
+                AzureStorageAccountKLM["💾 Azure Storage Account - KLM"]
+                Georedundantbackups["🔧 Geo-redundant backups"]
+                PrivateendpointsforAzureStorageAccounts["💾 Private endpoints for Azure Storage Accounts"]
+                AzureBackup["🔧 Azure Backup"]
+            end
+            subgraph DATABASE["🗄️ Database"]
+                AzurePostgreSQLServer["🔧 Azure PostgreSQL Server"]
+                AzureRedisCache["🔧 Azure Redis Cache"]
+                AzureCacheforRedis["🔧 Azure Cache for Redis"]
+            end
+            subgraph NETWORKING["🌐 Networking"]
+                AzureFrontDoor["🔧 Azure Front Door"]
+                AzureApplicationGatewayFinnair["🚪 Azure Application Gateway - Finnair"]
+                AzureApplicationGatewayKLM["🚪 Azure Application Gateway - KLM"]
+                AzureFirewallPremium["🔧 Azure Firewall Premium"]
+            end
+            subgraph SECURITY["🔒 Security"]
+                AzureKeyVaultShared["🔐 Azure Key Vault - Shared"]
+                AzureKeyVaultSecurity["🔐 Azure Key Vault - Security"]
+                MicrosoftDefenderforCloud["🔧 Microsoft Defender for Cloud"]
+                MicrosoftSentinel["🔧 Microsoft Sentinel"]
+            end
+            subgraph ANALYTICS["📊 Analytics"]
+                LogAnalyticsWorkspace["🔧 Log Analytics Workspace"]
+            end
+            subgraph INTEGRATION["🔗 Integration"]
+                AzureAPIManagement["🔧 Azure API Management"]
+            end
+            subgraph MONITORING["📈 Monitoring"]
+                ApplicationInsights["🔧 Application Insights"]
+                AzureMonitor["🔧 Azure Monitor"]
+            end
+        end
+    end
+
+    %% Architecture Connections
+    Users -->|User requests| AzureFrontDoor
+    AzureFrontDoor -->|HTTPS routing for Finnair| AzureApplicationGatewayFinnair
+    AzureFrontDoor -->|HTTPS routing for KLM| AzureApplicationGatewayKLM
+    AzureApplicationGatewayFinnair -->|Backend routing for Finnair| AzureAppServicePlanFinnair
+    AzureApplicationGatewayKLM -->|Backend routing for KLM| AzureAppServicePlanKLM
+    AzureAppServicePlanFinnair -->|Data queries for Finnair| AzurePostgreSQLServer
+    AzureAppServicePlanKLM -->|Data queries for KLM| AzurePostgreSQLServer
+    AzureFunctions -->|Cache access| AzureRedisCache
+    AzureFunctions -->|Secrets retrieval| AzureKeyVaultShared
+    AzureFunctions -->|Telemetry| ApplicationInsights
+    AzureAPIManagement -->|API gateway routing| AzureFunctions
+    AzureAppServicePlanFinnair -->|Data storage| AzureStorageAccountFinnair
+    AzureAppServicePlanFinnair -->|Data storage| AzureStorageAccountKLM
+    AzureFrontDoor -->|Secrets & certificate management| AzureKeyVaultSecurity
+    AzureAPIManagement -->|API gateway routing| AzureAppConfiguration
+    AzureAppServicePlanFinnair -->|Telemetry & diagnostics| LogAnalyticsWorkspace
+    AzureAppServicePlanFinnair -->|Telemetry & diagnostics| AzureMonitor
+    AzureFrontDoor -->|Security monitoring| MicrosoftDefenderforCloud
+    AzureFirewallPremium -->|Secrets & certificate management| AzureKeyVaultSecurity
+    AzureFrontDoor -->|Security monitoring| MicrosoftSentinel
+    AzureFrontDoor -->|Content delivery| AzureDDoSProtection
+    AzureAppServicePlanKLM -->|Data storage| AzureStorageAccountKLM
+    AzureFrontDoor -->|Health monitoring| AzureMonitor
+    AzureAppServicePlanFinnair -->|Caching for Finnair portal| AzureCacheforRedis
+    AzureStorageAccountFinnair -->|Secure storage access| PrivateEndpoint
+
+    %% Azure Styling
+    classDef azure fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff
+    classDef compute fill:#ff6b35,stroke:#e55100,stroke-width:2px,color:#fff
+    classDef storage fill:#00bcf2,stroke:#0288d1,stroke-width:2px,color:#fff
+    classDef database fill:#ba68c8,stroke:#8e24aa,stroke-width:2px,color:#fff
+    classDef networking fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
+    classDef security fill:#f44336,stroke:#d32f2f,stroke-width:2px,color:#fff

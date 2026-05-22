@@ -1,0 +1,44 @@
+graph TB
+    subgraph Azure["☁️ Microsoft Azure"]
+        subgraph RG["📦 Resource Group"]
+            subgraph COMPUTE["⚡ Compute"]
+                AzureAppService["🔧 Azure App Service"]
+                AppServices["🌐 App Services"]
+            end
+            subgraph STORAGE["💾 Storage"]
+                AzureBlobStorage["🔧 Azure Blob Storage"]
+                StorageAccount["💾 Storage Account"]
+            end
+            subgraph DATABASE["🗄️ Database"]
+                SQLDatabase["🗃️ SQL Database"]
+                AzureSQLDatabase["🗃️ Azure SQL Database"]
+            end
+            subgraph AI_+_ML["🤖 AI + ML"]
+                AzureOpenAIService["🔧 Azure OpenAI Service"]
+            end
+            subgraph MONITORING["📈 Monitoring"]
+                ApplicationInsights["🔧 Application Insights"]
+                AzureApplicationInsights["🔧 Azure Application Insights"]
+                AzureMonitor["🔧 Azure Monitor"]
+            end
+        end
+    end
+
+    %% Service Connections
+    SQLDatabase --> ApplicationInsights
+    ApplicationInsights --> AzureApplicationInsights
+    AzureApplicationInsights --> AzureOpenAIService
+    AzureOpenAIService --> AzureBlobStorage
+    AzureBlobStorage --> AzureMonitor
+    AzureMonitor --> AzureAppService
+    AzureAppService --> AppServices
+    AppServices --> StorageAccount
+    StorageAccount --> AzureSQLDatabase
+
+    %% Azure Styling
+    classDef azure fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff
+    classDef compute fill:#ff6b35,stroke:#e55100,stroke-width:2px,color:#fff
+    classDef storage fill:#00bcf2,stroke:#0288d1,stroke-width:2px,color:#fff
+    classDef database fill:#ba68c8,stroke:#8e24aa,stroke-width:2px,color:#fff
+    classDef networking fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
+    classDef security fill:#f44336,stroke:#d32f2f,stroke-width:2px,color:#fff

@@ -1,0 +1,79 @@
+graph TB
+    subgraph Azure["☁️ Microsoft Azure"]
+        subgraph RG["📦 Resource Group"]
+            subgraph COMPUTE["⚡ Compute"]
+                AzureAppServiceFinnairPortal["🔧 Azure App Service - Finnair Portal"]
+                AzureDNSZoneFinnair["🔧 Azure DNS Zone - Finnair"]
+                AzureAppServiceKLMPortal["🔧 Azure App Service - KLM Portal"]
+                AzureDNSZoneKLM["🔧 Azure DNS Zone - KLM"]
+                AzureAppServiceSharedFunctions["🔧 Azure App Service - Shared Functions"]
+            end
+            subgraph STORAGE["💾 Storage"]
+                AzureStorageFinnair["🔧 Azure Storage - Finnair"]
+                AzureStorageKLM["🔧 Azure Storage - KLM"]
+                AzureBackup["🔧 Azure Backup"]
+            end
+            subgraph DATABASE["🗄️ Database"]
+                PostgreSQLServer["🔧 PostgreSQL Server"]
+                RedisCache["🔧 Redis Cache"]
+            end
+            subgraph NETWORKING["🌐 Networking"]
+                AzureFrontDoor["🔧 Azure Front Door"]
+                AzureWebApplicationFirewall(WAF)["🔧 Azure Web Application Firewall (WAF)"]
+                AzureApplicationGatewayFinnair["🚪 Azure Application Gateway - Finnair"]
+                AzureApplicationGatewayKLM["🚪 Azure Application Gateway - KLM"]
+            end
+            subgraph SECURITY["🔒 Security"]
+                AzureKeyVaultFinnair["🔐 Azure Key Vault - Finnair"]
+                AzureKeyVaultKLM["🔐 Azure Key Vault - KLM"]
+                AzureKeyVaultShared["🔐 Azure Key Vault - Shared"]
+                MicrosoftDefenderforCloud["🔧 Microsoft Defender for Cloud"]
+            end
+            subgraph ANALYTICS["📊 Analytics"]
+                LogAnalyticsWorkspace["🔧 Log Analytics Workspace"]
+            end
+            subgraph INTEGRATION["🔗 Integration"]
+                AzureAPIManagement["🔧 Azure API Management"]
+            end
+            subgraph MONITORING["📈 Monitoring"]
+                AzureMonitor["🔧 Azure Monitor"]
+                ApplicationInsights["🔧 Application Insights"]
+            end
+        end
+    end
+
+    %% Architecture Connections
+    AzureFrontDoor -->|User HTTPS requests| AzureWebApplicationFirewall(WAF)
+    AzureWebApplicationFirewall(WAF) -->|Tenant-specific traffic routing| AzureApplicationGatewayFinnair
+    AzureWebApplicationFirewall(WAF) -->|Tenant-specific traffic routing| AzureApplicationGatewayKLM
+    AzureApplicationGatewayFinnair -->|Web application traffic| AzureAppServiceFinnairPortal
+    AzureApplicationGatewayKLM -->|Web application traffic| AzureAppServiceKLMPortal
+    AzureAppServiceSharedFunctions -->|API calls via Private Endpoint| AzureAPIManagement
+    AzureAppServiceSharedFunctions -->|SQL queries over Private Link| PostgreSQLServer
+    AzureAppServiceSharedFunctions -->|Cache-aside pattern| RedisCache
+    AzureAppServiceSharedFunctions -->|Secrets retrieval via Managed Identity| AzureKeyVaultShared
+    AzureAppServiceFinnairPortal -->|Secrets retrieval via Managed Identity| AzureKeyVaultFinnair
+    AzureAppServiceKLMPortal -->|Secrets retrieval via Managed Identity| AzureKeyVaultKLM
+    AzureMonitor -->|Telemetry & diagnostics| AzureAppServiceSharedFunctions
+    AzureMonitor -->|Telemetry & diagnostics| AzureAppServiceFinnairPortal
+    AzureMonitor -->|Telemetry & diagnostics| AzureAppServiceKLMPortal
+    AzureMonitor -->|Telemetry & diagnostics| PostgreSQLServer
+    AzureMonitor -->|Telemetry & diagnostics| RedisCache
+    vnettestfrontendfrasc -->|VNet Peering| vnettestsharedbackendfrasc
+    AzureAppServiceFinnairPortal -->|Data storage| AzureStorageFinnair
+    AzureApplicationGatewayFinnair -->|DNS resolution| AzureDNSZoneFinnair
+    AzureAppServiceFinnairPortal -->|Data storage| AzureStorageKLM
+    AzureApplicationGatewayKLM -->|DNS resolution| AzureDNSZoneKLM
+    AzureAppServiceFinnairPortal -->|Telemetry & diagnostics| ApplicationInsights
+    AzureAppServiceFinnairPortal -->|Telemetry & diagnostics| LogAnalyticsWorkspace
+    AzureFrontDoor -->|Security monitoring| MicrosoftDefenderforCloud
+    AzureAppServiceSharedFunctions -->|Telemetry| AzureMonitor
+    AzureAppServiceKLMPortal -->|Telemetry| AzureMonitor
+
+    %% Azure Styling
+    classDef azure fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff
+    classDef compute fill:#ff6b35,stroke:#e55100,stroke-width:2px,color:#fff
+    classDef storage fill:#00bcf2,stroke:#0288d1,stroke-width:2px,color:#fff
+    classDef database fill:#ba68c8,stroke:#8e24aa,stroke-width:2px,color:#fff
+    classDef networking fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
+    classDef security fill:#f44336,stroke:#d32f2f,stroke-width:2px,color:#fff

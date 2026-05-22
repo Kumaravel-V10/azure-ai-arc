@@ -1,0 +1,52 @@
+graph TB
+    subgraph Azure["☁️ Microsoft Azure"]
+        subgraph RG["📦 Resource Group"]
+            subgraph COMPUTE["⚡ Compute"]
+                AzurePrivateEndpoints["🔧 Azure Private Endpoints"]
+                AzureActiveDirectory["🔧 Azure Active Directory"]
+                AzureReservedInstances["🔧 Azure Reserved Instances"]
+                AzureSpotVMs["🔧 Azure Spot VMs"]
+                appprodeastus001["🔧 app-prod-eastus-001"]
+                agwprodeastus001["🔧 agw-prod-eastus-001"]
+            end
+            subgraph STORAGE["💾 Storage"]
+                AzureStorageTiers["🔧 Azure Storage Tiers"]
+            end
+            subgraph DATABASE["🗄️ Database"]
+                AzureCacheforRedis["🔧 Azure Cache for Redis"]
+                sqldbprodeastus001["🔧 sqldb-prod-eastus-001"]
+            end
+            subgraph NETWORKING["🌐 Networking"]
+                ApplicationGatewayv2["🚪 Application Gateway v2"]
+                AzureCDN["🔧 Azure CDN"]
+                ApplicationGateway["🚪 Application Gateway"]
+                AzureFirewall["🔧 Azure Firewall"]
+            end
+            subgraph SECURITY["🔒 Security"]
+                AzureKeyVault["🔐 Azure Key Vault"]
+            end
+        end
+    end
+
+    %% Service Connections
+    AzurePrivateEndpoints --> ApplicationGatewayv2
+    ApplicationGatewayv2 --> AzureCDN
+    AzureCDN --> AzureCacheforRedis
+    AzureCacheforRedis --> AzureActiveDirectory
+    AzureActiveDirectory --> AzureReservedInstances
+    AzureReservedInstances --> AzureStorageTiers
+    AzureStorageTiers --> AzureKeyVault
+    AzureKeyVault --> ApplicationGateway
+    ApplicationGateway --> AzureSpotVMs
+    AzureSpotVMs --> appprodeastus001
+    appprodeastus001 --> agwprodeastus001
+    agwprodeastus001 --> AzureFirewall
+    AzureFirewall --> sqldbprodeastus001
+
+    %% Azure Styling
+    classDef azure fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff
+    classDef compute fill:#ff6b35,stroke:#e55100,stroke-width:2px,color:#fff
+    classDef storage fill:#00bcf2,stroke:#0288d1,stroke-width:2px,color:#fff
+    classDef database fill:#ba68c8,stroke:#8e24aa,stroke-width:2px,color:#fff
+    classDef networking fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
+    classDef security fill:#f44336,stroke:#d32f2f,stroke-width:2px,color:#fff

@@ -1,0 +1,113 @@
+# Nevio Azure Shared Backend Architecture
+
+## Overview
+
+This document describes the multi-tenant shared backend architecture for the Nevio Service Center, designed to support multiple airline tenants (like Finnair and KLM) with a shared backend infrastructure while maintaining tenant isolation for frontend applications.
+
+## Architecture Components
+
+### 1. Internet Gateway & Security
+- **Azure Front Door**: Global load balancer and content delivery network
+- **WAF Policy**: Web Application Firewall for security protection
+- **SSL Certificates**: Secure communications for all tenant domains
+
+### 2. Tenant-Specific Resources
+
+#### Finnair Tenant (`rg-test-finnair-fra-sc`)
+- **Application Gateway**: Load balancer for Finnair-specific traffic
+- **Web App Service Plan**: Dedicated compute for Finnair portal
+- **Finnair Portal**: Tenant-specific web application
+- **Finnair Storage**: Tenant-specific storage account
+- **Finnair Identity**: Managed identity for secure resource access
+- **DNS Zone**: `finnair-test.nevio.com` for custom domain
+
+#### KLM Tenant (`rg-test-klm-fra-sc`)
+- **KLM Portal**: Tenant-specific web application
+- Similar infrastructure pattern as Finnair
+
+### 3. Shared Backend Services (`rg-test-shared-backend-fra-sc`)
+
+#### API Management
+- **Shared API Management**: Centralized API gateway for all backend services
+- Located in dedicated subnet (`snet-shared-apim`)
+
+#### Function Apps (Microservices)
+All function apps share the same App Service Plan and are hosted in `snet-shared-functions`:
+- **func-booking**: Booking management services
+- **func-payment**: Payment processing services
+- **func-customer**: Customer management services
+- **func-notification**: Notification services
+- **func-analytics**: Analytics and reporting services
+- **func-integration**: External system integrations
+- **func-reporting**: Business reporting services
+
+#### Data Layer (`snet-shared-data`)
+- **PostgreSQL Server**: Multi-tenant database with tenant isolation
+- **Redis Cache**: Shared caching layer for performance
+- **Private Endpoints**: Secure connectivity to data services
+- **Private DNS Zones**: 
+  - `postgres.database.azure.com`
+  - `vault.azure.net`
+
+#### Configuration & Security
+- **App Configuration**: Centralized tenant settings management
+- **Shared Key Vault**: Secure secrets and configuration storage
+- **Shared Storage**: Function apps storage requirements
+- **Shared Managed Identity**: Service-to-service authentication
+
+### 4. Monitoring & Security (`rg-test-monitoring-security-fra-sc`)
+- **Application Insights**: Application performance monitoring
+- **Log Analytics Workspace**: Centralized logging
+- **Azure Monitor**: Infrastructure monitoring
+- **Entra ID**: Identity and access management
+- **Security Key Vault**: Security-specific secrets
+- **Microsoft Defender**: Advanced threat protection
+
+## Network Architecture
+
+### Virtual Network Design
+- **Shared Backend VNet**: `vnet-test-shared-backend-fra-sc`
+  - **API Management Subnet**: Isolated subnet for APIM
+  - **Functions Subnet**: Shared compute for all function apps
+  - **Data Subnet**: Private connectivity for databases and cache
+
+### Security Features
+- **Private Endpoints**: Secure connectivity to PaaS services
+- **Network Security Groups**: Traffic filtering and security rules
+- **Private DNS Zones**: Internal name resolution
+- **VNet Peering**: Secure connectivity between tenant and shared networks
+
+## Multi-Tenant Strategy
+
+### Tenant Isolation
+- **UI Level**: Each tenant has dedicated web applications and gateways
+- **Data Level**: Tenant isolation implemented at the database level
+- **Configuration**: Tenant-specific settings managed through App Configuration
+
+### Shared Resources
+- **Backend Services**: All business logic functions are shared
+- **Data Infrastructure**: Single PostgreSQL instance with tenant partitioning
+- **Monitoring**: Centralized logging and monitoring for all tenants
+- **Security**: Shared security infrastructure with tenant-specific access controls
+
+## Benefits
+
+1. **Cost Efficiency**: Shared backend infrastructure reduces operational costs
+2. **Scalability**: Centralized services can scale based on aggregate demand
+3. **Maintainability**: Single codebase for business logic across all tenants
+4. **Security**: Centralized security controls and monitoring
+5. **Performance**: Shared caching and optimized data access patterns
+
+## Deployment Considerations
+
+- **Region**: Germany West Central (`fra`)
+- **Environment**: Test environment with production-ready architecture
+- **Naming Convention**: Consistent resource naming following Azure best practices
+- **Security**: Zero-trust approach with private endpoints and managed identities
+
+## Future Enhancements
+
+- Additional tenant onboarding through infrastructure as code
+- Enhanced monitoring and alerting capabilities
+- Disaster recovery and backup strategies
+- Performance optimization and auto-scaling policies

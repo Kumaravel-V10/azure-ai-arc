@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.env
+.env.*
+.venv/
+venv/
+ENV/
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# VSCode
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+*.bak
+
+# Test
+htmlcov/
+.coverage
+.tox/
+.nox/
+.pytest_cache/
+
+# Misc
+*.log
+*.local
+*.cache
+
+# Mac
+__MACOSX/

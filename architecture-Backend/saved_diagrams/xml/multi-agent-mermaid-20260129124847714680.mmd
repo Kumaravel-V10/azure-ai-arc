@@ -1,0 +1,58 @@
+graph TB
+    subgraph Azure["☁️ Microsoft Azure"]
+        subgraph RG["📦 Resource Group"]
+            subgraph COMPUTE["⚡ Compute"]
+                appprodeastus001["🔧 app-prod-eastus-001"]
+                VirtualMachine["🖥️ Virtual Machine"]
+                AzureSpotVMs["🔧 Azure Spot VMs"]
+                AzureReservedInstances["🔧 Azure Reserved Instances"]
+                ContainerInstances["🔧 Container Instances"]
+                AzureActiveDirectory["🔧 Azure Active Directory"]
+                agwprodeastus001["🔧 agw-prod-eastus-001"]
+            end
+            subgraph STORAGE["💾 Storage"]
+                AzureStorageTiers["🔧 Azure Storage Tiers"]
+                StorageAccount["💾 Storage Account"]
+            end
+            subgraph DATABASE["🗄️ Database"]
+                AzureCacheforRedis["🔧 Azure Cache for Redis"]
+                sqldbprodeastus001["🔧 sqldb-prod-eastus-001"]
+            end
+            subgraph NETWORKING["🌐 Networking"]
+                NetworkSecurityGroups["🔧 Network Security Groups"]
+                AzureCDN["🔧 Azure CDN"]
+                ApplicationGateway["🚪 Application Gateway"]
+            end
+            subgraph SECURITY["🔒 Security"]
+                AzureKeyVault["🔐 Azure Key Vault"]
+            end
+            subgraph AI_+_ML["🤖 AI + ML"]
+                MachineLearning["🔧 Machine Learning"]
+            end
+        end
+    end
+
+    %% Service Connections
+    AzureCacheforRedis --> appprodeastus001
+    appprodeastus001 --> VirtualMachine
+    VirtualMachine --> AzureSpotVMs
+    AzureSpotVMs --> AzureKeyVault
+    AzureKeyVault --> MachineLearning
+    MachineLearning --> AzureReservedInstances
+    AzureReservedInstances --> ContainerInstances
+    ContainerInstances --> NetworkSecurityGroups
+    NetworkSecurityGroups --> AzureCDN
+    AzureCDN --> ApplicationGateway
+    ApplicationGateway --> AzureStorageTiers
+    AzureStorageTiers --> AzureActiveDirectory
+    AzureActiveDirectory --> StorageAccount
+    StorageAccount --> sqldbprodeastus001
+    sqldbprodeastus001 --> agwprodeastus001
+
+    %% Azure Styling
+    classDef azure fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff
+    classDef compute fill:#ff6b35,stroke:#e55100,stroke-width:2px,color:#fff
+    classDef storage fill:#00bcf2,stroke:#0288d1,stroke-width:2px,color:#fff
+    classDef database fill:#ba68c8,stroke:#8e24aa,stroke-width:2px,color:#fff
+    classDef networking fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
+    classDef security fill:#f44336,stroke:#d32f2f,stroke-width:2px,color:#fff

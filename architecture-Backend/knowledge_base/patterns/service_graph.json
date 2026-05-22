@@ -1,0 +1,21 @@
+{
+  "AKS": [
+    "Cosmos DB",
+    "Service Bus"
+  ],
+  "Users": [
+    "Azure Front Door"
+  ],
+  "Azure Front Door": [
+    "Azure Application Gateway"
+  ],
+  "Azure Application Gateway": [
+    "Azure App Service"
+  ],
+  "Azure App Service": [
+    "Microsoft Entra ID",
+    "Azure Key Vault",
+    "Azure SQL Database",
+    "Application Insights"
+  ]
+}

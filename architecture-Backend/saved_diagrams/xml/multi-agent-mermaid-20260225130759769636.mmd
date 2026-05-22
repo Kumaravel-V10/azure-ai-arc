@@ -1,0 +1,69 @@
+graph TB
+    subgraph Azure["☁️ Microsoft Azure"]
+        subgraph RG["📦 Resource Group"]
+            subgraph COMPUTE["⚡ Compute"]
+                AzureAppServiceFinnairPortal["🔧 Azure App Service - Finnair Portal"]
+                AzureAppServiceKLMPortal["🔧 Azure App Service - KLM Portal"]
+                AzureAppServiceSharedFunctionApps["⚡ Azure App Service - Shared Function Apps"]
+                AzureDNSZones["🔧 Azure DNS Zones"]
+                AzureDevOpsPipelines["🔧 Azure DevOps Pipelines"]
+            end
+            subgraph STORAGE["💾 Storage"]
+                AzureStorageFinnair["🔧 Azure Storage - Finnair"]
+                AzureStorageKLM["🔧 Azure Storage - KLM"]
+                AzureBackup["🔧 Azure Backup"]
+            end
+            subgraph DATABASE["🗄️ Database"]
+                PostgreSQLFlexibleServer["🔧 PostgreSQL Flexible Server"]
+                AzureRedisCache["🔧 Azure Redis Cache"]
+            end
+            subgraph NETWORKING["🌐 Networking"]
+                AzureFrontDoor["🔧 Azure Front Door"]
+                AzureWebApplicationFirewall(WAF)["🔧 Azure Web Application Firewall (WAF)"]
+                AzureApplicationGatewayFinnair["🚪 Azure Application Gateway - Finnair"]
+                AzureApplicationGatewayKLM["🚪 Azure Application Gateway - KLM"]
+            end
+            subgraph SECURITY["🔒 Security"]
+                AzureKeyVaultShared["🔐 Azure Key Vault - Shared"]
+                AzureKeyVaultFinnair["🔐 Azure Key Vault - Finnair"]
+                AzureKeyVaultKLM["🔐 Azure Key Vault - KLM"]
+                MicrosoftDefenderforCloud["🔧 Microsoft Defender for Cloud"]
+            end
+            subgraph ANALYTICS["📊 Analytics"]
+                LogAnalyticsWorkspace["🔧 Log Analytics Workspace"]
+            end
+            subgraph INTEGRATION["🔗 Integration"]
+                AzureAPIManagement["🔧 Azure API Management"]
+            end
+            subgraph MONITORING["📈 Monitoring"]
+                ApplicationInsights["🔧 Application Insights"]
+                AzureMonitor["🔧 Azure Monitor"]
+            end
+        end
+    end
+
+    %% Architecture Connections
+    AzureFrontDoor -->|User HTTPS requests| AzureWebApplicationFirewall(WAF)
+    AzureWebApplicationFirewall(WAF) -->|Tenant-specific traffic routing| AzureApplicationGatewayFinnair
+    AzureWebApplicationFirewall(WAF) -->|Tenant-specific traffic routing| AzureApplicationGatewayKLM
+    AzureApplicationGatewayFinnair -->|Load balancing for Finnair portal| AzureAppServiceFinnairPortal
+    AzureApplicationGatewayKLM -->|Load balancing for KLM portal| AzureAppServiceKLMPortal
+    AzureAppServiceSharedFunctionApps -->|API calls via Private Endpoint| AzureAPIManagement
+    AzureAppServiceSharedFunctionApps -->|SQL queries over Private Link| PostgreSQLFlexibleServer
+    AzureAppServiceSharedFunctionApps -->|Cache-aside pattern| AzureRedisCache
+    AzureAppServiceSharedFunctionApps -->|Secrets retrieval via Managed Identity| AzureKeyVaultShared
+    AzureAppServiceFinnairPortal -->|Secrets retrieval via Managed Identity| AzureKeyVaultFinnair
+    AzureAppServiceKLMPortal -->|Secrets retrieval via Managed Identity| AzureKeyVaultKLM
+    AzureAppServiceSharedFunctionApps -->|Telemetry & diagnostics| ApplicationInsights
+    AzureAppServiceFinnairPortal -->|Telemetry & diagnostics| ApplicationInsights
+    AzureAppServiceKLMPortal -->|Telemetry & diagnostics| ApplicationInsights
+    vnettestsharedbackendfrasc -->|VNet Peering| vnettestfinnairfrasc
+    vnettestsharedbackendfrasc -->|VNet Peering| vnettestklmfrasc
+
+    %% Azure Styling
+    classDef azure fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff
+    classDef compute fill:#ff6b35,stroke:#e55100,stroke-width:2px,color:#fff
+    classDef storage fill:#00bcf2,stroke:#0288d1,stroke-width:2px,color:#fff
+    classDef database fill:#ba68c8,stroke:#8e24aa,stroke-width:2px,color:#fff
+    classDef networking fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
+    classDef security fill:#f44336,stroke:#d32f2f,stroke-width:2px,color:#fff

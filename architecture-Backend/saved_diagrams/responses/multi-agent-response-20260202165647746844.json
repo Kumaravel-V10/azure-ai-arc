@@ -1,0 +1,691 @@
+{
+  "diagram_url": "/diagram/multi-agent-diagram-20260202165647746844.png",
+  "architecture": {
+    "project_name": "Multi-Agent Azure Architecture",
+    "architecture_pattern": "Enterprise Multi-Agent Designed Architecture",
+    "user_requirements": "create webapplication",
+    "all_services": [
+      "sqldb-prod-eastus-001",
+      "Azure Firewall",
+      "Application Gateway v2",
+      "Azure Key Vault",
+      "Application Gateway",
+      "Azure Reserved Instances",
+      "Azure Private Endpoints",
+      "Azure Active Directory",
+      "agw-prod-eastus-001",
+      "Azure Storage Tiers",
+      "Azure Spot VMs",
+      "app-prod-eastus-001",
+      "Azure CDN",
+      "Azure Cache for Redis"
+    ],
+    "services_by_layer": {
+      "Security Layer": [
+        "Azure Active Directory",
+        "Azure Firewall",
+        "Application Gateway v2",
+        "Azure Key Vault",
+        "Azure Private Endpoints"
+      ],
+      "Performance Layer": [
+        "Azure CDN",
+        "Azure Cache for Redis",
+        "Application Gateway"
+      ],
+      "Application Layer": [
+        "app-prod-eastus-001",
+        "sqldb-prod-eastus-001",
+        "agw-prod-eastus-001"
+      ],
+      "Cost Optimization": [
+        "Azure Reserved Instances",
+        "Azure Spot VMs",
+        "Azure Storage Tiers"
+      ]
+    },
+    "total_services": 14,
+    "security_insights": {
+      "compliance_score": 95,
+      "critical_issues": [
+        {
+          "issue": "Public endpoints exposed without WAF protection",
+          "severity": "Critical",
+          "remediation": "Implement Application Gateway with WAF, disable public access to PaaS services",
+          "architecture_reference": "Secure web application pattern",
+          "effort": "High"
+        }
+      ],
+      "security_recommendations": [
+        "Enable Azure Security Center",
+        "Configure private endpoints",
+        "Implement network segmentation"
+      ]
+    },
+    "performance_insights": {
+      "performance_score": 75,
+      "optimization_opportunities": [],
+      "performance_recommendations": [
+        "Implement CDN for static content",
+        "Add Redis cache for sessions",
+        "Configure performance monitoring"
+      ]
+    },
+    "architecture_insights": {
+      "architecture_score": 0,
+      "design_patterns": [],
+      "architecture_recommendations": [
+        "Implement monitoring with Application Insights",
+        "Configure automated backups",
+        "Enable security features"
+      ],
+      "connections": [
+        {
+          "id": "conn1",
+          "source": "agw-prod-eastus-001",
+          "target": "app-prod-eastus-001",
+          "type": "HTTPS",
+          "port": "443"
+        },
+        {
+          "id": "conn2",
+          "source": "app-prod-eastus-001",
+          "target": "sqldb-prod-eastus-001",
+          "type": "SQL",
+          "port": "1433"
+        }
+      ]
+    },
+    "cost_insights": {
+      "cost_score": 88,
+      "cost_optimizations": [
+        {
+          "service": "Azure Reserved Instances",
+          "commitment": "3-year",
+          "workload": "Production VMs",
+          "savings_potential": "72%",
+          "annual_savings": "$15,000",
+          "configuration": "Reserve Standard_D4s_v3 instances for production workloads with consistent usage patterns",
+          "architecture_pattern": "Predictable Workload Optimization",
+          "payback_period": "14 months",
+          "icon": "azure-reserved-instances"
+        },
+        {
+          "service": "Azure Spot VMs",
+          "tier": "Standard_D4s_v3",
+          "workload": "Development/Testing",
+          "savings_potential": "90%",
+          "annual_savings": "$8,500",
+          "configuration": "Use Spot VMs for fault-tolerant batch processing and dev environments with auto-scaling",
+          "architecture_pattern": "Fault-Tolerant Cost Pattern",
+          "availability": "Variable",
+          "icon": "azure-spot-instances"
+        },
+        {
+          "service": "Azure Storage Tiers",
+          "optimization": "Lifecycle Management",
+          "workload": "Data Archival",
+          "savings_potential": "60%",
+          "annual_savings": "$3,200",
+          "configuration": "Implement automated tiering: Hot (0-30 days) → Cool (31-90 days) → Archive (90+ days)",
+          "architecture_pattern": "Data Lifecycle Cost Pattern",
+          "policy": "Automated",
+          "icon": "azure-blob-storage"
+        }
+      ],
+      "estimated_savings": {}
+    },
+    "comprehensive_recommendations": [
+      "🔒 Security: Enable Azure Security Center",
+      "🔒 Security: Configure private endpoints",
+      "🔒 Security: Implement network segmentation",
+      "🏗️ Architecture: Implement monitoring with Application Insights",
+      "🏗️ Architecture: Configure automated backups",
+      "🏗️ Architecture: Enable security features",
+      "⚡ Performance: Implement CDN for static content",
+      "⚡ Performance: Add Redis cache for sessions",
+      "💰 Cost: Consider reserved instances for steady workloads",
+      "💰 Cost: Implement auto-shutdown policies"
+    ],
+    "multi_agent_metadata": {
+      "workflow_status": "completed",
+      "agents_executed": [
+        "SecurityAgent",
+        "PerformanceAgent",
+        "ArchitectureAgent",
+        "CostOptimizationAgent"
+      ],
+      "total_duration": 39.80036664009094,
+      "processing_timeline": [
+        {
+          "agent": "Agent 1 (Security)",
+          "duration": 7.349884033203125,
+          "status": "completed"
+        },
+        {
+          "agent": "Agent 2 (Performance)",
+          "duration": 7.457446575164795,
+          "status": "completed"
+        },
+        {
+          "agent": "Agent 3 (Architecture)",
+          "duration": 13.943466424942017,
+          "status": "completed"
+        },
+        {
+          "agent": "Agent 4 (Cost)",
+          "duration": 11.049569606781006,
+          "status": "completed"
+        }
+      ]
+    },
+    "services": [
+      "sqldb-prod-eastus-001",
+      "Azure Firewall",
+      "Application Gateway v2",
+      "Azure Key Vault",
+      "Application Gateway",
+      "Azure Reserved Instances",
+      "Azure Private Endpoints",
+      "Azure Active Directory",
+      "agw-prod-eastus-001",
+      "Azure Storage Tiers",
+      "Azure Spot VMs",
+      "app-prod-eastus-001",
+      "Azure CDN",
+      "Azure Cache for Redis"
+    ],
+    "detected_services_info": [
+      {
+        "name": "App Services",
+        "confidence": 0.2,
+        "keywords_matched": [
+          "app"
+        ],
+        "icon_source": "portal",
+        "icon_url": "https://portal.azure.com/Content/static/MsPortalFx/Base/Images/Services/AppService.svg"
+      }
+    ],
+    "multi_agent_design": true,
+    "use_professional_style": true
+  },
+  "validation": {
+    "validation_id": "complex_ai_val_5249819918191482862",
+    "compliance_score": 82,
+    "critical_issues": [
+      "Public endpoints exposed without WAF protection."
+    ],
+    "quick_wins": [
+      "Enable Azure Security Center Defender plans.",
+      "Implement Infrastructure as Code for resource deployment.",
+      "Set up monitoring dashboards for real-time observability."
+    ],
+    "ai_comparison": {
+      "strengths": [
+        "Comprehensive security measures including Azure Security Center, private endpoints, and WAF.",
+        "Multi-tier architecture pattern implemented with proper separation of concerns.",
+        "Use of Application Gateway for load balancing and SSL termination.",
+        "Azure Key Vault for centralized secrets and certificate management with RBAC enabled.",
+        "Hub-and-Spoke network topology ensuring centralized security management and workload isolation."
+      ],
+      "gaps": [
+        "No disaster recovery or backup strategy explicitly mentioned.",
+        "Limited mention of managed identity for service authentication.",
+        "Performance optimization strategies such as auto-scaling are not fully detailed.",
+        "Monitoring and observability are partially addressed but lack detailed implementation."
+      ],
+      "insights": "The architecture demonstrates strong adherence to Azure Well-Architected Framework principles, particularly in security and cost optimization. However, gaps in disaster recovery, managed identity, and scalability need attention to ensure enterprise-grade reliability and performance.",
+      "well_architected_scores": {
+        "security": 85,
+        "reliability": 80,
+        "performance": 78,
+        "cost_optimization": 75,
+        "operational_excellence": 75
+      },
+      "overall_score": 82,
+      "architecture_assessment": {
+        "architecture_pattern": "Unknown",
+        "resource_group_organization": "Resource groups should be organized to separate domain-specific resources, shared services, and monitoring/security components for better manageability.",
+        "network_design": "The Hub-and-Spoke topology is well-implemented, but private endpoints for all PaaS services should be validated. Network Security Groups (NSGs) are configured with default deny inbound rules, which aligns with best practices.",
+        "security_implementation": "Strong security measures are implemented, including WAF, private endpoints, and Azure Key Vault. However, managed identity should be added for service authentication.",
+        "monitoring_strategy": "Not defined",
+        "disaster_recovery": "Not defined"
+      }
+    },
+    "agent_recommendations": {
+      "agents_results": [
+        {
+          "agent": "security",
+          "recommendations": [
+            "Enable Azure Security Center",
+            "Configure private endpoints",
+            "Implement network segmentation"
+          ],
+          "security_services": [
+            {
+              "service": "Azure Active Directory",
+              "tier": "Premium P2",
+              "purpose": "Zero Trust identity foundation with Conditional Access and Identity Protection",
+              "configuration": "Implement Conditional Access policies for location, device, and risk-based access. Enable Identity Protection for automated risk remediation. Use PIM for just-in-time admin access.",
+              "architecture_pattern": "Zero Trust Reference Architecture",
+              "icon": "azure-active-directory"
+            },
+            {
+              "service": "Azure Firewall",
+              "tier": "Premium",
+              "purpose": "Centralized network security in hub-and-spoke topology",
+              "configuration": "Deploy in hub VNet with forced tunneling. Enable IDPS, URL filtering, and TLS inspection. Configure DNAT rules for controlled inbound access.",
+              "architecture_pattern": "Hub-and-Spoke Network Security",
+              "icon": "azure-firewall"
+            },
+            {
+              "service": "Application Gateway v2",
+              "tier": "WAF_v2",
+              "purpose": "Web application firewall and SSL termination",
+              "configuration": "Enable WAF with OWASP 3.2 rules. Configure custom rules for application-specific threats. Implement SSL end-to-end encryption.",
+              "architecture_pattern": "Secure Web Application",
+              "icon": "azure-application-gateway"
+            },
+            {
+              "service": "Azure Key Vault",
+              "tier": "Premium",
+              "purpose": "Centralized secrets and certificate management",
+              "configuration": "Use Managed HSM for FIPS 140-2 Level 3 compliance. Enable soft delete and purge protection. Implement RBAC for granular access control.",
+              "architecture_pattern": "Secure Key Management",
+              "icon": "azure-key-vault"
+            },
+            {
+              "service": "Azure Private Endpoints",
+              "tier": "Standard",
+              "purpose": "Private connectivity for PaaS services",
+              "configuration": "Deploy private endpoints for all PaaS services in dedicated subnet. Configure private DNS zones for name resolution.",
+              "architecture_pattern": "Private PaaS Connectivity",
+              "icon": "azure-private-endpoints"
+            }
+          ],
+          "network_security": [
+            {
+              "component": "Hub-and-Spoke Topology",
+              "configuration": "Hub VNet (10.0.0.0/16) with Azure Firewall, VPN Gateway. Spoke VNets (10.1.0.0/16, 10.2.0.0/16) with VNet peering",
+              "justification": "Centralized security management with workload isolation per Azure Architecture Center guidance",
+              "reference": "https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/hybrid-networking/hub-spoke",
+              "icon": "azure-virtual-network"
+            },
+            {
+              "component": "Network Security Groups",
+              "configuration": "Default deny inbound, allow specific application ports (443, 80). Use service tags and ASGs for granular control",
+              "justification": "Implements micro-segmentation per Azure security baseline",
+              "icon": "azure-network-security-groups"
+            }
+          ],
+          "identity_management": [
+            {
+              "capability": "Zero Trust Conditional Access",
+              "configuration": "Require MFA for all users, compliant devices for admin access, block legacy authentication, location-based restrictions",
+              "architecture_pattern": "Zero Trust Identity",
+              "reference": "https://learn.microsoft.com/en-us/azure/architecture/guide/security/conditional-access-zero-trust",
+              "icon": "azure-active-directory"
+            }
+          ],
+          "data_protection": [],
+          "compliance_score": 95,
+          "critical_issues": [
+            {
+              "issue": "Public endpoints exposed without WAF protection",
+              "severity": "Critical",
+              "remediation": "Implement Application Gateway with WAF, disable public access to PaaS services",
+              "architecture_reference": "Secure web application pattern",
+              "effort": "High"
+            }
+          ],
+          "quick_wins": [
+            {
+              "improvement": "Enable Azure Security Center Defender plans",
+              "impact": "Immediate threat detection and security recommendations",
+              "architecture_reference": "Security monitoring baseline",
+              "effort_hours": "2"
+            }
+          ],
+          "status": "completed"
+        },
+        {
+          "agent": "performance",
+          "recommendations": [
+            "Implement CDN for static content",
+            "Add Redis cache for sessions",
+            "Configure performance monitoring"
+          ],
+          "performance_services": [
+            {
+              "service": "Azure CDN",
+              "tier": "Standard",
+              "purpose": "Content delivery optimization"
+            },
+            {
+              "service": "Azure Cache for Redis",
+              "tier": "Standard",
+              "purpose": "Application caching"
+            },
+            {
+              "service": "Application Gateway",
+              "tier": "Standard_v2",
+              "purpose": "Load balancing and SSL termination"
+            }
+          ],
+          "optimization_strategies": [
+            "Enable CDN",
+            "Implement caching",
+            "Configure auto-scaling"
+          ],
+          "performance_score": 75,
+          "critical_issues": [],
+          "quick_wins": [
+            {
+              "optimization": "Enable CDN",
+              "impact": "Reduced latency",
+              "implementation_time": "2 hours"
+            }
+          ],
+          "status": "completed"
+        },
+        {
+          "agent": "cost_optimization",
+          "recommendations": [
+            "Consider reserved instances for steady workloads",
+            "Implement auto-shutdown policies",
+            "Optimize storage costs"
+          ],
+          "cost_optimization_services": [
+            {
+              "service": "Azure Reserved Instances",
+              "commitment": "3-year",
+              "workload": "Production VMs",
+              "savings_potential": "72%",
+              "annual_savings": "$15,000",
+              "configuration": "Reserve Standard_D4s_v3 instances for production workloads with consistent usage patterns",
+              "architecture_pattern": "Predictable Workload Optimization",
+              "payback_period": "14 months",
+              "icon": "azure-reserved-instances"
+            },
+            {
+              "service": "Azure Spot VMs",
+              "tier": "Standard_D4s_v3",
+              "workload": "Development/Testing",
+              "savings_potential": "90%",
+              "annual_savings": "$8,500",
+              "configuration": "Use Spot VMs for fault-tolerant batch processing and dev environments with auto-scaling",
+              "architecture_pattern": "Fault-Tolerant Cost Pattern",
+              "availability": "Variable",
+              "icon": "azure-spot-instances"
+            },
+            {
+              "service": "Azure Storage Tiers",
+              "optimization": "Lifecycle Management",
+              "workload": "Data Archival",
+              "savings_potential": "60%",
+              "annual_savings": "$3,200",
+              "configuration": "Implement automated tiering: Hot (0-30 days) → Cool (31-90 days) → Archive (90+ days)",
+              "architecture_pattern": "Data Lifecycle Cost Pattern",
+              "policy": "Automated",
+              "icon": "azure-blob-storage"
+            }
+          ],
+          "rightsizing_strategies": [],
+          "cost_score": 88,
+          "critical_issues": [],
+          "quick_wins": [],
+          "status": "completed"
+        },
+        {
+          "agent": "architecture",
+          "schema": "https://schema.management.azure.com/schemas/2019-04-01/architecture.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "title": "Default Azure Architecture",
+            "description": "Multi-tier web application",
+            "author": "Azure Architecture Agent",
+            "architecture_pattern": "Multi-tier Web Application"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Web/sites",
+              "name": "app-prod-eastus-001",
+              "location": "East US",
+              "properties": {
+                "serverFarmId": "/subscriptions/.../serverfarms/asp-prod"
+              },
+              "diagramPosition": {
+                "x": 200,
+                "y": 150,
+                "width": 120,
+                "height": 80
+              },
+              "tier": "Standard S1",
+              "purpose": "Web application hosting",
+              "icon": "azure-app-service"
+            },
+            {
+              "type": "Microsoft.Sql/servers/databases",
+              "name": "sqldb-prod-eastus-001",
+              "location": "East US",
+              "properties": {
+                "edition": "Standard",
+                "serviceLevelObjective": "S2"
+              },
+              "diagramPosition": {
+                "x": 400,
+                "y": 150,
+                "width": 120,
+                "height": 80
+              },
+              "tier": "Standard S2",
+              "purpose": "Primary database",
+              "icon": "azure-sql-database"
+            },
+            {
+              "type": "Microsoft.Network/applicationGateways",
+              "name": "agw-prod-eastus-001",
+              "location": "East US",
+              "properties": {
+                "sku": {
+                  "name": "Standard_v2",
+                  "tier": "Standard_v2"
+                }
+              },
+              "diagramPosition": {
+                "x": 50,
+                "y": 150,
+                "width": 120,
+                "height": 80
+              },
+              "tier": "Standard_v2",
+              "purpose": "Load balancing and SSL termination",
+              "icon": "azure-application-gateway"
+            }
+          ],
+          "connections": [
+            {
+              "id": "conn1",
+              "source": "agw-prod-eastus-001",
+              "target": "app-prod-eastus-001",
+              "type": "HTTPS",
+              "port": "443"
+            },
+            {
+              "id": "conn2",
+              "source": "app-prod-eastus-001",
+              "target": "sqldb-prod-eastus-001",
+              "type": "SQL",
+              "port": "1433"
+            }
+          ],
+          "network_architecture": {},
+          "recommendations": [
+            "Implement monitoring with Application Insights",
+            "Configure automated backups",
+            "Enable security features"
+          ],
+          "architecture_pattern": "Multi-tier Web Application",
+          "security_features": {},
+          "critical_issues": [],
+          "quick_wins": [
+            "Implement Infrastructure as Code",
+            "Set up monitoring dashboards"
+          ],
+          "status": "completed"
+        }
+      ],
+      "summary": {
+        "total_agents": 4,
+        "agents_completed": 4,
+        "critical_issues_found": 1,
+        "recommendations_generated": 3
+      }
+    },
+    "recommendations": {
+      "critical": [
+        {
+          "title": "Public endpoints exposed without WAF protection.",
+          "description": "Critical: Public endpoints exposed without WAF protection.",
+          "priority": "high",
+          "effort": "medium"
+        }
+      ],
+      "high": [
+        {
+          "title": "Enable Azure Security Center Defender plans.",
+          "description": "High priority: Enable Azure Security Center Defender plans.",
+          "priority": "high",
+          "effort": "low"
+        },
+        {
+          "title": "Implement Infrastructure as Code for resource deployment.",
+          "description": "High priority: Implement Infrastructure as Code for resource deployment.",
+          "priority": "high",
+          "effort": "low"
+        },
+        {
+          "title": "Set up monitoring dashboards for real-time observability.",
+          "description": "High priority: Set up monitoring dashboards for real-time observability.",
+          "priority": "high",
+          "effort": "low"
+        }
+      ],
+      "medium": [
+        {
+          "title": "Consider Azure Front Door for global load balancing and additional WAF protection.",
+          "description": "Medium priority: Consider Azure Front Door for global load balancing and additional WAF protection.",
+          "priority": "medium",
+          "effort": "medium"
+        },
+        {
+          "title": "Optimize cost further by implementing reserved instances for steady workloads.",
+          "description": "Medium priority: Optimize cost further by implementing reserved instances for steady workloads.",
+          "priority": "medium",
+          "effort": "medium"
+        }
+      ]
+    },
+    "validation_type": "AI-Enhanced Complex Architecture Analysis",
+    "architecture_complexity": "Enterprise-Scale Multi-Tier",
+    "multi_agent_context": {
+      "workflow_status": "completed",
+      "agents_executed": [
+        "SecurityAgent",
+        "PerformanceAgent",
+        "ArchitectureAgent",
+        "CostOptimizationAgent"
+      ],
+      "total_duration": 39.80036664009094
+    }
+  },
+  "multi_agent_features": {
+    "sequential_agent_enhancement": true,
+    "security_analysis": true,
+    "performance_optimization": true,
+    "architecture_design": true,
+    "cost_optimization": true,
+    "professional_styling": true,
+    "intelligent_design": true
+  },
+  "workflow_insights": {
+    "agents_executed": [
+      "SecurityAgent",
+      "PerformanceAgent",
+      "ArchitectureAgent",
+      "CostOptimizationAgent"
+    ],
+    "processing_timeline": [
+      {
+        "agent": "Agent 1 (Security)",
+        "duration": 7.349884033203125,
+        "status": "completed"
+      },
+      {
+        "agent": "Agent 2 (Performance)",
+        "duration": 7.457446575164795,
+        "status": "completed"
+      },
+      {
+        "agent": "Agent 3 (Architecture)",
+        "duration": 13.943466424942017,
+        "status": "completed"
+      },
+      {
+        "agent": "Agent 4 (Cost)",
+        "duration": 11.049569606781006,
+        "status": "completed"
+      }
+    ],
+    "total_processing_time": 39.80036664009094,
+    "workflow_status": "completed"
+  },
+  "service_detection": {
+    "multi_agent_services": [
+      "sqldb-prod-eastus-001",
+      "Azure Firewall",
+      "Application Gateway v2",
+      "Azure Key Vault",
+      "Application Gateway",
+      "Azure Reserved Instances",
+      "Azure Private Endpoints",
+      "Azure Active Directory",
+      "agw-prod-eastus-001",
+      "Azure Storage Tiers",
+      "Azure Spot VMs",
+      "app-prod-eastus-001",
+      "Azure CDN",
+      "Azure Cache for Redis"
+    ],
+    "detected_services": [
+      {
+        "name": "App Services",
+        "confidence": 0.2,
+        "keywords_matched": [
+          "app"
+        ],
+        "icon_source": "portal",
+        "icon_url": "https://portal.azure.com/Content/static/MsPortalFx/Base/Images/Services/AppService.svg"
+      }
+    ],
+    "total_services": 14
+  },
+  "diagrams": {
+    "drawio_xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<mxfile host=\"app.diagrams.net\" modified=\"1770031607744\" agent=\"professional-azure-generator\" etag=\"b0a60836\" version=\"24.7.17\">\n  <diagram name=\"Azure Architecture\" id=\"azure-arch-professional\">\n    <mxGraphModel dx=\"1674\" dy=\"1014\" grid=\"1\" gridSize=\"10\" guides=\"1\" tooltips=\"1\" connect=\"1\" arrows=\"1\" fold=\"1\" page=\"1\" pageScale=\"1\" pageWidth=\"1400\" pageHeight=\"900\" math=\"0\" shadow=\"0\">\n      <root>\n        <mxCell id=\"0\"/>\n        <mxCell id=\"1\" parent=\"0\"/>\n        \n        \n        <!-- Azure Subscription Header -->\n        <mxCell id=\"subscription-header\" value=\"Azure Subscription - East US Region\" \n               style=\"rounded=0;whiteSpace=wrap;html=1;fillColor=#0078d4;strokeColor=none;fontSize=14;fontColor=#ffffff;fontStyle=1;align=left;spacingLeft=20;\" \n               vertex=\"1\" parent=\"1\">\n          <mxGeometry x=\"30\" y=\"20\" width=\"1340\" height=\"40\" as=\"geometry\"/>\n        </mxCell>\n        \n        <!-- Resource Group Container -->\n        <mxCell id=\"main-resource-group\" value=\"multi-agentazurearchitecture-rg (Resource Group)\" \n               style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#e8f4fd;strokeColor=#004578;fontSize=11;startSize=28;rounded=1;dashed=1;dashPattern=8 8;fontStyle=1;\" \n               vertex=\"1\" parent=\"1\">\n          <mxGeometry x=\"50\" y=\"80\" width=\"1300\" height=\"650\" as=\"geometry\"/>\n        </mxCell>\n        \n        <!-- Virtual Network Container -->\n        <mxCell id=\"vnet-container\" value=\"multi-agentazurearchitectureVNet (10.0.0.0/16)\" \n               style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#e6f3ff;strokeColor=#0078d4;fontSize=10;startSize=24;rounded=1;dashed=1;dashPattern=5 5;\" \n               vertex=\"1\" parent=\"main-resource-group\">\n          <mxGeometry x=\"30\" y=\"40\" width=\"1030\" height=\"580\" as=\"geometry\"/>\n        </mxCell>\n        \n        <!-- API Management Container -->\n        <mxCell id=\"container-api-management\" value=\"🌐 API Management\" \n               style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#004578;fontSize=11;startSize=26;rounded=1;fontStyle=1;\" \n               vertex=\"1\" parent=\"vnet-container\">\n          <mxGeometry x=\"40\" y=\"50\" width=\"680\" height=\"80\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"service-application-gateway-v2\" value=\"Application Gateway v2\" \n               style=\"sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%234CAF50%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%F0%9F%8C%90%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EWeb%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;\" \n               vertex=\"1\" parent=\"container-api-management\">\n          <mxGeometry x=\"20\" y=\"35\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"service-application-gateway\" value=\"Application Gateway\" \n               style=\"sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20id%3D%22acac5a34-a032-49f9-9397-37f4f1b4ae9a%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2218%22%20height%3D%2218%22%20viewBox%3D%220%200%2018%2018%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22f6d5399b-a5cb-4c09-96cc-9e3bb1af2386%22%20x1%3D%229%22%20y1%3D%2219.25%22%20x2%3D%229%22%20y2%3D%22-0.46%22%20gradientTransform%3D%22translate%289%20-3.73%29%20rotate%2845%29%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%235e9624%22%20/%3E%3Cstop%20offset%3D%220.55%22%20stop-color%3D%22%236dad2a%22%20/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%2376bc2d%22%20/%3E%3C/linearGradient%3E%3ClinearGradient%20id%3D%22a43242a2-4d95-4f6d-8870-2702ceb6aebc%22%20x1%3D%227.54%22%20y1%3D%226.44%22%20x2%3D%227.53%22%20y2%3D%225.18%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ccc%22%20/%3E%3Cstop%20offset%3D%220.12%22%20stop-color%3D%22%23d7d7d7%22%20/%3E%3Cstop%20offset%3D%220.42%22%20stop-color%3D%22%23ebebeb%22%20/%3E%3Cstop%20offset%3D%220.72%22%20stop-color%3D%22%23f8f8f8%22%20/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23fcfcfc%22%20/%3E%3C/linearGradient%3E%3ClinearGradient%20id%3D%22eedce6dd-706a-43c4-ac66-66b73578221d%22%20x1%3D%229.36%22%20y1%3D%227.69%22%20x2%3D%229.36%22%20y2%3D%226.57%22%20href%3D%22%23a43242a2-4d95-4f6d-8870-2702ceb6aebc%22%20/%3E%3C/defs%3E%3Crect%20x%3D%222.82%22%20y%3D%222.82%22%20width%3D%2212.35%22%20height%3D%2212.35%22%20rx%3D%220.57%22%20transform%3D%22translate%28-3.73%209%29%20rotate%28-45%29%22%20fill%3D%22url%28%23f6d5399b-a5cb-4c09-96cc-9e3bb1af2386%29%22%20/%3E%3Cg%3E%3Cpath%20d%3D%22M10.89%2C10.51h2.84a.11.11%2C0%2C0%2C0%2C.1-.11V7.57a.1.1%2C0%2C0%2C0-.18-.07l-.78.78%2C0%2C.05a.1.1%2C0%2C0%2C1-.14%2C0L9.26%2C4.91a.1.1%2C0%2C0%2C0-.14%2C0l-.88.88a.11.11%2C0%2C0%2C0%2C0%2C.15l3.41%2C3.41a.11.11%2C0%2C0%2C1%2C0%2C.15l-.05.05-.78.78A.11.11%2C0%2C0%2C0%2C10.89%2C10.51Z%22%20fill%3D%22%23fff%22%20/%3E%3Cpath%20d%3D%22M6.92%2C10.51H4.08A.11.11%2C0%2C0%2C1%2C4%2C10.4V7.57a.1.1%2C0%2C0%2C1%2C.17-.07l.79.78%2C0%2C.05a.1.1%2C0%2C0%2C0%2C.14%2C0L8.55%2C4.91a.1.1%2C0%2C0%2C1%2C.14%2C0l.88.88a.11.11%2C0%2C0%2C1%2C0%2C.15L6.16%2C9.35a.11.11%2C0%2C0%2C0%2C0%2C.15l0%2C.05.78.78A.11.11%2C0%2C0%2C1%2C6.92%2C10.51Z%22%20fill%3D%22%23fff%22%20/%3E%3Cpath%20d%3D%22M6.82%2C13.07l2%2C2a.1.1%2C0%2C0%2C0%2C.14%2C0l2-2a.1.1%2C0%2C0%2C0-.07-.17H9.72a.11.11%2C0%2C0%2C1-.1-.1V8a.1.1%2C0%2C0%2C0-.1-.11H8.28A.11.11%2C0%2C0%2C0%2C8.17%2C8V12.8a.1.1%2C0%2C0%2C1-.1.1H6.89A.1.1%2C0%2C0%2C0%2C6.82%2C13.07Z%22%20fill%3D%22%23fff%22%20/%3E%3C/g%3E%3Cpath%20id%3D%22ac0a9c0c-2e8c-4843-b02b-2fadf76b27d0%22%20d%3D%22M10.65%2C7.78A2.71%2C2.71%2C0%2C0%2C1%2C7.33%2C3.5l0%2C0a2.71%2C2.71%2C0%2C0%2C1%2C3.29%2C4.3%22%20fill%3D%22%230078d4%22%20/%3E%3Ccircle%20cx%3D%227.53%22%20cy%3D%225.55%22%20r%3D%220.87%22%20fill%3D%22url%28%23a43242a2-4d95-4f6d-8870-2702ceb6aebc%29%22%20/%3E%3Cg%3E%3Cpath%20d%3D%22M6.67%2C7l.19.3L7%2C7.5a5.94%2C5.94%2C0%2C0%2C1%2C.34-1.1.85.85%2C0%2C0%2C1-.45-.23A6.71%2C6.71%2C0%2C0%2C0%2C6.67%2C7Z%22%20fill%3D%22%23f2f2f2%22%20opacity%3D%220.55%22%20/%3E%3Cpath%20d%3D%22M7.24%2C4.73A4%2C4%2C0%2C0%2C1%2C7%2C3.8a2.48%2C2.48%2C0%2C0%2C0-.34.46A3.51%2C3.51%2C0%2C0%2C0%2C6.86%2C5%2C1%2C1%2C0%2C0%2C1%2C7.24%2C4.73Z%22%20fill%3D%22%23f2f2f2%22%20opacity%3D%220.55%22%20/%3E%3Cpath%20d%3D%22M8.17%2C6.14a.87.87%2C0%2C0%2C1-.48.26%2C4.62%2C4.62%2C0%2C0%2C0%2C.46.41%2C4.14%2C4.14%2C0%2C0%2C0%2C.65.39V7.13A.53.53%2C0%2C0%2C1%2C9%2C6.73%2C3.6%2C3.6%2C0%2C0%2C1%2C8.17%2C6.14Z%22%20fill%3D%22%23f2f2f2%22%20opacity%3D%220.55%22%20/%3E%3Cpath%20d%3D%22M10.79%2C7.2a4.14%2C4.14%2C0%2C0%2C1-.87-.1v0a.55.55%2C0%2C0%2C1-.16.39%2C3.84%2C3.84%2C0%2C0%2C0%2C1.08.08%2C2.93%2C2.93%2C0%2C0%2C0%2C.37-.42Z%22%20fill%3D%22%23f2f2f2%22%20opacity%3D%220.55%22%20/%3E%3C/g%3E%3Ccircle%20cx%3D%229.36%22%20cy%3D%227.13%22%20r%3D%220.56%22%20fill%3D%22url%28%23eedce6dd-706a-43c4-ac66-66b73578221d%29%22%20/%3E%3Ccircle%20cx%3D%2210.64%22%20cy%3D%225.74%22%20r%3D%220.6%22%20fill%3D%22%23f2f2f2%22%20/%3E%3Cg%3E%3Cpath%20d%3D%22M9.21%2C4.42A4.29%2C4.29%2C0%2C0%2C1%2C11.09%2C4a2.24%2C2.24%2C0%2C0%2C0-.47-.45%2C4.5%2C4.5%2C0%2C0%2C0-1.49.35c-.1%2C0-.19.11-.29.16h0a5.85%2C5.85%2C0%2C0%2C1-.63-.93l-.34.13a5.35%2C5.35%2C0%2C0%2C0%2C.65%2C1%2C3.92%2C3.92%2C0%2C0%2C0-.67.55.87.87%2C0%2C0%2C1%2C.43.35%2C3.29%2C3.29%2C0%2C0%2C1%2C.61-.48%2C9.16%2C9.16%2C0%2C0%2C0%2C1.17%2C1%2C.57.57%2C0%2C0%2C1%2C.2-.32A8.44%2C8.44%2C0%2C0%2C1%2C9.21%2C4.42Z%22%20fill%3D%22%23f2f2f2%22%20opacity%3D%220.55%22%20/%3E%3Cpath%20d%3D%22M11.55%2C6.09h0l-.1%2C0h0l-.08%2C0h0l-.1-.06a.61.61%2C0%2C0%2C1-.2.3l.12.07h0l.11.06h0l.28.14h0a3.58%2C3.58%2C0%2C0%2C0%2C.09-.35Z%22%20fill%3D%22%23f2f2f2%22%20opacity%3D%220.55%22%20/%3E%3C/g%3E%3Ccircle%20cx%3D%227.53%22%20cy%3D%225.55%22%20r%3D%220.87%22%20fill%3D%22%23f2f2f2%22%20/%3E%3Ccircle%20cx%3D%229.36%22%20cy%3D%227.13%22%20r%3D%220.56%22%20fill%3D%22%23f2f2f2%22%20/%3E%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;\" \n               vertex=\"1\" parent=\"container-api-management\">\n          <mxGeometry x=\"135\" y=\"35\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"service-azure-reserved-instances\" value=\"Azure Reserved Instances\" \n               style=\"sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%230078d4%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%E2%9A%99%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EService%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;\" \n               vertex=\"1\" parent=\"container-api-management\">\n          <mxGeometry x=\"250\" y=\"35\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"service-azure-private-endpoints\" value=\"Azure Private Endpoints\" \n               style=\"sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%230078d4%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%E2%9A%99%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EService%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;\" \n               vertex=\"1\" parent=\"container-api-management\">\n          <mxGeometry x=\"365\" y=\"35\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"service-agw-prod-eastus-001\" value=\"agw-prod-eastus-001\" \n               style=\"sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%230078d4%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%E2%9A%99%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EService%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;\" \n               vertex=\"1\" parent=\"container-api-management\">\n          <mxGeometry x=\"480\" y=\"35\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"service-azure-cdn\" value=\"Azure CDN\" \n               style=\"sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%230078d4%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%E2%9A%99%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EService%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;\" \n               vertex=\"1\" parent=\"container-api-management\">\n          <mxGeometry x=\"595\" y=\"35\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"service-azure-cache-for-redis\" value=\"Azure Cache for Redis\" \n               style=\"sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%230078d4%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%E2%9A%99%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EService%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;\" \n               vertex=\"1\" parent=\"container-api-management\">\n          <mxGeometry x=\"20\" y=\"114\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <!-- Web Apps (UI Layer) Container -->\n        <mxCell id=\"container-web-apps-(ui-layer)\" value=\"🌐 Web Apps (UI Layer)\" \n               style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#004578;fontSize=11;startSize=26;rounded=1;fontStyle=1;\" \n               vertex=\"1\" parent=\"vnet-container\">\n          <mxGeometry x=\"40\" y=\"290\" width=\"680\" height=\"120\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"service-app-prod-eastus-001\" value=\"app-prod-eastus-001\" \n               style=\"sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%234CAF50%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%F0%9F%8C%90%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EWeb%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;\" \n               vertex=\"1\" parent=\"container-web-apps-(ui-layer)\">\n          <mxGeometry x=\"20\" y=\"35\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <!-- Data Layer Container -->\n        <mxCell id=\"container-data-layer\" value=\"💾 Data Layer\" \n               style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#004578;fontSize=11;startSize=26;rounded=1;fontStyle=1;\" \n               vertex=\"1\" parent=\"vnet-container\">\n          <mxGeometry x=\"40\" y=\"430\" width=\"680\" height=\"120\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"service-sqldb-prod-eastus-001\" value=\"sqldb-prod-eastus-001\" \n               style=\"sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%232196F3%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%F0%9F%92%BE%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EData%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;\" \n               vertex=\"1\" parent=\"container-data-layer\">\n          <mxGeometry x=\"20\" y=\"35\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"service-azure-storage-tiers\" value=\"Azure Storage Tiers\" \n               style=\"sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%232196F3%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%F0%9F%92%BE%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EData%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;\" \n               vertex=\"1\" parent=\"container-data-layer\">\n          <mxGeometry x=\"135\" y=\"35\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <!-- Virtual Machines Container -->\n        <mxCell id=\"container-virtual-machines\" value=\"🖥️ Virtual Machines\" \n               style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#004578;fontSize=11;startSize=26;rounded=1;fontStyle=1;\" \n               vertex=\"1\" parent=\"vnet-container\">\n          <mxGeometry x=\"750\" y=\"50\" width=\"250\" height=\"400\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"service-azure-spot-vms\" value=\"Azure Spot VMs\" \n               style=\"sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%230078d4%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%E2%9A%99%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EService%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;\" \n               vertex=\"1\" parent=\"container-virtual-machines\">\n          <mxGeometry x=\"20\" y=\"35\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <!-- Security & Identity Container -->\n        <mxCell id=\"container-security-&-identity\" value=\"🔒 Security & Identity\" \n               style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#004578;fontSize=11;startSize=26;rounded=1;fontStyle=1;\" \n               vertex=\"1\" parent=\"vnet-container\">\n          <mxGeometry x=\"40\" y=\"480\" width=\"680\" height=\"70\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"service-azure-firewall\" value=\"Azure Firewall\" \n               style=\"sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%23FF9800%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%F0%9F%94%97%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3ENetwork%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;\" \n               vertex=\"1\" parent=\"container-security-&-identity\">\n          <mxGeometry x=\"20\" y=\"35\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"service-azure-key-vault\" value=\"Azure Key Vault\" \n               style=\"sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%239C27B0%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%F0%9F%94%92%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3ESecurity%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;\" \n               vertex=\"1\" parent=\"container-security-&-identity\">\n          <mxGeometry x=\"135\" y=\"35\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        <mxCell id=\"service-azure-active-directory\" value=\"Azure Active Directory\" \n               style=\"sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=9;fontFamily=Segoe UI;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22grad1%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%230078d4%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%23004578%3Bstop-opacity%3A1%22%20/%3E%0A%20%20%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%2260%22%20height%3D%2260%22%20x%3D%222%22%20y%3D%222%22%20rx%3D%228%22%20fill%3D%22url%28%23grad1%29%22%20stroke%3D%22%230078d4%22%20stroke-width%3D%222%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2224%22%20font-family%3D%22Segoe%20UI%22%3E%E2%9A%99%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%228%22%20font-family%3D%22Segoe%20UI%22%20font-weight%3D%22bold%22%3EAzure%3C/text%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2252%22%20text-anchor%3D%22middle%22%20fill%3D%22%23e6f3ff%22%20font-size%3D%226%22%20font-family%3D%22Segoe%20UI%22%3EService%3C/text%3E%0A%3C/svg%3E;labelPosition=south;verticalLabelPosition=top;imageVerticalAlign=bottom;spacing=2;\" \n               vertex=\"1\" parent=\"container-security-&-identity\">\n          <mxGeometry x=\"250\" y=\"35\" width=\"64\" height=\"64\" as=\"geometry\"/>\n        </mxCell>\n        \n        <!-- Architecture Notes Panel -->\n        <mxCell id=\"notes-panel\" value=\"Architecture Notes\" \n               style=\"swimlane;whiteSpace=wrap;html=1;fillColor=#e6f3ff;strokeColor=#004578;fontSize=12;startSize=26;rounded=1;fontStyle=1;\" \n               vertex=\"1\" parent=\"1\">\n          <mxGeometry x=\"1080\" y=\"150\" width=\"280\" height=\"350\" as=\"geometry\"/>\n        </mxCell>\n        \n        <mxCell id=\"notes-content\" value=\"• API Management serves as the gateway for all function apps\n• Function apps provide microservices functionality\n• Web apps handle UI components (Azure/PowerShell)\n• Data storage uses multiple Azure Database services\n• Redis cache for session management and caching\n• Automation account for resource management\n• Application Insights for monitoring and telemetry\" \n               style=\"text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontFamily=Segoe UI;spacing=5;spacingLeft=10;spacingTop=5;\" \n               vertex=\"1\" parent=\"notes-panel\">\n          <mxGeometry x=\"10\" y=\"35\" width=\"260\" height=\"300\" as=\"geometry\"/>\n        </mxCell>\n        \n      </root>\n    </mxGraphModel>\n  </diagram>\n</mxfile>",
+    "mermaid": "graph TB\n    subgraph Azure[\"☁️ Microsoft Azure\"]\n        subgraph RG[\"📦 Resource Group\"]\n            subgraph COMPUTE[\"⚡ Compute\"]\n                AzureReservedInstances[\"🔧 Azure Reserved Instances\"]\n                AzurePrivateEndpoints[\"🔧 Azure Private Endpoints\"]\n                AzureActiveDirectory[\"🔧 Azure Active Directory\"]\n                agwprodeastus001[\"🔧 agw-prod-eastus-001\"]\n                AzureSpotVMs[\"🔧 Azure Spot VMs\"]\n                appprodeastus001[\"🔧 app-prod-eastus-001\"]\n            end\n            subgraph STORAGE[\"💾 Storage\"]\n                AzureStorageTiers[\"🔧 Azure Storage Tiers\"]\n            end\n            subgraph DATABASE[\"🗄️ Database\"]\n                sqldbprodeastus001[\"🔧 sqldb-prod-eastus-001\"]\n                AzureCacheforRedis[\"🔧 Azure Cache for Redis\"]\n            end\n            subgraph NETWORKING[\"🌐 Networking\"]\n                AzureFirewall[\"🔧 Azure Firewall\"]\n                ApplicationGatewayv2[\"🚪 Application Gateway v2\"]\n                ApplicationGateway[\"🚪 Application Gateway\"]\n                AzureCDN[\"🔧 Azure CDN\"]\n            end\n            subgraph SECURITY[\"🔒 Security\"]\n                AzureKeyVault[\"🔐 Azure Key Vault\"]\n            end\n        end\n    end\n\n    %% Service Connections\n    sqldbprodeastus001 --> AzureFirewall\n    AzureFirewall --> ApplicationGatewayv2\n    ApplicationGatewayv2 --> AzureKeyVault\n    AzureKeyVault --> ApplicationGateway\n    ApplicationGateway --> AzureReservedInstances\n    AzureReservedInstances --> AzurePrivateEndpoints\n    AzurePrivateEndpoints --> AzureActiveDirectory\n    AzureActiveDirectory --> agwprodeastus001\n    agwprodeastus001 --> AzureStorageTiers\n    AzureStorageTiers --> AzureSpotVMs\n    AzureSpotVMs --> appprodeastus001\n    appprodeastus001 --> AzureCDN\n    AzureCDN --> AzureCacheforRedis\n\n    %% Azure Styling\n    classDef azure fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff\n    classDef compute fill:#ff6b35,stroke:#e55100,stroke-width:2px,color:#fff\n    classDef storage fill:#00bcf2,stroke:#0288d1,stroke-width:2px,color:#fff\n    classDef database fill:#ba68c8,stroke:#8e24aa,stroke-width:2px,color:#fff\n    classDef networking fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff\n    classDef security fill:#f44336,stroke:#d32f2f,stroke-width:2px,color:#fff\n",
+    "terraform": "# Azure Architecture Terraform Template\n# Generated by Azure Architecture Generator\n\nterraform {\n  required_version = \">= 1.5\"\n  required_providers {\n    azurerm = {\n      source  = \"hashicorp/azurerm\"\n      version = \"~> 3.80\"\n    }\n    random = {\n      source  = \"hashicorp/random\"\n      version = \"~> 3.1\"\n    }\n  }\n}\n\nprovider \"azurerm\" {\n  features {\n    key_vault {\n      purge_soft_delete_on_destroy    = true\n      recover_soft_deleted_key_vaults = true\n    }\n    resource_group {\n      prevent_deletion_if_contains_resources = false\n    }\n  }\n}\n\n# Variables\nvariable \"environment\" {\n  description = \"Environment name (dev, staging, prod)\"\n  type        = string\n  default     = \"dev\"\n  validation {\n    condition     = contains([\"dev\", \"staging\", \"prod\"], var.environment)\n    error_message = \"Environment must be one of: dev, staging, prod.\"\n  }\n}\n\nvariable \"location\" {\n  description = \"Azure region for resources\"\n  type        = string\n  default     = \"East US\"\n}\n\nvariable \"project_name\" {\n  description = \"Name of the project\"\n  type        = string\n  default     = \"azure-architecture\"\n}\n\nvariable \"tags\" {\n  description = \"Common tags for all resources\"\n  type        = map(string)\n  default = {\n    Environment = \"dev\"\n    Project     = \"Azure Architecture\"\n    ManagedBy   = \"Terraform\"\n  }\n}\n\n# Random suffix for unique resource names\nresource \"random_string\" \"suffix\" {\n  length  = 8\n  special = false\n  upper   = false\n}\n\n# Data sources\ndata \"azurerm_client_config\" \"current\" {}\n\n# Resource Group\nresource \"azurerm_resource_group\" \"main\" {\n  name     = \"rg-${var.project_name}-${var.environment}\"\n  location = var.location\n  tags     = var.tags\n}\n\n# Network Security Group\nresource \"azurerm_network_security_group\" \"main\" {\n  name                = \"nsg-${var.project_name}-${var.environment}\"\n  location            = azurerm_resource_group.main.location\n  resource_group_name = azurerm_resource_group.main.name\n  tags                = var.tags\n\n  security_rule {\n    name                       = \"HTTPS\"\n    priority                   = 1001\n    direction                  = \"Inbound\"\n    access                     = \"Allow\"\n    protocol                   = \"Tcp\"\n    source_port_range          = \"*\"\n    destination_port_range     = \"443\"\n    source_address_prefix      = \"*\"\n    destination_address_prefix = \"*\"\n  }\n\n  security_rule {\n    name                       = \"HTTP\"\n    priority                   = 1002\n    direction                  = \"Inbound\"\n    access                     = \"Allow\"\n    protocol                   = \"Tcp\"\n    source_port_range          = \"*\"\n    destination_port_range     = \"80\"\n    source_address_prefix      = \"*\"\n    destination_address_prefix = \"*\"\n  }\n}\n\n\n# Public IP for VM\nresource \"azurerm_public_ip\" \"vm\" {\n  name                = \"pip-vm-${var.environment}\"\n  location            = azurerm_resource_group.main.location\n  resource_group_name = azurerm_resource_group.main.name\n  allocation_method   = \"Dynamic\"\n  tags                = var.tags\n}\n\n# Network Interface for VM\nresource \"azurerm_network_interface\" \"vm\" {\n  name                = \"nic-vm-${var.environment}\"\n  location            = azurerm_resource_group.main.location\n  resource_group_name = azurerm_resource_group.main.name\n  tags                = var.tags\n\n  ip_configuration {\n    name                          = \"internal\"\n    subnet_id                     = azurerm_subnet.internal.id\n    private_ip_address_allocation = \"Dynamic\"\n    public_ip_address_id          = azurerm_public_ip.vm.id\n  }\n}\n\n# Virtual Machine\nresource \"azurerm_linux_virtual_machine\" \"main\" {\n  name                = \"vm-${var.project_name}-${var.environment}\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  size                = \"Standard_B1s\"\n  admin_username      = \"adminuser\"\n  tags                = var.tags\n\n  disable_password_authentication = true\n\n  network_interface_ids = [\n    azurerm_network_interface.vm.id,\n  ]\n\n  admin_ssh_key {\n    username   = \"adminuser\"\n    public_key = file(\"~/.ssh/id_rsa.pub\")\n  }\n\n  os_disk {\n    caching              = \"ReadWrite\"\n    storage_account_type = \"Standard_LRS\"\n  }\n\n  source_image_reference {\n    publisher = \"Canonical\"\n    offer     = \"0001-com-ubuntu-server-focal\"\n    sku       = \"20_04-lts-gen2\"\n    version   = \"latest\"\n  }\n}\n\n\n# Storage Account\nresource \"azurerm_storage_account\" \"main\" {\n  name                     = \"st${random_string.suffix.result}\"\n  resource_group_name      = azurerm_resource_group.main.name\n  location                 = azurerm_resource_group.main.location\n  account_tier             = \"Standard\"\n  account_replication_type = \"LRS\"\n  tags                     = var.tags\n}\n\n\n# Key Vault\nresource \"azurerm_key_vault\" \"main\" {\n  name                        = \"kv-${var.project_name}-${var.environment}-${random_string.suffix.result}\"\n  location                    = azurerm_resource_group.main.location\n  resource_group_name         = azurerm_resource_group.main.name\n  enabled_for_disk_encryption = true\n  tenant_id                   = data.azurerm_client_config.current.tenant_id\n  soft_delete_retention_days  = 7\n  purge_protection_enabled    = false\n  sku_name                    = \"standard\"\n  tags                        = var.tags\n\n  access_policy {\n    tenant_id = data.azurerm_client_config.current.tenant_id\n    object_id = data.azurerm_client_config.current.object_id\n\n    key_permissions = [\n      \"Get\",\n    ]\n\n    secret_permissions = [\n      \"Get\",\n    ]\n\n    storage_permissions = [\n      \"Get\",\n    ]\n  }\n}\n\n\n# SQL Server\nresource \"azurerm_mssql_server\" \"main\" {\n  name                         = \"sql-${var.project_name}-${var.environment}-${random_string.suffix.result}\"\n  resource_group_name          = azurerm_resource_group.main.name\n  location                     = azurerm_resource_group.main.location\n  version                      = \"12.0\"\n  administrator_login          = \"sqladmin\"\n  administrator_login_password = \"P@ssw0rd123!\" # Use Key Vault in production\n  tags                         = var.tags\n}\n\n# SQL Database\nresource \"azurerm_mssql_database\" \"main\" {\n  name      = \"sqldb-${var.project_name}-${var.environment}\"\n  server_id = azurerm_mssql_server.main.id\n  sku_name  = \"Basic\"\n  tags      = var.tags\n}\n\n\n# Public IP for Application Gateway\nresource \"azurerm_public_ip\" \"app_gateway\" {\n  name                = \"pip-appgw-${var.environment}\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  allocation_method   = \"Static\"\n  sku                 = \"Standard\"\n  tags                = var.tags\n}\n\n# Subnet for Application Gateway\nresource \"azurerm_subnet\" \"app_gateway\" {\n  name                 = \"snet-appgw\"\n  resource_group_name  = azurerm_resource_group.main.name\n  virtual_network_name = azurerm_virtual_network.main.name\n  address_prefixes     = [\"10.0.1.0/24\"]\n}\n\n# Application Gateway\nresource \"azurerm_application_gateway\" \"main\" {\n  name                = \"appgw-${var.project_name}-${var.environment}\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  tags                = var.tags\n\n  sku {\n    name     = \"Standard_v2\"\n    tier     = \"Standard_v2\"\n    capacity = 2\n  }\n\n  gateway_ip_configuration {\n    name      = \"appgw-ip-configuration\"\n    subnet_id = azurerm_subnet.app_gateway.id\n  }\n\n  frontend_port {\n    name = \"appgw-feport\"\n    port = 80\n  }\n\n  frontend_ip_configuration {\n    name                 = \"appgw-feip\"\n    public_ip_address_id = azurerm_public_ip.app_gateway.id\n  }\n\n  backend_address_pool {\n    name = \"appgw-beap\"\n  }\n\n  backend_http_settings {\n    name                  = \"appgw-be-htst\"\n    cookie_based_affinity = \"Disabled\"\n    port                  = 80\n    protocol              = \"Http\"\n    request_timeout       = 60\n  }\n\n  http_listener {\n    name                           = \"appgw-httplstn\"\n    frontend_ip_configuration_name = \"appgw-feip\"\n    frontend_port_name             = \"appgw-feport\"\n    protocol                       = \"Http\"\n  }\n\n  request_routing_rule {\n    name                       = \"appgw-rqrt\"\n    rule_type                  = \"Basic\"\n    http_listener_name         = \"appgw-httplstn\"\n    backend_address_pool_name  = \"appgw-beap\"\n    backend_http_settings_name = \"appgw-be-htst\"\n    priority                   = 100\n  }\n}\n\n\n# Virtual Network\nresource \"azurerm_virtual_network\" \"main\" {\n  name                = \"vnet-${var.project_name}-${var.environment}\"\n  address_space       = [\"10.0.0.0/16\"]\n  location            = azurerm_resource_group.main.location\n  resource_group_name = azurerm_resource_group.main.name\n  tags                = var.tags\n}\n\nresource \"azurerm_subnet\" \"internal\" {\n  name                 = \"snet-internal\"\n  resource_group_name  = azurerm_resource_group.main.name\n  virtual_network_name = azurerm_virtual_network.main.name\n  address_prefixes     = [\"10.0.2.0/24\"]\n}\n\n\n# Outputs\noutput \"resource_group_name\" {\n  description = \"Name of the resource group\"\n  value       = azurerm_resource_group.main.name\n}\n\noutput \"resource_group_location\" {\n  description = \"Location of the resource group\"\n  value       = azurerm_resource_group.main.location\n}\n\noutput \"deployment_summary\" {\n  description = \"Summary of deployed resources\"\n  value = {\n    environment      = var.environment\n    location        = var.location\n    project_name    = var.project_name\n    resource_count  = length(azurerm_resource_group.main.tags)\n  }\n}\n",
+    "image": null
+  },
+  "saved_files": {
+    "drawio_path": "saved_diagrams\\xml\\multi-agent-drawio-20260202165647746844.xml",
+    "mermaid_path": "saved_diagrams\\xml\\multi-agent-mermaid-20260202165647746844.mmd",
+    "terraform_path": "saved_diagrams\\xml\\multi-agent-terraform-20260202165647746844.tf",
+    "response_path": "saved_diagrams\\responses\\multi-agent-response-20260202165647746844.json"
+  },
+  "timestamp": "20260202165647746844",
+  "requirements": "create webapplication",
+  "project_name": null,
+  "environment": "production",
+  "generation_method": "multi_agent_integrated",
+  "style": "professional_multi_agent"
+}

@@ -1,0 +1,86 @@
+graph TB
+    subgraph Azure["☁️ Microsoft Azure"]
+        subgraph RG["📦 Resource Group"]
+            subgraph COMPUTE["⚡ Compute"]
+                AzureAppServiceFinnairPortal["🔧 Azure App Service - Finnair Portal"]
+                AzureAppServiceKLMPortal["🔧 Azure App Service - KLM Portal"]
+                AzureAppServicePlanSharedFunctions["🔧 Azure App Service Plan - Shared Functions"]
+                AzureFunctionAppBooking["🔧 Azure Function App - Booking"]
+                AzureFunctionAppPayment["🔧 Azure Function App - Payment"]
+                AzureFunctionAppCustomer["🔧 Azure Function App - Customer"]
+                AzureFunctionAppNotification["🔧 Azure Function App - Notification"]
+                AzureFunctionAppAnalytics["🔧 Azure Function App - Analytics"]
+                AzureFunctionAppIntegration["🔧 Azure Function App - Integration"]
+                AzureFunctionAppReporting["🔧 Azure Function App - Reporting"]
+                AzureDNSZone["🔧 Azure DNS Zone"]
+            end
+            subgraph STORAGE["💾 Storage"]
+                AzureStorageFinnair["🔧 Azure Storage - Finnair"]
+                AzureStorageKLM["🔧 Azure Storage - KLM"]
+                AzureBackup["🔧 Azure Backup"]
+            end
+            subgraph DATABASE["🗄️ Database"]
+                PostgreSQLServer["🔧 PostgreSQL Server"]
+                RedisCache["🔧 Redis Cache"]
+            end
+            subgraph NETWORKING["🌐 Networking"]
+                AzureFrontDoor["🔧 Azure Front Door"]
+                AzureWebApplicationFirewall(WAF)["🔧 Azure Web Application Firewall (WAF)"]
+                AzureApplicationGatewayFinnair["🚪 Azure Application Gateway - Finnair"]
+                AzureApplicationGatewayKLM["🚪 Azure Application Gateway - KLM"]
+            end
+            subgraph SECURITY["🔒 Security"]
+                AzureKeyVaultFinnair["🔐 Azure Key Vault - Finnair"]
+                AzureKeyVaultKLM["🔐 Azure Key Vault - KLM"]
+                AzureKeyVaultShared["🔐 Azure Key Vault - Shared"]
+                MicrosoftDefenderforCloud["🔧 Microsoft Defender for Cloud"]
+            end
+            subgraph ANALYTICS["📊 Analytics"]
+                LogAnalyticsWorkspace["🔧 Log Analytics Workspace"]
+            end
+            subgraph INTEGRATION["🔗 Integration"]
+                AzureAPIManagement["🔧 Azure API Management"]
+            end
+            subgraph MONITORING["📈 Monitoring"]
+                ApplicationInsights["🔧 Application Insights"]
+                AzureMonitor["🔧 Azure Monitor"]
+            end
+        end
+    end
+
+    %% Service Connections
+    AzureFrontDoor --> AzureWebApplicationFirewall(WAF)
+    AzureWebApplicationFirewall(WAF) --> AzureApplicationGatewayFinnair
+    AzureApplicationGatewayFinnair --> AzureApplicationGatewayKLM
+    AzureApplicationGatewayKLM --> AzureAppServiceFinnairPortal
+    AzureAppServiceFinnairPortal --> AzureAppServiceKLMPortal
+    AzureAppServiceKLMPortal --> AzureStorageFinnair
+    AzureStorageFinnair --> AzureStorageKLM
+    AzureStorageKLM --> AzureKeyVaultFinnair
+    AzureKeyVaultFinnair --> AzureKeyVaultKLM
+    AzureKeyVaultKLM --> AzureAPIManagement
+    AzureAPIManagement --> AzureAppServicePlanSharedFunctions
+    AzureAppServicePlanSharedFunctions --> AzureFunctionAppBooking
+    AzureFunctionAppBooking --> AzureFunctionAppPayment
+    AzureFunctionAppPayment --> AzureFunctionAppCustomer
+    AzureFunctionAppCustomer --> AzureFunctionAppNotification
+    AzureFunctionAppNotification --> AzureFunctionAppAnalytics
+    AzureFunctionAppAnalytics --> AzureFunctionAppIntegration
+    AzureFunctionAppIntegration --> AzureFunctionAppReporting
+    AzureFunctionAppReporting --> PostgreSQLServer
+    PostgreSQLServer --> RedisCache
+    RedisCache --> AzureKeyVaultShared
+    AzureKeyVaultShared --> ApplicationInsights
+    ApplicationInsights --> LogAnalyticsWorkspace
+    LogAnalyticsWorkspace --> AzureMonitor
+    AzureMonitor --> MicrosoftDefenderforCloud
+    MicrosoftDefenderforCloud --> AzureBackup
+    AzureBackup --> AzureDNSZone
+
+    %% Azure Styling
+    classDef azure fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff
+    classDef compute fill:#ff6b35,stroke:#e55100,stroke-width:2px,color:#fff
+    classDef storage fill:#00bcf2,stroke:#0288d1,stroke-width:2px,color:#fff
+    classDef database fill:#ba68c8,stroke:#8e24aa,stroke-width:2px,color:#fff
+    classDef networking fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
+    classDef security fill:#f44336,stroke:#d32f2f,stroke-width:2px,color:#fff

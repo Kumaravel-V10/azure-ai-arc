@@ -1,0 +1,56 @@
+graph TB
+    subgraph Azure["☁️ Microsoft Azure"]
+        subgraph RG["📦 Resource Group"]
+            subgraph COMPUTE["⚡ Compute"]
+                AzureSpotVMs["🔧 Azure Spot VMs"]
+                AzurePrivateEndpoints["🔧 Azure Private Endpoints"]
+                appprodeastus001["🔧 app-prod-eastus-001"]
+                AppServices["🌐 App Services"]
+                agwprodeastus001["🔧 agw-prod-eastus-001"]
+                AzureReservedInstances["🔧 Azure Reserved Instances"]
+                AzureActiveDirectory["🔧 Azure Active Directory"]
+            end
+            subgraph STORAGE["💾 Storage"]
+                BlobStorage["🔧 Blob Storage"]
+                AzureStorageTiers["🔧 Azure Storage Tiers"]
+            end
+            subgraph DATABASE["🗄️ Database"]
+                AzureCacheforRedis["🔧 Azure Cache for Redis"]
+                sqldbprodeastus001["🔧 sqldb-prod-eastus-001"]
+            end
+            subgraph NETWORKING["🌐 Networking"]
+                AzureCDN["🔧 Azure CDN"]
+                ApplicationGatewayv2["🚪 Application Gateway v2"]
+                ApplicationGateway["🚪 Application Gateway"]
+                AzureFirewall["🔧 Azure Firewall"]
+            end
+            subgraph SECURITY["🔒 Security"]
+                AzureKeyVault["🔐 Azure Key Vault"]
+            end
+        end
+    end
+
+    %% Service Connections
+    AzureCDN --> AzureSpotVMs
+    AzureSpotVMs --> BlobStorage
+    BlobStorage --> AzurePrivateEndpoints
+    AzurePrivateEndpoints --> ApplicationGatewayv2
+    ApplicationGatewayv2 --> AzureKeyVault
+    AzureKeyVault --> ApplicationGateway
+    ApplicationGateway --> AzureCacheforRedis
+    AzureCacheforRedis --> appprodeastus001
+    appprodeastus001 --> AzureStorageTiers
+    AzureStorageTiers --> AppServices
+    AppServices --> agwprodeastus001
+    agwprodeastus001 --> AzureFirewall
+    AzureFirewall --> AzureReservedInstances
+    AzureReservedInstances --> AzureActiveDirectory
+    AzureActiveDirectory --> sqldbprodeastus001
+
+    %% Azure Styling
+    classDef azure fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff
+    classDef compute fill:#ff6b35,stroke:#e55100,stroke-width:2px,color:#fff
+    classDef storage fill:#00bcf2,stroke:#0288d1,stroke-width:2px,color:#fff
+    classDef database fill:#ba68c8,stroke:#8e24aa,stroke-width:2px,color:#fff
+    classDef networking fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
+    classDef security fill:#f44336,stroke:#d32f2f,stroke-width:2px,color:#fff

@@ -1,0 +1,48 @@
+graph TB
+    subgraph Azure["☁️ Microsoft Azure"]
+        subgraph RG["📦 Resource Group"]
+            subgraph COMPUTE["⚡ Compute"]
+                AzureReservedInstances["🔧 Azure Reserved Instances"]
+                AzurePrivateEndpoints["🔧 Azure Private Endpoints"]
+                AzureKubernetesService["🔧 Azure Kubernetes Service"]
+                AzureSpotVMs["🔧 Azure Spot VMs"]
+                AzureActiveDirectory["🔧 Azure Active Directory"]
+            end
+            subgraph STORAGE["💾 Storage"]
+                AzureStorageTiers["🔧 Azure Storage Tiers"]
+            end
+            subgraph DATABASE["🗄️ Database"]
+                AzureCacheforRedis["🔧 Azure Cache for Redis"]
+                AzureSQLDatabase["🗃️ Azure SQL Database"]
+            end
+            subgraph NETWORKING["🌐 Networking"]
+                AzureFrontDoor["🔧 Azure Front Door"]
+                AzureFirewall["🔧 Azure Firewall"]
+                ApplicationGatewayv2["🚪 Application Gateway v2"]
+            end
+            subgraph SECURITY["🔒 Security"]
+                AzureKeyVault["🔐 Azure Key Vault"]
+            end
+        end
+    end
+
+    %% Service Connections
+    AzureCacheforRedis --> AzureStorageTiers
+    AzureStorageTiers --> AzureFrontDoor
+    AzureFrontDoor --> AzureFirewall
+    AzureFirewall --> AzureReservedInstances
+    AzureReservedInstances --> AzurePrivateEndpoints
+    AzurePrivateEndpoints --> AzureKubernetesService
+    AzureKubernetesService --> AzureSpotVMs
+    AzureSpotVMs --> AzureKeyVault
+    AzureKeyVault --> AzureActiveDirectory
+    AzureActiveDirectory --> ApplicationGatewayv2
+    ApplicationGatewayv2 --> AzureSQLDatabase
+
+    %% Azure Styling
+    classDef azure fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff
+    classDef compute fill:#ff6b35,stroke:#e55100,stroke-width:2px,color:#fff
+    classDef storage fill:#00bcf2,stroke:#0288d1,stroke-width:2px,color:#fff
+    classDef database fill:#ba68c8,stroke:#8e24aa,stroke-width:2px,color:#fff
+    classDef networking fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
+    classDef security fill:#f44336,stroke:#d32f2f,stroke-width:2px,color:#fff
