@@ -33,13 +33,17 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["diagram-modifier"])
 
-MIN_CHANGE_MAX_NEW_SERVICES_DEFAULT = 3
-MIN_CHANGE_MAX_NEW_EDGES_PER_SERVICE = 6
+MIN_CHANGE_MAX_NEW_SERVICES_DEFAULT = 4
+MIN_CHANGE_MAX_NEW_EDGES_PER_SERVICE = 2
 
 
 SERVICE_ALIAS_GROUPS: Dict[str, List[str]] = {
+    "application gateway": ["application gateway", "app gateway", "gateway"],
+    "api management": ["api management", "apim", "api gateway"],
     "azure functions": ["azure functions", "functions", "function app", "function", "serverless"],
     "azure app service": ["azure app service", "app service", "web app", "webapp"],
+    "azure openai service": ["azure openai service", "azure openai", "openai", "llm", "copilot", "assistant"],
+    "azure ai search": ["azure ai search", "ai search", "cognitive search", "search index", "search service"],
     "azure sql database": [
         "azure sql database",
         "azure sql",
@@ -61,24 +65,32 @@ SERVICE_ALIAS_GROUPS: Dict[str, List[str]] = {
     "azure cosmos db": ["azure cosmos db", "cosmos", "cosmosdb", "documentdb", "nosql"],
     "azure cache for redis": ["azure cache for redis", "redis", "redis cache", "cache"],
     "azure key vault": ["azure key vault", "key vault", "keyvault", "secrets vault"],
+    "microsoft entra id": ["microsoft entra id", "entra id", "azure ad", "rbac", "role-based access control", "identity"],
     "application insights": ["application insights", "app insights", "appinsights"],
     "azure monitor": ["azure monitor", "monitor", "monitoring"],
+    "azure log analytics": ["azure log analytics", "log analytics", "audit logs", "audit logging", "audit trail"],
     "azure service bus": ["azure service bus", "service bus", "queue"],
     "azure event hubs": ["azure event hubs", "event hubs", "event hub", "stream hub"],
 }
 
 
 SERVICE_IMAGE_HINTS: Dict[str, List[str]] = {
+    "application gateway": ["Application-Gateways", "Application_Gateways", "application gateway"],
+    "api management": ["API-Management-Services", "API_Management_Services", "api management"],
     "azure functions": ["Function-Apps", "Function_Apps", "functions"],
     "azure app service": ["App-Service", "App_Services", "app service"],
+    "azure openai service": ["OpenAI", "Azure-OpenAI", "azure openai"],
+    "azure ai search": ["Azure-AI-Search", "Search", "search"],
     "azure sql database": ["SQL-Database", "SQL_Database", "sql"],
     "azure database for postgresql": ["PostgreSQL", "PostgreSQL-Server", "postgres"],
     "azure database for mysql": ["MySQL", "mysql"],
     "azure cosmos db": ["Cosmos-DB", "Cosmos_DB", "cosmos"],
     "azure cache for redis": ["Cache-Redis", "Redis", "redis"],
     "azure key vault": ["Key-Vault", "Key_Vault", "key vault"],
+    "microsoft entra id": ["Active-Directory", "Entra", "entra id"],
     "application insights": ["Application-Insights", "Application_Insights", "insights"],
     "azure monitor": ["Monitor", "monitor"],
+    "azure log analytics": ["Log-Analytics-Workspaces", "Log_Analytics", "log analytics"],
     "azure service bus": ["Service-Bus", "Service_Bus", "service bus"],
     "azure event hubs": ["Event-Hubs", "Event_Hubs", "event hub"],
 }
@@ -270,6 +282,48 @@ def _infer_service_name_from_image(style: str) -> str:
     return ""
 
 
+def _looks_like_service_label(label_name: str) -> bool:
+    cleaned = _decode_drawio_value(label_name)
+    lowered = cleaned.lower()
+    if not cleaned:
+        return False
+    if _is_legend_or_decoration("", cleaned, ""):
+        return False
+    if any(token in lowered for token in ["production environment", "azure architecture with", "north europe", "legend"]):
+        return False
+    if "nsg" in lowered or "network security group" in lowered:
+        return False
+
+    canonical = _canonical_service_key(cleaned)
+    if canonical in SERVICE_ALIAS_GROUPS:
+        return True
+
+    service_keywords = [
+        "azure ",
+        "postgres",
+        "sql",
+        "redis",
+        "cosmos",
+        "gateway",
+        "management",
+        "function",
+        "app service",
+        "key vault",
+        "monitor",
+        "insights",
+        "analytics",
+        "search",
+        "openai",
+        "entra",
+    ]
+    return any(keyword in lowered for keyword in service_keywords)
+
+
+def _is_non_connectable_infrastructure(name: str) -> bool:
+    lowered = _decode_drawio_value(name).lower()
+    return any(token in lowered for token in ["nsg", "network security group"])
+
+
 def _build_existing_service_indexes(current_architecture: Dict[str, Any]) -> Dict[str, Any]:
     by_exact: Dict[str, Dict[str, Any]] = {}
     by_canonical: Dict[str, List[Dict[str, Any]]] = {}
@@ -282,6 +336,8 @@ def _build_existing_service_indexes(current_architecture: Dict[str, Any]) -> Dic
         if not name:
             continue
         if _is_legend_or_decoration(v.get("id", ""), name, v.get("style", "")):
+            continue
+        if _is_non_connectable_infrastructure(name):
             continue
         style = v.get("style", "")
         if not _extract_image_path(style):
@@ -363,7 +419,7 @@ def _extract_named_function_service(prompt: str) -> Optional[Dict[str, Any]]:
 
 def _extract_feature_named_service(prompt: str, csv_context_summary: str = "") -> Optional[Dict[str, Any]]:
     prompt_lower = (prompt or "").lower()
-    combined = f"{prompt}\n{csv_context_summary}".lower()
+    combined = prompt_lower
 
     if any(term in combined for term in ["loyalty", "accrual", "miles", "points"]):
         return {
@@ -384,6 +440,67 @@ def _extract_feature_named_service(prompt: str, csv_context_summary: str = "") -
         }
 
     return None
+
+
+def _infer_feature_bundle_services(
+    prompt: str,
+    arch_agent: ArchitectureAgent,
+    csv_context_summary: str = "",
+) -> List[Dict[str, Any]]:
+    prompt_lower = (prompt or "").lower()
+    combined = f"{prompt}\n{csv_context_summary}".lower()
+
+    bundle: List[Dict[str, Any]] = []
+    seen: Set[str] = set()
+
+    def _add(service_name: str, *, custom_workload: bool = False, platform_canonical: str = "") -> None:
+        canonical = _canonical_service_key(service_name)
+        if canonical in seen or service_name.lower() in seen:
+            return
+        layer = arch_agent._get_service_layer(service_name)
+        payload = {
+            "name": service_name,
+            "category": _layer_name(layer),
+            "layer": layer,
+        }
+        if custom_workload:
+            payload["custom_workload"] = True
+            payload["platform_canonical"] = platform_canonical
+        bundle.append(payload)
+        seen.add(canonical)
+        seen.add(service_name.lower())
+
+    is_ai_assistant_feature = any(term in combined for term in [
+        "copilot",
+        "assistant",
+        "natural language questions",
+        "azure openai",
+        "openai",
+        "rag",
+        "retrieval augmented",
+    ])
+    if is_ai_assistant_feature:
+        _add("Copilot Orchestrator Function", custom_workload=True, platform_canonical="azure functions")
+        _add("Azure OpenAI Service")
+        _add("Azure AI Search")
+
+        if any(term in combined for term in ["api management", "apim"]):
+            _add("Api Management")
+        if any(term in combined for term in ["application gateway", "app gateway", "gateway"]):
+            _add("Application Gateway")
+        if any(term in combined for term in ["role-based access control", "rbac", "entra", "identity"]):
+            _add("Microsoft Entra Id")
+        if any(term in combined for term in ["audit", "audit logs", "historical", "source references", "explainable"]):
+            _add("Azure Log Analytics")
+        if any(term in combined for term in ["system health", "monitor", "observability"]):
+            _add("Application Insights")
+        if any(term in combined for term in ["secured", "security", "secret", "managed identity"]):
+            _add("Azure Key Vault")
+
+    if any(term in combined for term in ["async", "queue", "workflow", "event-driven", "event based", "pubsub"]):
+        _add("Azure Service Bus")
+
+    return bundle
 
 
 def _infer_feature_supporting_endpoints(prompt: str, requested_endpoints: List[str]) -> List[str]:
@@ -1022,6 +1139,8 @@ def _parse_drawio_xml_to_dict(xml_content: str) -> Dict[str, Any]:
 
         if _is_legend_or_decoration(svc.get("id", ""), logical_name, style):
             continue
+        if _is_non_connectable_infrastructure(logical_name):
+            continue
 
         if logical_name:
             logical_services.append(
@@ -1040,9 +1159,13 @@ def _parse_drawio_xml_to_dict(xml_content: str) -> Dict[str, Any]:
             continue
         if _is_architecture_container(lbl.get("id", ""), lbl.get("name", ""), lbl.get("style", "")):
             continue
+        if not _looks_like_service_label(lbl.get("name", "")):
+            continue
 
         label_name = _extract_primary_service_name(lbl.get("name", ""))
         if not label_name:
+            continue
+        if _is_non_connectable_infrastructure(label_name):
             continue
         if any(v.get("name", "").lower() == label_name.lower() for v in logical_services):
             continue
@@ -1105,6 +1228,14 @@ def _find_platform_container(current_architecture: Dict[str, Any], platform_cano
     return None
 
 
+def _find_named_container(current_architecture: Dict[str, Any], phrases: List[str]) -> Optional[Dict[str, Any]]:
+    for container in current_architecture.get("containers", []):
+        name = (container.get("name") or "").lower()
+        if any(phrase in name for phrase in phrases):
+            return container
+    return None
+
+
 def _find_target_container_for_layer(
     current_architecture: Dict[str, Any], layer: int, default_container: Optional[Dict[str, Any]]
 ) -> Optional[Dict[str, Any]]:
@@ -1131,81 +1262,153 @@ def _find_target_container_for_layer(
     return default_container
 
 
+def _find_preferred_container_for_service(
+    current_architecture: Dict[str, Any],
+    service_name: str,
+    layer: int,
+    default_container: Optional[Dict[str, Any]],
+) -> Optional[Dict[str, Any]]:
+    canonical = _canonical_service_key(service_name)
+    if canonical in {"azure openai service", "azure ai search"}:
+        return _find_named_container(current_architecture, ["web application"]) or _find_target_container_for_layer(
+            current_architecture, layer, default_container
+        )
+    if canonical in {"microsoft entra id", "azure key vault", "azure log analytics", "application insights", "azure monitor"}:
+        return (
+            _find_named_container(current_architecture, ["security /", "observability /"])
+            or _find_target_container_for_layer(current_architecture, layer, default_container)
+        )
+    return _find_target_container_for_layer(current_architecture, layer, default_container)
+
+
 def _calculate_new_node_coordinates(
     current_architecture: Dict[str, Any], new_services: List[Dict[str, Any]]
 ) -> Dict[str, Dict[str, float]]:
     placements: Dict[str, Dict[str, float]] = {}
     default_container = _select_default_container(current_architecture)
+    
+    all_vertices = list(current_architecture.get("vertices", []))
+    # Include containers so we can traverse parents to calculate absolute coordinates
+    all_elements = all_vertices + current_architecture.get("containers", [])
+    element_map = {e.get("id"): e for e in all_elements if e.get("id")}
 
-    if default_container is None:
-        base_x = 120.0
-        base_y = 140.0
-        for idx, svc in enumerate(new_services):
-            placements[svc["name"]] = {
-                "x": base_x + (idx * 180.0),
-                "y": base_y + (float(svc.get("layer", 2)) * 120.0),
-                "width": 64.0,
-                "height": 64.0,
-                "parent_id": "1",
-                "expand_container": False,
-            }
-        return placements
+    def get_absolute_rect(v: Dict[str, Any]) -> Tuple[float, float, float, float]:
+        """Calculates true global X,Y by traversing up the parent tree."""
+        x = float(v.get("geometry", {}).get("x", 0.0))
+        y = float(v.get("geometry", {}).get("y", 0.0))
+        w = float(v.get("geometry", {}).get("width", 0.0))
+        h = float(v.get("geometry", {}).get("height", 0.0))
+        
+        pid = v.get("parent")
+        while pid and pid not in ("0", "1"):
+            parent_node = element_map.get(pid)
+            if parent_node:
+                x += float(parent_node.get("geometry", {}).get("x", 0.0))
+                y += float(parent_node.get("geometry", {}).get("y", 0.0))
+                pid = parent_node.get("parent")
+            else:
+                break
+        return x, y, w, h
 
-    services = [v for v in current_architecture.get("vertices", []) if v.get("category") == "service"]
+    def check_absolute_overlap(abs_nx: float, abs_ny: float, nw: float, nh: float) -> bool:
+        """Checks for bounding box collisions using global absolute coordinates."""
+        pad_x = 45.0
+        pad_y = 55.0
+        for v in all_vertices:
+            vw = float(v.get("geometry", {}).get("width", 0.0))
+            vh = float(v.get("geometry", {}).get("height", 0.0))
+            
+            # Skip checking against massive background containers
+            if v.get("category") == "container" and vw > 300 and vh > 200:
+                continue
+                
+            vx, vy, vw, vh = get_absolute_rect(v)
+            
+            if v.get("category") == "service":
+                vh += 40.0 # padding for text label below the icon
+
+            # Standard AABB overlap check
+            if (abs_nx < vx + vw + pad_x and
+                abs_nx + nw + pad_x > vx and
+                abs_ny < vy + vh + pad_y and
+                abs_ny + nh + pad_y > vy):
+                return True
+        return False
 
     for svc in new_services:
         layer = int(svc.get("layer", 2))
+        
         target_container = _find_platform_container(current_architecture, str(svc.get("platform_canonical", "")))
         if target_container is None:
-            target_container = _find_target_container_for_layer(current_architecture, layer, default_container)
-        parent_id = target_container.get("id", "1") if target_container else "1"
-        cgeom = (target_container or {}).get("geometry", {})
-
-        in_parent = [s for s in services if s.get("parent") == parent_id and int(s.get("layer", 2)) == layer]
-        if in_parent:
-            rightmost = max(in_parent, key=lambda x: x.get("geometry", {}).get("x", 0.0))
-            x_new = float(rightmost.get("geometry", {}).get("x", 0.0)) + 180.0
-            y_new = float(rightmost.get("geometry", {}).get("y", 0.0))
+            target_container = _find_preferred_container_for_service(
+                current_architecture, svc.get("name", ""), layer, default_container
+            )
+            
+        # Determine the true parent ID (handles Draw.io Groups vs Background shapes)
+        layer_services = [v for v in all_vertices if v.get("category") == "service" and int(v.get("layer", 2)) == layer]
+        if layer_services and target_container:
+            tc_id = target_container.get("id")
+            tc_parent = target_container.get("parent")
+            parent_counts = {}
+            for s in layer_services:
+                pid = s.get("parent")
+                if pid in (tc_id, tc_parent):
+                    parent_counts[pid] = parent_counts.get(pid, 0) + 1
+            if parent_counts:
+                parent_id = max(parent_counts, key=parent_counts.get)
+            else:
+                parent_id = tc_id or "1"
         else:
-            x_new = 40.0
-            y_new = 70.0 + (layer * 140.0 if layer >= 0 else 420.0)
+            parent_id = target_container.get("id", "1") if target_container else "1"
 
-        node_w = 64.0
-        node_h = 64.0
+        cgeom = (target_container or {}).get("geometry", {})
         container_w = float(cgeom.get("width", 1200.0))
         container_h = float(cgeom.get("height", 800.0))
 
-        if x_new + node_w > container_w - 30.0:
-            same_parent = [s for s in services if s.get("parent") == parent_id]
-            max_y = max([s.get("geometry", {}).get("y", 0.0) for s in same_parent], default=70.0)
-            x_new = 40.0
-            y_new = float(max_y) + 120.0
+        # Get global offset of the chosen parent
+        parent_node = element_map.get(parent_id, {})
+        px, py, pw, ph = get_absolute_rect(parent_node) if parent_node else (0.0, 0.0, 0.0, 0.0)
 
-        needs_expand_w = x_new + node_w > container_w - 20.0
-        needs_expand_h = y_new + node_h + 40.0 > container_h - 20.0
+        node_w = 64.0
+        node_h = 64.0
+        
+        current_x = 40.0
+        current_y = 70.0
+        
+        attempts = 0
+        while check_absolute_overlap(px + current_x, py + current_y, node_w, node_h) and attempts < 100:
+            current_x += 120.0
+            if current_x + node_w > max(container_w - 40.0, 300.0):
+                current_x = 40.0
+                current_y += 130.0
+            attempts += 1
+
+        needs_expand_w = current_x + node_w > container_w - 40.0
+        needs_expand_h = current_y + node_h + 100.0 > container_h - 40.0
 
         placements[svc["name"]] = {
-            "x": x_new,
-            "y": y_new,
+            "x": current_x,
+            "y": current_y,
             "width": node_w,
             "height": node_h,
             "parent_id": parent_id,
+            "container_id_to_expand": target_container.get("id") if target_container else parent_id,
             "expand_container": bool(needs_expand_w or needs_expand_h),
-            "required_width": max(container_w, x_new + node_w + 40.0),
-            "required_height": max(container_h, y_new + node_h + 70.0),
+            "required_width": max(container_w, current_x + node_w + 80.0),
+            "required_height": max(container_h, current_y + node_h + 130.0),
         }
-
-        services.append(
-            {
-                "name": svc["name"],
-                "layer": layer,
-                "parent": parent_id,
-                "geometry": {"x": x_new, "y": y_new, "width": node_w, "height": node_h},
-            }
-        )
+        
+        # Track locally so the next node in the loop avoids this spot
+        new_node_mock = {
+            "id": f"mock_{attempts}_{current_x}",
+            "parent": parent_id,
+            "category": "service",
+            "geometry": {"x": current_x, "y": current_y, "width": node_w, "height": node_h}
+        }
+        all_vertices.append(new_node_mock)
+        element_map[new_node_mock["id"]] = new_node_mock
 
     return placements
-
 
 def _build_service_lookup(current_architecture: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
     lookup: Dict[str, Dict[str, Any]] = {}
@@ -1228,6 +1431,8 @@ def _build_baseline_services_and_connections(current_architecture: Dict[str, Any
             continue
         if _is_legend_or_decoration(v.get("id", ""), name, v.get("style", "")):
             continue
+        if _is_non_connectable_infrastructure(name):
+            continue
         services.append(
             {
                 "name": name,
@@ -1242,6 +1447,7 @@ def _build_baseline_services_and_connections(current_architecture: Dict[str, Any
         for v in current_architecture.get("vertices", [])
         if v.get("category") == "service"
         and not _is_legend_or_decoration(v.get("id", ""), v.get("name", ""), v.get("style", ""))
+        and not _is_non_connectable_infrastructure(v.get("name", ""))
     }
     connections: List[Dict[str, Any]] = []
     for e in current_architecture.get("edges", []):
@@ -1267,7 +1473,8 @@ def _extract_candidate_services_from_component_output(
 ) -> List[Dict[str, Any]]:
     candidates: Dict[str, Dict[str, Any]] = {}
     named_function_candidate = _extract_named_function_service(prompt)
-    feature_named_candidate = _extract_feature_named_service(prompt, csv_context_summary)
+    feature_bundle_candidates = _infer_feature_bundle_services(prompt, arch_agent, csv_context_summary)
+    feature_named_candidate = None if feature_bundle_candidates else _extract_feature_named_service(prompt, csv_context_summary)
 
     tech_stack = extraction_result.get("tech_stack", [])
     technical_reqs = extraction_result.get("technical_requirements", [])
@@ -1322,8 +1529,12 @@ def _extract_candidate_services_from_component_output(
         candidates.pop("azure functions", None)
         candidates[feature_named_candidate["name"].lower()] = feature_named_candidate
 
-    # Minimum-change mode: if the prompt explicitly names service(s), only use those.
-    if requested_canonicals and not named_function_candidate and not feature_named_candidate:
+    for bundle_candidate in feature_bundle_candidates:
+        candidates[bundle_candidate["name"].lower()] = bundle_candidate
+
+    # Minimum-change mode: if the prompt explicitly names service(s), only use those,
+    # unless a broader feature bundle was inferred from the prompt semantics.
+    if requested_canonicals and not named_function_candidate and not feature_named_candidate and not feature_bundle_candidates:
         max_new = _max_new_services_from_prompt(prompt, requested_canonicals)
         direct_candidates: List[Dict[str, Any]] = []
         for canonical in sorted(requested_canonicals):
@@ -1359,6 +1570,9 @@ def _extract_candidate_services_from_component_output(
             filtered.append(c)
             seen_canonical.add(canonical)
 
+    if feature_bundle_candidates:
+        return filtered
+
     max_new = max(1, _max_new_services_from_prompt(prompt, set())) if (named_function_candidate or feature_named_candidate) else _max_new_services_from_prompt(prompt, set())
     return filtered[:max_new]
 
@@ -1386,6 +1600,10 @@ def _dynamic_edge_stitching(
         baseline_architecture,
         csv_context_summary,
     )
+    feature_bundle_candidates = _infer_feature_bundle_services(modification_prompt, arch_agent, csv_context_summary)
+    feature_bundle_service_names = {
+        (svc.get("name") or "").lower() for svc in feature_bundle_candidates if svc.get("name")
+    }
     supporting_endpoints = _infer_feature_supporting_endpoints(modification_prompt, requested_endpoints)
     prompt_lower = (modification_prompt or "").lower()
     explicit_connect_intent = bool(
@@ -1423,6 +1641,10 @@ def _dynamic_edge_stitching(
         resolved_name = name if svc.get("custom_workload") else (_resolve_existing_service_name(name, existing_name_index) or name)
 
         svc_new_edges: List[Dict[str, Any]] = []
+
+        if resolved_name.lower() in feature_bundle_service_names:
+            new_connections.extend(svc_new_edges)
+            continue
 
         # If user named existing endpoints, connect minimally to those endpoints only.
         if requested_endpoints:
@@ -1492,6 +1714,16 @@ def _dynamic_edge_stitching(
 
         new_connections.extend(svc_new_edges[:MIN_CHANGE_MAX_NEW_EDGES_PER_SERVICE])
 
+    bundle_connections = _infer_feature_bundle_connections(
+        baseline_architecture,
+        all_services,
+        modification_prompt,
+        csv_context_summary,
+    )
+    for conn in bundle_connections:
+        if conn not in new_connections:
+            new_connections.append(conn)
+
     # Validate only the newly proposed delta edges; do not return baseline edges.
     validated_delta = arch_agent._validate_and_fix_connections(new_connections, all_services)
     return validated_delta
@@ -1553,6 +1785,72 @@ def _filter_enhanced_connections(
     return filtered
 
 
+def _infer_feature_bundle_connections(
+    baseline_architecture: Dict[str, Any],
+    all_services: List[Dict[str, Any]],
+    modification_prompt: str,
+    csv_context_summary: str,
+) -> List[Dict[str, Any]]:
+    prompt_lower = f"{modification_prompt}\n{csv_context_summary}".lower()
+    if not any(term in prompt_lower for term in ["copilot", "assistant", "azure openai", "ai search", "natural language"]):
+        return []
+
+    existing_index = _build_existing_service_indexes(baseline_architecture)
+    name_set = {svc.get("name", "") for svc in all_services if svc.get("name")}
+
+    def _pick(name: str) -> Optional[str]:
+        direct = next((svc for svc in name_set if svc.lower() == name.lower()), None)
+        if direct:
+            return direct
+        return _resolve_existing_service_name(name, existing_index)
+
+    apim = _pick("Api Management")
+    app_gateway = _pick("Application Gateway")
+    openai = _pick("Azure OpenAI Service")
+    search = _pick("Azure AI Search")
+    copilot = next((svc for svc in name_set if "copilot" in svc.lower()), None)
+    entra = _pick("Microsoft Entra Id")
+    key_vault = _pick("Azure Key Vault")
+    app_insights = _pick("Application Insights")
+    log_analytics = _pick("Azure Log Analytics")
+
+    data_endpoints = _extract_existing_endpoints_from_prompt(
+        modification_prompt,
+        existing_index,
+        baseline_architecture,
+        csv_context_summary,
+    )
+    preferred_data = [
+        ep for ep in data_endpoints if any(token in ep.lower() for token in ["postgres", "sql", "database", "cosmos", "redis"])
+    ]
+    if not preferred_data:
+        default_db = _infer_default_database_endpoint(baseline_architecture)
+        if default_db:
+            preferred_data = [default_db]
+
+    connections: List[Dict[str, Any]] = []
+
+    def _add(source: Optional[str], target: Optional[str], label: str) -> None:
+        if not source or not target or source == target:
+            return
+        payload = {"source": source, "target": target, "label": label, "type": "service_integration"}
+        if payload not in connections:
+            connections.append(payload)
+
+    _add(app_gateway, apim, "Secured API ingress")
+    _add(apim, copilot, "Copilot API routing")
+    _add(copilot, openai, "LLM inference")
+    _add(copilot, search, "Retrieval and grounding")
+    for endpoint in preferred_data[:1]:
+        _add(search, endpoint, "Indexed source data")
+    _add(copilot, entra, "RBAC and identity")
+    _add(copilot, key_vault, "Secrets and credentials")
+    _add(copilot, app_insights, "Telemetry and traces")
+    _add(copilot, log_analytics, "Audit and historical logs")
+
+    return connections
+
+
 def _next_numeric_id(graph_root: ET.Element) -> int:
     max_id = 1000
     for cell in graph_root.findall("mxCell"):
@@ -1579,21 +1877,75 @@ def _expand_container_if_needed(
     required_width: float,
     required_height: float,
 ) -> None:
+    target_cell = None
     for cell in graph_root.findall("mxCell"):
-        if cell.get("id") != container_id:
-            continue
-        geom = cell.find("mxGeometry")
-        if geom is None:
-            continue
-        width = _safe_float(geom.get("width"), 0.0)
-        height = _safe_float(geom.get("height"), 0.0)
-        if required_width > width:
-            geom.set("width", str(int(required_width)))
-        if required_height > height:
-            geom.set("height", str(int(required_height)))
-        break
+        if cell.get("id") == container_id:
+            target_cell = cell
+            break
 
+    if target_cell is None:
+        return
 
+    geom = target_cell.find("mxGeometry")
+    if geom is None:
+        return
+        
+    orig_width = float(geom.get("width") or 0.0)
+    orig_height = float(geom.get("height") or 0.0)
+    orig_x = float(geom.get("x") or 0.0)
+    orig_y = float(geom.get("y") or 0.0)
+    
+    dx = max(0.0, required_width - orig_width)
+    dy = max(0.0, required_height - orig_height)
+
+    if dx == 0 and dy == 0:
+        return
+
+    # 1. Expand the target container
+    geom.set("width", str(int(required_width)))
+    geom.set("height", str(int(required_height)))
+
+    # 2. If it's in a Draw.io Group, expand the group wrapper too
+    parent_id = target_cell.get("parent", "1")
+    if parent_id not in ("0", "1"):
+        for cell in graph_root.findall("mxCell"):
+            if cell.get("id") == parent_id:
+                p_geom = cell.find("mxGeometry")
+                if p_geom is not None:
+                    p_w = float(p_geom.get("width") or 0.0)
+                    p_h = float(p_geom.get("height") or 0.0)
+                    if required_width > p_w:
+                        p_geom.set("width", str(int(required_width)))
+                    if required_height > p_h:
+                        p_geom.set("height", str(int(required_height)))
+                    
+                    # Inherit the group's X/Y for pushing global siblings
+                    orig_x = float(p_geom.get("x") or 0.0)
+                    orig_y = float(p_geom.get("y") or 0.0)
+                    parent_id = cell.get("parent", "1")
+                break
+
+    # 3. Push top-level structural containers to make room and prevent overlaps
+    for cell in graph_root.findall("mxCell"):
+        if cell.get("id") == container_id or cell.get("id") == target_cell.get("parent"):
+            continue
+            
+        if cell.get("parent") == "1" and cell.get("vertex") == "1":
+            c_geom = cell.find("mxGeometry")
+            if c_geom is None:
+                continue
+            
+            c_x = float(c_geom.get("x") or 0.0)
+            c_y = float(c_geom.get("y") or 0.0)
+
+            # Push right
+            if dx > 0 and c_x >= orig_x + orig_width - 20.0:
+                c_geom.set("x", str(int(c_x + dx)))
+            
+            # Push down
+            if dy > 0 and c_y >= orig_y + orig_height - 20.0:
+                c_geom.set("y", str(int(c_y + dy)))
+                
 def _remove_generated_artifacts_from_xml(xml_content: str) -> str:
     root, diagram, model, was_compressed = _extract_mxgraph_model(xml_content)
     graph_root = _get_graph_root(model)
@@ -1666,7 +2018,6 @@ def _inject_nodes_and_edges_into_xml(
         if v.get("category") == "service" and v.get("name"):
             service_name_to_icon_id[v["name"]] = v.get("id", "")
 
-    # Also map canonical aliases to existing IDs to maximize edge reuse.
     for v in current_architecture.get("vertices", []):
         if v.get("category") != "service" or not v.get("name"):
             continue
@@ -1684,7 +2035,7 @@ def _inject_nodes_and_edges_into_xml(
         if place.get("expand_container"):
             _expand_container_if_needed(
                 graph_root,
-                parent_id,
+                place.get("container_id_to_expand", parent_id), # <-- Uses the proper background shape ID now
                 place.get("required_width", 0.0),
                 place.get("required_height", 0.0),
             )
@@ -1782,7 +2133,6 @@ def _inject_nodes_and_edges_into_xml(
 
     return _materialize_mxgraph_model(root, diagram, model, was_compressed), filtered_new_services, reused_services
 
-
 def _create_rollback_backup(original_drawio_content: str, target_path: Path) -> Path:
     BACKUP_DIR.mkdir(parents=True, exist_ok=True)
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -1826,7 +2176,7 @@ class ModifyArchWorkflow:
         return graph.compile()
 
     def _route_after_review(self, state: ModifyArchState) -> str:
-        if state.get("requires_correction") and int(state.get("correction_attempts", 0)) < 1:
+        if state.get("requires_correction") and int(state.get("correction_attempts", 0)) < 2:
             return "architecture_retry"
         return "done"
 
