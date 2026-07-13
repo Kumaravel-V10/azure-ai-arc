@@ -41,6 +41,12 @@ export const API_CONFIG = {
     SESSION_BY_ID: "/api/knowledge/session",  // + /{id}
     DIAGRAM_IMPROVE: "/api/diagram/improve",
     DIAGRAM_MODIFY: "/api/diagram/modify",
+    DIAGRAM_MODIFY_ARCH: "/api/diagram/modifyArch",
+    DIAGRAM_MODIFY_ARCH_FILES: "/api/diagram/modifyArch/files",
+    DIAGRAM_MODIFY_ARCH_LOCK: "/api/diagram/modifyArch/lock",
+    DIAGRAM_MODIFY_ARCH_PREVIEW: "/api/diagram/modifyArch/preview",
+    DIAGRAM_MODIFY_ARCH_ACCEPT: "/api/diagram/modifyArch/accept",
+    DIAGRAM_MODIFY_ARCH_REJECT: "/api/diagram/modifyArch/reject",
     REVERSE_ENGINEER_STORY: "/api/reverse-engineer/analyze-story",
     INTERACTION_RESPOND: "/api/interaction",  // + /{session_id}/respond
     CLARIFY: "/api/clarify",  // Pre-generation clarifying questions

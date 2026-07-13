@@ -1,0 +1,456 @@
+<mxfile host="65bd71144e">
+    <diagram name="AAI-Production-Architecture" id="aai-production-architecture">
+        <mxGraphModel dx="1247" dy="2844" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2200" pageHeight="2200" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="vnet-ndmz" value="vnet-aai-prod-ndmz-neu-02  (Internal App VNet)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e6f3ff;strokeColor=#0078d4;strokeWidth=2;verticalAlign=top;fontSize=11;fontStyle=1;arcSize=4;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="590" width="1970" height="1180" as="geometry"/>
+                </mxCell>
+                <mxCell id="webapp-container" value="Web Application" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0f7ff;strokeColor=#0078d4;strokeWidth=2;verticalAlign=top;fontSize=11;fontStyle=1;arcSize=4;" parent="1" vertex="1">
+                    <mxGeometry x="430" y="615" width="1040" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="title" value="AAI Production Environment — Azure Architecture with SOC (rg-aai-prod-neu-01 · North Europe)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=18;fontStyle=1;fontColor=#0078d4;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="-220" width="1200" height="36" as="geometry"/>
+                </mxCell>
+                <mxCell id="apim-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/app_services/API_Management_Services.svg;" parent="1" vertex="1">
+                    <mxGeometry x="845" y="645" width="60" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="apim-label" value="API Management&amp;#xa;apim-aai-prod-neu-02&amp;#xa;Premium v2 · Zone Redundant" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontStyle=1;strokeColor=none;fillColor=none;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="930" y="645" width="170" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="apim-apis" value="APIs: appconfig · cart-retrieve · checkout-confirm · checkout-passengers · checkout-update · create-cart · order-retrieve · payment · searchpanel · seatmap · seat-services · service · shop-offer · func-token&amp;#xa;Private VNet injection + diagnostics to Sentinel" style="text;html=1;align=left;verticalAlign=middle;fontSize=9;strokeColor=#d79b00;fillColor=#fff9f0;rounded=1;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="740" width="540" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="webapp-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/app_services/App_Services.svg;" parent="1" vertex="1">
+                    <mxGeometry x="470" y="645" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="webapp-label" value="App Service (Linux P1v3/P2v3)&amp;#xa;app-aai-prod-wapp-neu-01&amp;#xa;ASP: asp-aai-prod-wapp-neu-01" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontStyle=1;strokeColor=none;fillColor=none;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="540" y="645" width="170" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="data-layer" value="Data Layer — Production HA / DR" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32;strokeWidth=2;verticalAlign=top;fontSize=12;fontStyle=1;arcSize=4;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="1378" width="840" height="139" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg1-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/databases/Azure_Database_PostgreSQL_Server.svg;" parent="1" vertex="1">
+                    <mxGeometry x="260" y="1425" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg1-label" value="PostgreSQL Flexible Server&amp;#xa;psql-aai-prod-data-neu-01&amp;#xa;Primary · Zone Redundant HA&amp;#xa;North Europe" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontStyle=1;strokeColor=none;fillColor=none;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="330" y="1425" width="200" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg2-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/databases/Azure_Database_PostgreSQL_Server.svg;" parent="1" vertex="1">
+                    <mxGeometry x="680" y="1425" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg2-label" value="PostgreSQL Flexible Server / DR&amp;#xa;psql-aai-prod-dr-weu-01&amp;#xa;Geo-backup / DR Region&amp;#xa;West Europe" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;strokeColor=none;fillColor=none;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="750" y="1425" width="150" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="security-layer" value="Security / Secrets / Governance" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;strokeWidth=2;verticalAlign=top;fontSize=12;fontStyle=1;arcSize=4;" parent="1" vertex="1">
+                    <mxGeometry x="1080" y="1378" width="340" height="139" as="geometry"/>
+                </mxCell>
+                <mxCell id="kv-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/security/Key_Vaults.svg;" parent="1" vertex="1">
+                    <mxGeometry x="1115" y="1420" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="kv-label" value="Key Vault&amp;#xa;kv-aai-prod-neu-01&amp;#xa;Private Endpoint · RBAC · Rotation" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontStyle=1;strokeColor=none;fillColor=none;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="1185" y="1420" width="210" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="obs-layer" value="Observability / SOC Telemetry" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8eaf6;strokeColor=#3949ab;strokeWidth=2;verticalAlign=top;fontSize=12;fontStyle=1;arcSize=4;" parent="1" vertex="1">
+                    <mxGeometry x="1460" y="1378" width="360" height="252" as="geometry"/>
+                </mxCell>
+                <mxCell id="ai-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/management_governance/Application_Insights.svg;" parent="1" vertex="1">
+                    <mxGeometry x="1490" y="1420" width="52" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="ai-label" value="Application Insights (prod components)&amp;#xa;App + APIM + critical functions&amp;#xa;Alerts / dashboards / distributed tracing" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontStyle=1;strokeColor=none;fillColor=none;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="1555" y="1420" width="205" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-ai-la" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=1;strokeColor=#3949ab;endArrow=block;endFill=1;" parent="1" source="ai-icon" target="la-icon" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-func-ai" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=1;strokeColor=#3949ab;endArrow=open;endFill=0;dashed=1;" parent="1" source="func-token-icon" target="ai-icon" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="v-5000" value="Deployment Slot&amp;#xa;staging / pre-prod swap" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;strokeWidth=1;verticalAlign=middle;fontSize=10;arcSize=4;" parent="1" vertex="1">
+                    <mxGeometry x="418" y="750" width="160" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-5001" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=1;strokeColor=#666666;endArrow=open;endFill=0;dashed=1;" parent="1" source="webapp-icon" target="v-5000" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="" style="group" parent="1" vertex="1" connectable="0">
+                    <mxGeometry x="2170" y="820" width="1080" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="v-5002" value="Secondary Region / DR (West Europe)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7e6;strokeColor=#d79b00;strokeWidth=2;verticalAlign=top;fontSize=12;fontStyle=1;arcSize=4;" parent="2" vertex="1">
+                    <mxGeometry width="1080" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="v-5003" value="Warm standby services / restore targets&amp;#xa;Front Door failover origin" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontStyle=1;strokeColor=none;fillColor=none;" parent="2" vertex="1">
+                    <mxGeometry x="30" y="45" width="380" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="v-5004" value="DB geo-restore / app recovery / config rehydration" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;strokeColor=none;fillColor=none;" parent="2" vertex="1">
+                    <mxGeometry x="430" y="45" width="400" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="v-5005" value="Runbooks + health probes + regional failover" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;strokeColor=none;fillColor=none;" parent="2" vertex="1">
+                    <mxGeometry x="430" y="80" width="380" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="" style="group" parent="1" vertex="1" connectable="0">
+                    <mxGeometry x="2080" y="497" width="700" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="gw-vnet" value="vnet-aai-prod-gw-neu-03  (Gateway / Shared Services VNet)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;strokeWidth=2;verticalAlign=top;fontSize=11;fontStyle=1;arcSize=4;" parent="3" vertex="1">
+                    <mxGeometry width="700" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="vnet-gw-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/networking/Virtual_Networks.svg;" parent="3" vertex="1">
+                    <mxGeometry x="40" y="45" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="vnet-gw-label" value="Gateway VNet&#xa;vnet-aai-perf-gw-neu-03" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;strokeColor=none;fillColor=none;" parent="3" vertex="1">
+                    <mxGeometry x="105" y="45" width="220" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="pub-ip-vm-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/networking/Public_IP_Addresses.svg;" parent="3" vertex="1">
+                    <mxGeometry x="350" y="45" width="40" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="pub-ip-vm-label" value="Bastion Public IP&amp;#xa;admin access only" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;whiteSpace=wrap;" parent="3" vertex="1">
+                    <mxGeometry x="335" y="90" width="70" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="" style="group" parent="1" vertex="1" connectable="0">
+                    <mxGeometry x="766" y="270" width="640" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="vnet-dmz" value="vnet-aai-prod-dmz-neu-01  (DMZ VNet)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f9f9f9;strokeColor=#0078d4;strokeWidth=2;verticalAlign=top;fontSize=11;fontStyle=1;arcSize=4;" parent="4" vertex="1">
+                    <mxGeometry width="640" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="nsg-dmz-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/networking/Network_Security_Groups.svg;" parent="4" vertex="1">
+                    <mxGeometry x="534" y="35" width="36" height="36" as="geometry"/>
+                </mxCell>
+                <mxCell id="nsg-dmz-label" value="NSG&amp;#xa;nsg-aai-prod-dmz-neu-01" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;whiteSpace=wrap;" parent="4" vertex="1">
+                    <mxGeometry x="514" y="75" width="76" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pip-agw-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/networking/Public_IP_Addresses.svg;" parent="4" vertex="1">
+                    <mxGeometry x="409" y="35" width="36" height="36" as="geometry"/>
+                </mxCell>
+                <mxCell id="pip-agw-label" value="Public IP&amp;#xa;pip-aai-prod-agw-neu-01&amp;#xa;Front Door origin only" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;whiteSpace=wrap;" parent="4" vertex="1">
+                    <mxGeometry x="384" y="75" width="86" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="agw-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/networking/Application_Gateways.svg;" parent="4" vertex="1">
+                    <mxGeometry x="81" y="35" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="agw-label" value="Application Gateway&amp;#xa;ag-aai-prod-agw-neu-01&amp;#xa;WAF v2 · North Europe" style="text;html=1;align=center;verticalAlign=top;fontSize=10;fontStyle=1;strokeColor=none;fillColor=none;whiteSpace=wrap;" parent="4" vertex="1">
+                    <mxGeometry x="46" y="95" width="126" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="" style="group" parent="1" vertex="1" connectable="0">
+                    <mxGeometry x="780" y="-20" width="640" height="190" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge-layer" value="Edge / CDN Layer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;verticalAlign=top;fontSize=12;fontStyle=1;arcSize=4;" parent="6" vertex="1">
+                    <mxGeometry width="640" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="fd-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/networking/Front_Doors.svg;" parent="6" vertex="1">
+                    <mxGeometry x="70" y="34.61538461538461" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="fd-label" value="Azure Front Door Premium&amp;#xa;fd-aai-prod-neu-01&amp;#xa;WAF + Private Link Origins" style="text;html=1;align=center;verticalAlign=top;fontSize=10;fontStyle=1;strokeColor=none;fillColor=none;whiteSpace=wrap;" parent="6" vertex="1">
+                    <mxGeometry x="45" y="98.07692307692307" width="100" height="34.61538461538461" as="geometry"/>
+                </mxCell>
+                <mxCell id="cdn-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/networking/CDN_Profiles.svg;" parent="6" vertex="1">
+                    <mxGeometry x="190" y="34.61538461538461" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="cdn-label" value="Global Edge Routing&amp;#xa;Standard/Premium AFD&amp;#xa;Primary + Secondary Region" style="text;html=1;align=center;verticalAlign=top;fontSize=10;strokeColor=none;fillColor=none;whiteSpace=wrap;" parent="6" vertex="1">
+                    <mxGeometry x="155" y="98.07692307692307" width="120" height="46.153846153846146" as="geometry"/>
+                </mxCell>
+                <mxCell id="waf-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/networking/Web_Application_Firewall_Policies_WAF.svg;" parent="6" vertex="1">
+                    <mxGeometry x="340" y="34.61538461538461" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="waf-label" value="WAF Policy&amp;#xa;waf-aai-prod-neu-01&amp;#xa;Prevention + Rate Limit" style="text;html=1;align=center;verticalAlign=top;fontSize=10;strokeColor=none;fillColor=none;whiteSpace=wrap;" parent="6" vertex="1">
+                    <mxGeometry x="315" y="98.07692307692307" width="100" height="34.61538461538461" as="geometry"/>
+                </mxCell>
+                <mxCell id="dns-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/networking/DNS_Zones.svg;" parent="6" vertex="1">
+                    <mxGeometry x="480" y="34.61538461538461" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="dns-label" value="Private DNS Zones&amp;#xa;postgres / keyvault / appservice / apim" style="text;html=1;align=center;verticalAlign=top;fontSize=10;strokeColor=none;fillColor=none;whiteSpace=wrap;" parent="6" vertex="1">
+                    <mxGeometry x="445" y="98.07692307692307" width="120" height="34.61538461538461" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="" style="group" parent="1" vertex="1" connectable="0">
+                    <mxGeometry x="795" y="-180" width="160" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="internet-label" value="Internet / Users" style="text;html=1;align=center;verticalAlign=middle;resizable=0;strokeColor=none;fillColor=none;fontSize=11;fontStyle=1;" parent="7" vertex="1">
+                    <mxGeometry width="160" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="internet" value="" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;" parent="7" vertex="1">
+                    <mxGeometry x="25" y="20" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-internet-fd" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;strokeColor=#0078d4;endArrow=block;endFill=1;exitX=0.55;exitY=0.95;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="internet" target="fd-icon" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-fd-agw" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;strokeColor=#0078d4;endArrow=block;endFill=1;" parent="1" source="fd-icon" target="agw-icon" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="" style="group" parent="1" vertex="1" connectable="0">
+                    <mxGeometry x="210" y="930" width="1760" height="330" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-section" value="Azure Functions&amp;nbsp; (17 apps)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3f0ff;strokeColor=#6c4db8;strokeWidth=2;verticalAlign=top;fontSize=11;fontStyle=1;arcSize=4;" parent="11" vertex="1">
+                    <mxGeometry width="1760" height="330" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-shop-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/compute/Function_Apps.svg;" parent="11" vertex="1">
+                    <mxGeometry x="30" y="50" width="44" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-shop-label" value="func-aai-perf&#xa;-shop-offer-neu-02&#xa;Shop / Flights" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;" parent="11" vertex="1">
+                    <mxGeometry x="15" y="98" width="74" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-token-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/compute/Function_Apps.svg;" parent="11" vertex="1">
+                    <mxGeometry x="130" y="50" width="44" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-token-label" value="func-aai-perf&#xa;-token-neu-01&#xa;Auth Token" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;" parent="11" vertex="1">
+                    <mxGeometry x="115" y="98" width="74" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-services-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/compute/Function_Apps.svg;" parent="11" vertex="1">
+                    <mxGeometry x="230" y="50" width="44" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-services-label" value="func-aai-perf&#xa;-services-neu-03&#xa;Services" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;" parent="11" vertex="1">
+                    <mxGeometry x="215" y="98" width="74" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-seatsvcs-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/compute/Function_Apps.svg;" parent="11" vertex="1">
+                    <mxGeometry x="330" y="50" width="44" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-seatsvcs-label" value="func-aai-perf&#xa;-seat-services-neu-04&#xa;Seat Services" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;" parent="11" vertex="1">
+                    <mxGeometry x="312" y="98" width="80" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-seatmap-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/compute/Function_Apps.svg;" parent="11" vertex="1">
+                    <mxGeometry x="430" y="50" width="44" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-seatmap-label" value="func-aai-perf&#xa;-seat-map-neu-05&#xa;Seat Map" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;" parent="11" vertex="1">
+                    <mxGeometry x="415" y="98" width="74" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-search-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/compute/Function_Apps.svg;" parent="11" vertex="1">
+                    <mxGeometry x="530" y="50" width="44" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-search-label" value="func-aai-perf&#xa;-searchpanel-neu-06&#xa;Search Panel" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;" parent="11" vertex="1">
+                    <mxGeometry x="512" y="98" width="80" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-order-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/compute/Function_Apps.svg;" parent="11" vertex="1">
+                    <mxGeometry x="630" y="50" width="44" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-order-label" value="func-aai-perf&#xa;-retrieve-order-neu-07&#xa;Retrieve Order" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;" parent="11" vertex="1">
+                    <mxGeometry x="610" y="98" width="84" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-cart-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/compute/Function_Apps.svg;" parent="11" vertex="1">
+                    <mxGeometry x="730" y="50" width="44" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-cart-label" value="func-aai-perf&#xa;-retrieve-cart-neu-08&#xa;Retrieve Cart" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;" parent="11" vertex="1">
+                    <mxGeometry x="710" y="98" width="84" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-rbac-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/compute/Function_Apps.svg;" parent="11" vertex="1">
+                    <mxGeometry x="830" y="50" width="44" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-rbac-label" value="func-aai-perf&#xa;-rbac-pending-neu-09&#xa;RBAC Pending" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;" parent="11" vertex="1">
+                    <mxGeometry x="810" y="98" width="84" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-pay-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/compute/Function_Apps.svg;" parent="11" vertex="1">
+                    <mxGeometry x="930" y="50" width="44" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-pay-label" value="func-aai-perf&#xa;-payment-neu-10&#xa;Payment" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;" parent="11" vertex="1">
+                    <mxGeometry x="915" y="98" width="74" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-createcart-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/compute/Function_Apps.svg;" parent="11" vertex="1">
+                    <mxGeometry x="1030" y="50" width="44" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-createcart-label" value="func-aai-perf&#xa;-create-cart-neu-11&#xa;Create Cart" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;" parent="11" vertex="1">
+                    <mxGeometry x="1012" y="98" width="80" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-ckupdate-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/compute/Function_Apps.svg;" parent="11" vertex="1">
+                    <mxGeometry x="1130" y="50" width="44" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-ckupdate-label" value="func-aai-perf&#xa;-checkoutupdate-neu-12&#xa;Checkout Update" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;" parent="11" vertex="1">
+                    <mxGeometry x="1108" y="98" width="88" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-ckpax-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/compute/Function_Apps.svg;" parent="11" vertex="1">
+                    <mxGeometry x="1235" y="50" width="44" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-ckpax-label" value="func-aai-perf&#xa;-checkoutpassengers&#xa;-neu-13" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;" parent="11" vertex="1">
+                    <mxGeometry x="1215" y="98" width="84" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-ckinit-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/compute/Function_Apps.svg;" parent="11" vertex="1">
+                    <mxGeometry x="1335" y="50" width="44" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-ckinit-label" value="func-aai-perf&#xa;-checkoutinitiate&#xa;-neu-14" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;" parent="11" vertex="1">
+                    <mxGeometry x="1315" y="98" width="84" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-ckconfirm-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/compute/Function_Apps.svg;" parent="11" vertex="1">
+                    <mxGeometry x="1435" y="50" width="44" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-ckconfirm-label" value="func-aai-perf&#xa;-checkoutconfirm&#xa;-neu-15" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;" parent="11" vertex="1">
+                    <mxGeometry x="1415" y="98" width="84" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-baggage-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/compute/Function_Apps.svg;" parent="11" vertex="1">
+                    <mxGeometry x="1535" y="50" width="44" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-baggage-label" value="func-aai-perf&#xa;-baggage-policies&#xa;-neu-16" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;" parent="11" vertex="1">
+                    <mxGeometry x="1515" y="98" width="84" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-appconfig-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/compute/Function_Apps.svg;" parent="11" vertex="1">
+                    <mxGeometry x="1635" y="50" width="44" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="func-appconfig-label" value="func-aai-perf&#xa;-appconfigp-neu-17&#xa;App Config" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;" parent="11" vertex="1">
+                    <mxGeometry x="1615" y="98" width="84" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="asp-note" value="Production controls: VNet integration · private endpoints / restrictions · always-ready for critical functions · managed identities · blue/green deployment" style="text;html=1;align=center;verticalAlign=middle;fontSize=9;strokeColor=#6c4db8;fillColor=#f8f5ff;rounded=1;" parent="11" vertex="1">
+                    <mxGeometry y="155" width="1760" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="asp-webapp-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/app_services/App_Service_Plans.svg;" parent="11" vertex="1">
+                    <mxGeometry x="30" y="190" width="36" height="36" as="geometry"/>
+                </mxCell>
+                <mxCell id="asp-webapp-label" value="ASP: asp-aai-prod-wapp-neu-01&amp;#xa;Premium v3 (Web App)" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;whiteSpace=wrap;" parent="11" vertex="1">
+                    <mxGeometry x="5" y="230" width="86" height="34" as="geometry"/>
+                </mxCell>
+                <mxCell id="pe-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/networking/Private_Endpoint.svg;" parent="11" vertex="1">
+                    <mxGeometry x="150" y="190" width="36" height="36" as="geometry"/>
+                </mxCell>
+                <mxCell id="pe-label" value="Private Endpoints&amp;#xa;App / Func / APIM / KeyVault / PostgreSQL" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;whiteSpace=wrap;" parent="11" vertex="1">
+                    <mxGeometry x="130" y="230" width="76" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="" style="group" parent="11" vertex="1" connectable="0">
+                    <mxGeometry x="5" width="52" height="61" as="geometry"/>
+                </mxCell>
+                <mxCell id="nsg-ndmz-app-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/networking/Network_Security_Groups.svg;" parent="15" vertex="1">
+                    <mxGeometry x="10" width="32" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="nsg-ndmz-app-label" value="NSG · ndmz-app" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;whiteSpace=wrap;" parent="15" vertex="1">
+                    <mxGeometry y="35" width="52" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-apim-funcs2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;strokeColor=#6c4db8;endArrow=block;endFill=1;dashed=1;dashPattern=6 4;" parent="1" source="apim-icon" target="func-token-icon" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="875" y="830"/>
+                            <mxPoint x="362" y="830"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-apim-funcs" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;strokeColor=#6c4db8;endArrow=block;endFill=1;dashed=1;dashPattern=6 4;" parent="1" source="apim-icon" target="func-shop-icon" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="875" y="830"/>
+                            <mxPoint x="262" y="830"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="12" value="" style="group" parent="1" vertex="1" connectable="0">
+                    <mxGeometry x="40" y="-200" width="160" height="380" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-box" value="Legend" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;strokeWidth=1;verticalAlign=top;fontSize=11;fontStyle=1;arcSize=4;" parent="12" vertex="1">
+                    <mxGeometry width="160" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-traffic" value="─── HTTPS Traffic" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#0078d4;strokeColor=none;fillColor=none;" parent="12" vertex="1">
+                    <mxGeometry x="10" y="25" width="140" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-api" value="─── API Routing" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#d79b00;strokeColor=none;fillColor=none;" parent="12" vertex="1">
+                    <mxGeometry x="10" y="48" width="140" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-func" value="╌╌╌ Function Calls" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#6c4db8;strokeColor=none;fillColor=none;" parent="12" vertex="1">
+                    <mxGeometry x="10" y="71" width="140" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-db" value="─── DB Connection" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#2e7d32;strokeColor=none;fillColor=none;" parent="12" vertex="1">
+                    <mxGeometry x="10" y="94" width="140" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-obs" value="╌╌╌ Telemetry" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#3949ab;strokeColor=none;fillColor=none;" parent="12" vertex="1">
+                    <mxGeometry x="10" y="117" width="140" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-load" value="╌╌╌ Load Test Traffic" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#e65100;strokeColor=none;fillColor=none;" parent="12" vertex="1">
+                    <mxGeometry x="10" y="140" width="140" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-sec" value="╌╌╌ Secret Access" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#c62828;strokeColor=none;fillColor=none;" parent="12" vertex="1">
+                    <mxGeometry x="10" y="163" width="140" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="v-5033" value="Production Additions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;strokeWidth=1;verticalAlign=top;fontSize=11;fontStyle=1;arcSize=4;" parent="12" vertex="1">
+                    <mxGeometry y="220" width="160" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="v-5034" value="─── DR / Failover" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#d79b00;strokeColor=none;fillColor=none;" parent="12" vertex="1">
+                    <mxGeometry x="10" y="245" width="140" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="v-5035" value="╌╌╌ SOC Telemetry" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#6c4db8;strokeColor=none;fillColor=none;" parent="12" vertex="1">
+                    <mxGeometry x="10" y="268" width="140" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="v-5036" value="╌╌╌ Governance / Security" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#ff8f00;strokeColor=none;fillColor=none;" parent="12" vertex="1">
+                    <mxGeometry x="10" y="291" width="140" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="v-5037" value="─── Admin / Mgmt" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#607d8b;strokeColor=none;fillColor=none;" parent="12" vertex="1">
+                    <mxGeometry x="10" y="314" width="140" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="v-5038" value="HA / Zone Redundant" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#2e7d32;strokeColor=none;fillColor=none;" parent="12" vertex="1">
+                    <mxGeometry x="10" y="337" width="140" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="" style="group" parent="1" vertex="1" connectable="0">
+                    <mxGeometry x="1460" y="270" width="700" height="170" as="geometry"/>
+                </mxCell>
+                <mxCell id="mgmt-vnet" value="vnet-aai-prod-mngt-neu-04  (Management VNet)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;strokeWidth=2;verticalAlign=top;fontSize=11;fontStyle=1;arcSize=4;" parent="13" vertex="1">
+                    <mxGeometry width="700" height="170" as="geometry"/>
+                </mxCell>
+                <mxCell id="vm-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/compute/Virtual_Machine.svg;" parent="13" vertex="1">
+                    <mxGeometry x="40" y="45" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="vm-label" value="Bastion / Jump Access&amp;#xa;Management access only&amp;#xa;PIM / JIT / admin operations" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontStyle=1;strokeColor=none;fillColor=none;whiteSpace=wrap;" parent="13" vertex="1">
+                    <mxGeometry x="110" y="35" width="140" height="76" as="geometry"/>
+                </mxCell>
+                <mxCell id="nsg-sg-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/networking/Network_Security_Groups.svg;" parent="13" vertex="1">
+                    <mxGeometry x="405" y="45" width="36" height="36" as="geometry"/>
+                </mxCell>
+                <mxCell id="nsg-sg-label" value="NSG · mgmt&amp;#xa;NSG · bastion&amp;#xa;NSG · gateway&amp;#xa;No public load-test VM in prod" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;whiteSpace=wrap;" parent="13" vertex="1">
+                    <mxGeometry x="380" y="85" width="86" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-agw-apim" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;strokeColor=#d79b00;endArrow=block;endFill=1;" parent="1" source="agw-icon" target="apim-icon" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-vm-agw" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;strokeColor=#e65100;endArrow=open;endFill=0;dashed=1;dashPattern=8 4;" parent="1" source="vm-icon" target="agw-icon" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1528" y="560"/>
+                            <mxPoint x="1080" y="560"/>
+                            <mxPoint x="1080" y="333"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="16" value="" style="group" parent="1" vertex="1" connectable="0">
+                    <mxGeometry x="1400" y="620" width="52" height="61" as="geometry"/>
+                </mxCell>
+                <mxCell id="nsg-ndmz-ilb-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/networking/Network_Security_Groups.svg;" parent="16" vertex="1">
+                    <mxGeometry x="10" width="32" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="nsg-ndmz-ilb-label" value="NSG · ndmz-ilb" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;whiteSpace=wrap;" parent="16" vertex="1">
+                    <mxGeometry y="35" width="52" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="" style="group" parent="1" vertex="1" connectable="0">
+                    <mxGeometry x="970" y="1390" width="60" height="61" as="geometry"/>
+                </mxCell>
+                <mxCell id="nsg-ndmz-data-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/networking/Network_Security_Groups.svg;" parent="17" vertex="1">
+                    <mxGeometry x="14" width="32" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="nsg-ndmz-data-label" value="NSG · ndmz-data" style="text;html=1;align=center;verticalAlign=top;fontSize=9;strokeColor=none;fillColor=none;whiteSpace=wrap;" parent="17" vertex="1">
+                    <mxGeometry y="35" width="60" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-agw-webapp" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;strokeColor=#0078d4;endArrow=block;endFill=1;" parent="1" source="agw-icon" target="webapp-icon" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-webapp-ai" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=1;strokeColor=#3949ab;endArrow=open;endFill=0;dashed=1;" parent="1" source="webapp-icon" target="ai-icon" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-funcs-pg" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;strokeColor=#2e7d32;endArrow=block;endFill=1;" parent="1" source="func-services-icon" target="pg1-icon" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="462" y="1330"/>
+                            <mxPoint x="288" y="1330"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-webapp-pg" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;strokeColor=#2e7d32;endArrow=block;endFill=1;" parent="1" source="webapp-icon" target="pg1-icon" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="150" y="673"/>
+                            <mxPoint x="150" y="1453"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-func-kv" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=1;strokeColor=#c62828;endArrow=open;endFill=0;dashed=1;" parent="1" source="func-token-icon" target="kv-icon" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="" style="group" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="1490" y="1540" width="245" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="la-icon" value="" style="image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/management_governance/Log_Analytics_Workspaces.svg;" parent="18" vertex="1">
+                    <mxGeometry width="52" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="la-label" value="Central Log Analytics Workspace&amp;#xa;law-aai-prod-security-neu-01&amp;#xa;Retention + archive strategy" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;strokeColor=none;fillColor=none;whiteSpace=wrap;" parent="18" vertex="1">
+                    <mxGeometry x="63" width="182" height="52" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

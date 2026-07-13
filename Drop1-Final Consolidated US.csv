@@ -1,0 +1,1069 @@
+﻿Story ID,Increment,Title,UserStory,Business Value,Acceptance Criteria,Feature,Feedback on Uss,
+US-Config-01,Increment-1,Support Airline-specific Origins,I want the system to support a list of origins marked by the airline,So that I can offer customers flights from various starting points,"If the airline marks a list of origins, then the system must support this list when providing origin options to the user.
+
+If an administrator configures origins  via the admin interface, then the system must reflect these changes in the user interface.
+
+If an agent selects an origin and destination for OW (One Way) or RT (Round Trip) itineraries, then the system must ensure these are different locations.
+
+• Can be determined whether its of location type ""Airport"" or ""City""
+• The Locations in the autosuggest are presented in the following format:
+<city> - <airport> (<airport code>),<state>, <country> ",F1.1 - SC_F2_1//Search Criteria_Offer Search,"AY 14OCT: Who is the admin and do we AY get the Admin UI interface?
+For drop1, would we get only a set of O&Ds ? Would it be limited to Finnair O&Ds?
+
+TCS 28Oct: Yes. AY will get admin access, and it is restricted based on job role.
+Yes only support Finnair O&D.
+
+AY24NOV. In ref to O&D. Please clarify the ""only support Finnair O&D""; only Finnair destinations or only the fares that has been filed?
+TCS07DEC: O&D configuration in admin UI based on Finnair's provided list. Admin UI's autocomplete list for origin and destination fields will display all locations provided by the airline, regardless of current flight routes, and the offer management system will determine if an offer is available.",
+US-Config-02,Increment-1,Support Airline-specific Destinations,I want the system to support a list of destinations marked by the airline,So that I can offer customers flights to destinations marked by the airline,"If the airline marks a list of destinations, then the system must support this list when providing origin options to the user.
+
+If an administrator configures destinations via the admin interface, then the system must reflect these changes in the user interface.
+
+If an agent selects an origin and destination for OW (One Way) or RT (Round Trip) itineraries, then the system must ensure these are different locations.
+
+• Can be determined whether its of location type ""Airport"" or ""City""
+• The Locations in the autosuggest are presented in the following format:
+<city> - <airport> (<airport code>),<state>, <country> ",F1.1 - SC_F2_1//Search Criteria_Offer Search,"AY 14OCT: Who is the admin and do we AY get the Admin UI interface?
+For drop1, would we get only a set of O&Ds ? Would it be limited to Finnair O&Ds?
+
+TCS 28Oct: Yes, AY will get admin access, and it is restricted based on job role.
+Yes, Only support Finnair O&D.
+
+AY24NOV. In ref to O&D. Please clarify the ""only support Finnair O&D""; only Finnair destinations or only the fares that has been filed? As an example; HEL-SYD.
+
+TCS07DEC: O&D configuration in admin UI based on Finnair's provided list.Admin UI's autocomplete list for origin and destination fields will display all locations provided by the airline, regardless of current flight routes, and the offer management system will determine if an offer is available.",
+US-Config-03,Increment-1,Support Airline-specific Cabin Types,"I want the system to support search for all cabin classes marketed by the airline
+- Agent can apply Cabin filters on customer request",so that I can offer customers a range of seating or cabin options,"• The system must support search for one or all cabin classes.
+Cabin classes must be configurable via the admin interface",F1.1 - SC_F2_1//Search Criteria_Offer Search,"AY 14OCT: Same as above for the Admin role and UI
+
+TCS 28Oct: Yes, AY will get admin access, and it is restricted based on job role.",
+US-Config-04,Increment-1,Support Airline-specific Fare Families per Cabin Types,I want the system to support configuration of Fare Familes per cabin classes marketed by the airline,So that agent can choose the fare family that best fits customer needs and budget,,F1.1 - SC_F2_1//Search Criteria_Offer Search,"AY 14OCT: Are there filters for Fare Family?
+
+TCS28Oct: Yes, We have filter for fare families.",
+US-Config-05,Increment-1,Support Airline-specific Trip Types,"I want the system to support a list of Trip types marked by the airline
+- Agent can apply configured Trip types based on the customer request",So that agent can choose the trip type based on customer needs,"Iteration 1: Supported Trip Type is One way (OW) & Return (RT)
+OW - 1 set of flight & Return date field is hidden or disabled 
+RT - 2 sets of flight Outbound & Inbound. Return date is must",F1.1 - SC_F2_1//Search Criteria_Offer Search,AY 14OCT: OK,
+US-Config-06,Backlog,Support Airline-specific Point of Sale (PoS)/ Market,"I want the system to support a list of Market/ PoS marked by the airline
+
+I want the system to retrieve allowed origins and destinations based on the Point of Sale (POS)/ market",So that I can offer customers flights from their preferred Market/ Country,"• The system must retrieve allowed origins and destinations based on the POS.
+• The system must have the capability to exclude certain Origins and Destinations for a PoS.",F1.1 - SC_F2_1//Search Criteria_Offer Search,"AY 14OCT: In PSS for office IDs we do have different currencies and different fare types. But O&Ds are not limited to any PoS.
+On selecting a particualar PoS, during SmartBridge out, would the reconstructed PNRs be created in the Office ID dedicated to the PoS?
+
+TCS28Oct: Need to check with 1A.
+PoS is decided at login based on Oiffice Id, the agent uses.
+1A: Ashwin will check and confirm
+
+1A09NOV: Office Id Override can be passed in the JWT Authorization Header sent in every request. Presently, the currency will depend on the Origin City. But, it will be changed to Office Id, as that will be needed for Business Continuity (Ticketing after Payment). After reconstruction, it will be created in the Office id passed in the flow.
+
+AY24NOV: AY assumption is that the final solution will be based on Office ID (not the origin city).
+TCS07DEC: Ashwin need to respond.
+TCS&1A: Ashwin check & Response.
+1A13JAN: Final Solution will be based on Office Id. ",
+US-Config-07,Increment-1,Support Airline-specific CFF,"I want the system to support a list of CFF marked by the airline
+- Agent can apply CFF configured in the system during search",So that relavant CFFs are returned based on the market/ PoS or PoC,"Airline can configure list of CFFs per PoS/ Market
+
+If an agent selects an Origin or PoS/ Market for any Trip Type, then the sytem has to provide the list of CFFs for the agent to select",F1.1 - SC_F2_1//Search Criteria_Offer Search,"AY 14OCT: Agents should not be selecting the CFF. The Fare family should be mapped to CFF. When agent selects a particualr Fare Family, the corresponding CFF should be selected automatically.
+We believe that Admin UI should have the mapping capability.
+
+TCS28Oct: Yes, Admin console have these capabilities. Need to discuss more on it.
+
+1A& TCS: Savitha needs to plan demo to show AY how mapping will be done.
+
+AY 24NOV. Demo to clarify the planned process.
+TCS 7DEC: Savitha need to plan demo with AY. 
+TCS 25 Feb : AY demo planned on 27 Feb 2026",
+US-Config-08,Increment-1,Support Airline-specific Frequent Flyer Program,"I want the system to support a list of Frequent Flyer Program needed by the airline
+- Agent can choose a configured Frequent Flyer Program on the customer preference/ request",so that I can offer customers a range of FFPs,"Support Frequent flyer program selection 
+",F1.1 - SC_F2_1//Search Criteria_Offer Search,"AY 14OCT: Is the list of FFPs mean only select the tier name? The UI should allow Agents to input the Frequent flyer number. 
+Also Agents should be able to select other airlines FFPs.
+
+TCS 28Oct: Frequent flyer program  will be available  based on configuration and agent can enter FFN manually.
+Yes, agent can select partner airlines FFPs if configured.
+
+AY24NOV: Is the configuration managed by airlines in Admin UI?
+TCS 7DEC: Yes, configuration can be managed by airlines using Admin UI. Savitha will show in demo.
+TCS 25 Feb : AY demo planned on 27 Feb 2026
+",
+US-Config-09,Increment-1,Support Airline-specific Language,"I want the system to support a list of Languages needed by the airline
+- Agent can choose a language configured in the system",So that agent can choose a language the agent & customer understands,"Support language selection 
+Available languages - EN, …
+All labels, error message and dynamic content adapt based on the selected language",F1.1 - SC_F2_1//Search Criteria_Offer Search,"AY 14OCT: Currently agents refer the Amadeus Service Hub if they face any error. Would it affect the troubleshooting by Agent when they encounter error messages?
+
+TCS 28Oct:  Agent need to check product manual and process documents to validate error message but need to recheck with 1A.
+1A: Ashwin will share error documents
+1A 09NOV: Ashwin will share error documents shortly. 
+1A:AD:20NOV:Error messages shared in SharePoint. Link emailed.
+
+AY24NOV: Finnair need to is to have Agent UI only in English, including error messages. 
+TCS 7DEC: Noted and aligned.",
+US-Config-10,Increment-1,Support Airline-specific Currency,"I want the system to handle searches based on currency
+- Agent can choose a configured currency based on the customer request",So that I can offer customers flight prices in their preferred currency,"• The system must accept currency parameters in the shopping request.
+• The system must return flight prices in the specified currency
+Supported Currency: EUR, USD, …
+ - Currency  changes update prices dynamically across the shopping flow",F1.1 - SC_F2_1//Search Criteria_Offer Search,"AY 14OCT: Currently PoS determines the currency in which the PNR will be ticketed. So when changing currency in the shopping flow, will it change the PoS?
+
+TCS 28Oct: Currency will reflect based on PoS. Change in currency will not change the PoS.
+
+AY24NOV: If there is a discrepancy between PoS and currency, would that not cause an error in ticketing (single-currency offices)?
+TCS07DEC:Currency changes are not supported in the current UI, and office ID determines the point of sale and associated currency automatically through the API.",
+US-Config-11,Increment-1,Support Airline-specific Operating Carriers,"I want the system to support a list of Operating Carrier needed by the airline
+- Agent can filter flights based on the operating carrier",So that agent can choose flights operated by airlines customer prefer,"The system allows filtering search results based on the Operating Carrier
+Increment 1: Only Finnair Marketed & Operated flights",F1.1 - SC_F2_1//Search Criteria_Offer Search,"AY 14OCT: Filter based on OneWorld alliance should be available for Agents.
+Will there be option to select multiple Carriers (for example, Joint Business - AJB)
+
+TCS 28Oct: Currently, filtering is not supported it will consider in future.But we will show the results of partner airlines based on Nevio API response.
+
+AY 25.11NOV Please clarify further the (with demo or somehow). Currently the usecase and options available is not clear for us. 
+
+TCS07DEC: Need to introduce a filter to see to choose  only flight or particular operating carrier.
+TCS 25 Feb : Added to backlog.",
+US-Config-12,Increment-1,Support Airline-specific Shopping Types,I want the system to support a list of Shopping Types needed by the airline,So that agent can book flights tailored to the customer request,"Airline can configure possible Shopping types - Revenue, Group, Staff, Corporate,...",F1.1 - SC_F2_1//Search Criteria_Offer Search,"AY 14OCT: Would there be option to input the corporate codes / group discount code / staff code, etc?
+
+TCS 28Oct: No. Currently, we have options to input the PTC discount code & Promo code only in UI and these are configurable.
+
+AY 25.11. Usage of corporate and promo codes are very important use cases of for this scenario should be included in the UI capabilities.
+TCS07DEC: Currently, UI supported promo codes & discount codes. Need to check with Ashwin if corporate codes we can support.
+12Dec: Ashwin confirmed corporate codes supported by API. Corporate codes we need to check internally with design team. Group & staff booking are not part of drop1&2.
+TCS 25 Feb: Corporate code support in service center UI is out of scope for Drop 1 & 2.",
+US-Config-13,Increment-1,Support Airline-specific Passenger Type codes with Age range,"I want the system to support a list of Passenger Types (PTC) with Age definition marked by the airline
+- Agent can select configured/ apply different PTCs in the search
+- System can validate PTC age in the Passenger Information section","So that system applies correct fare, taxes and rules based on PTC and age","If the airline marks a list of PTCs with configured age definitions, then the system must support this list when providing Passenger Types options to the user.
+
+The system must ensure to validate the age of the PTC based on the Date of the Birth input in the Passenger details.
+
+Iteration 1: Supported PTCs are ADT, CHD, INF
+Age range can be overrideable per Airline
+PTC age range is configurable.",F1.1 - SC_F2_1//Search Criteria_Offer Search,"AY 14OCT: OK
+AY 20OCT Pls confirm that next iteration contains all PTCs in use. Pls clarify the process to override age range.
+
+TCS 28Oct: PTC age range is configurable. In intial drop we are handling only adult child and infant. For other PTC need to check with 1A.
+1A:For other PTC Ashwin will check and confirm.
+
+1A 09NOV: PTCs presently supported are ADT, CHD, INF, INS, B15(UK Mandate), C15
+
+AY25.11. OK (and removing out  previous comment of ability to override age range ).  Pls clarify B15. We use C15 for UK mandate (= decreased taxes)
+TCS07DEC: Its similar to B15 taxes where GB taxes are exempted for C15 PTC.",
+US-Config-14,Increment-1,Support Airline-specific Passenger Type code with Discount Code,"I want the system to support a list of Discount codes per Passenger Types (PTC) defined by the airline
+- Agent can apply configured Discount code for a PTC during search
+- additionally can validate Discount code of PTC",So that special fares  can be applies during search,"If the airline configure list of Discount codes per PTC, then the system must support this discount codes for the respective Passenger Types to the user.
+
+The system must ensure to validate the Discount Code of the PTC based on the configurations
+
+Iteration 1: Supported PTCs are ADT, CHD, INF
+Discount codes: MIL,...",F1.1 - SC_F2_1//Search Criteria_Offer Search,"AY 20OCT Pls confirm that next iteration contains all PTCs in use.
+
+TCS 28Oct:  In intial drop we are handling only adult child and infant. For other PTC need to check with 1A.
+1A:For other PTC Ashwin will check and confirm.
+
+1A 09NOV: PTCs presently supported are ADT, CHD, INF, INS, B15(UK Mandate), C15
+
+AY 25.11 How to manage e.g. SEA prices. 
+TCS07DEC: Ashwin need to check.
+TCS&1A12Dec: Ashwin will check and confirm.
+1A 19JAN: SEA will be priced as ADT. ",
+US-Config-15,Increment-1,"Support Airline-specific
+No of Passengers count",I want the system to support Search Offer requests for up to configured number of passengers ,So that system validates maximum allowed count of PTC,"If the Airline configures the maximum number of Passenger based on PTC & combinability of other PTCs, then the system must support providing the number the PTCs to the user.
+
+If the number of passengers is entered in the search request exceed the count (more than configuration), then the system must return an error
+
+Note: Configurable should be flexible to support multiple PTCs
+The system should limit the count of passenger as per business rules (Refer BR001 & BR004)",F1.1 - SC_F2_1//Search Criteria_Offer Search,"AY 20OCT Instead of displaying the error, could the system inhibit entering the number that is too big .
+AY additional comment: check the BR001/BR004)
+
+TCS 28Oct: System will restrict agent from going beyond configured number of passenger count.
+
+AY 25.11. OK, if the reasoning of the restriction is clearly stated.",
+US-Search-01,Increment-1,Flight Search - 1 or more ADT PTCs,I want the system to search flight offers for 1 or more ADT passenger types ,so that I can return accurate and complete offers for adult/ ADT passenger(s),"If the Agent selects 1 or more Passenger Type, then the system must create and price offers for each PTC according to airline-configured age definitions
+
+If an infant passenger (INF) is included, then the system must ensure the infant is associated with an adult (ADT).",F1.1 - SC_F2_1//Search Criteria_Offer Search,"AY 20OCT: ok. With the assumption that all PTCs in use will be covered in next increment
+
+",
+US-Search-02,Increment-1,Flight Search - 1 or more ADT and CHD PTCs,I want the system to create and search offers for 1 or more ADT along with Child (CHD) passengers,so that I can return accurate and complete offers for adult/ ADT & CHD passenger(s),,F1.1 - SC_F2_1//Search Criteria_Offer Search,AY 20OCT: ok. With the assumption that all PTCs in use will be covered in next increment,
+US-Search-03,Increment-1,Flight Search - 1 or more ADT and INF PTCs,I want the system to create and search offers for 1 or more ADT along with Infant (INF) passengers,so that I can return accurate and complete offers for adult/ ADT & INF passenger(s),,F1.1 - SC_F2_1//Search Criteria_Offer Search,"AY 20OCT: ok. With the assumption that all PTCs in use will be covered in next increment
+
+",
+US-Search-04,Increment-1,"Flight Search - 1 or more ADT, CHD and INF PTCs",I want the system to create and search offers for 1 or more ADT along with Child (CHD) and Infant (INF) passengers,"so that I can return accurate and complete offers for adult/ ADT, CHD, INF passenger(s)",,F1.1 - SC_F2_1//Search Criteria_Offer Search,"AY 20OCT: ok. With the assumption that all PTCs in use will be covered in next increment
+
+",
+US-Search-05,Increment-1,Flight Search - One Way (OW),I want the system to offer and search One-Way (OW) itineraries,So that I can provide customers with single-bound travel options.,"If a search is submitted, then the request must contain the passenger type and count, and validate that all required parameters (Origin, Destination, Passenger type and count, Travel date) are present.
+
+If any required parameter is missing or invalid, then the system must return an appropriate error message to the user.
+
+If the search criteria match available flights, then the system must return all suitable flight offers for the specified date; when no flights are found, a meaningful message must be displayed.",F1.1 - SC_F2_1//Search Criteria_Offer Search,"AY 20OCT UI should display  mandatory fields in addition to displaying errors when needed data is missing . 
+Clarification of Day trip itineneraries is needed.
+Assumption is that increment 2 will support multi-city scenarios
+
+TCS 28Oct: Yes, UI will display missing madatory fields in error message. Multicity will be part of BPT2.
+
+AY 25.11. OK. Please clarify the the Day trip itinerary.
+TCS07DEC: A day trip itinerary is a detailed plan for a short trip that starts and ends on the same day.",
+US-Search-06,Increment-1,Flight Search - Return (RT),II want the system to offer and search Return (RT) and Day Trip itineraries,So that I can provide customers with round-trip travel options.,,F1.1 - SC_F2_1//Search Criteria_Offer Search,"AY 20OCT Round trip should be selected by default.
+
+TCS 28Oct: Noted and aligned.
+
+AY 25.11 OK",
+US-Search-07,Increment-1,Flight Search - PTC Discount code,I want to include a passenger type discount code during flight search,So that the system returns offers applicable to that PTC discount.,"If a discount code is entered against a Passenger Type Code (PTC), then the system must validate the discount code for the PTC. Refer
+
+System provides an optional field to enter the discount code against PTC.",F1.1 - SC_F2_1//Search Criteria_Offer Search,"AY 20OCT Assumption is to automatically use special pricing based on PTC filing (ADT/CHD). In addition we need to have option to use different discound codes; AIR Discound codes, air promo codes and PTC codes.
+
+TCS 28Oct: Yes, these are configurable.
+
+AY 25.11. OK",
+US-Search-08,Increment-1,Flight Search - 1 or max 3 CFFs applied,I want to include a specific Commercial Fare Family (CFF) in the search criteria ,So that I can only retrieve flight offers matching the fare family,"If the CFFs are included in the Search, then the system must apply the CFF logic and return relavant/ discounted fare familes; when not specified, all offers are returned by default.
+
+Note: Maximum of 3 CFFs can be applied in the Search. Refer BR006",F1.1 - SC_F2_1//Search Criteria_Offer Search,"AY 20OCT Assumption is that seach can be done for economy, premium economy and business at the same time.
+Pls confirm the data source for CFF, is it Fare expert? It has to be mapped with brand name when displayed in UI.
+
+TCS 28Oct: Yes for search we are doing for economy, premium economy and business at the same time.
+CFF is configurable in admin console.
+
+For fare expert need to check with 1A.
+1A: For fare expert Manisha/Prasad will check and confirm.
+1A 06Nov (MS): The data source for CFF, is Fare expert. CFF code returned in shopping response is to be mapped to a meaningful brand code and displayed on UI.
+
+AY 25.11. OK. Where is the mapping managed? In Admin UI?
+
+TCS07DEC: Yes. It's managed in admin UI.",
+US-Search-09,Increment-1,Flight Search - Frequent Flyer Number/ details,I want to capture frequent flyer program & number for each passengers before search and then initiate search,So that the system can retrieve personalized offers for eligible travelers,"If a frequent flyer number is provided, then the system must validate its format and retrieve personalized offers accordingly; when not provided, standard offers are shown. Refer",F1.1 - SC_F2_1//Search Criteria_Offer Search,"AY 20OCT What's included in validation? Tier and customer value also? In addition to personalized offers system needs to display offers based on tiers. What is included in personalization scenarios (TDNA and AAM)
+
+TCS 28Oct:Only format validation is done for membership Id.  Need to check with 1A for personalization.
+1A: TDNA is not part of MVP. Personalization is not part of BPT drop1. It is part part of drop2(which has to be planned after drop2).
+Manisha will validate tier and customer value.
+1A 06Nov (MS): Tier Level & Customer Value are included in the Offer validation.
+
+AY 25.11. OK, that's the minimum for MVP.",
+US-Offer-01,Increment-1,Offers - No Offers Found,I want the system to display message - when no offers are found for a given search criteria,So that I can inform to the customer,"If no matching flights are found, the system must include return message
+ - ""No Offer found for given search criteria""",F1.2 - SC_F2_2//Display_offers,"AY 20OCT Return message should contain more specific information of the reason why nothing cannot be returned (flight full, no flights on specific day, any specific inventory related reason etc)
+
+TCS 28Oct: Need to check with 1A for details info in Nevio response.
+1A: UI will return error meesage based on API response. Ashwin will share error message list.
+1A:AD:20NOV:Error messages shared in SharePoint. Link emailed.
+
+AY 25.11. Thank you for the table of error messages. Coming back to request that the Return messages need to contain specific information in order to quide agent to update search criteria as expeted (e.g. ""Invalid or Incomplete request"", which is used in seval situations with different reasons).
+
+TCS07DEC: Do we have different id for different messages and error should be meaningful.---Need to check with Savitha.
+TCS&1A12DEC: Error messages are handled in CMS where airlines can customize error messages but this not part of admin UI.",
+US-Offer-02,Increment-1,Offers - View Flight Details ,"I want the system to display detailed flight information, Cabin & Fare family details in the Offer/ bound",So that I can present travel options/ recommendations to customer,"If Offer are found, then flight details are presented to the agent must include 
+- Date
+- Departure time & Origin
+- Arrival time & Destination
+- Flight number,  Aircarft Type, Operating Carrier,...
+- Trip Duration, Leg Duration, Leg Connecting time, Stop Over,...
+
+Refer: FlightDetails",F1.2 - SC_F2_2//Display_offers,"AY 21OCT Terminal information, Arrival or connecting flights on next day ( +1) needs to be visible, Aircraft/Bus/Train as aircraft types, Marketing carrier, codeshare carrier, wetlease carrier, technical stop-overs.
+Question related to DO entry returnging e.g. flight delay - which feature would cover that data. Could this  feature cover that data also.
+
+TCS 28Oct: We are currently displaying  Terminal information, Arrival or connecting flights on next day ( +1), Aircraft type, Marketing carrier, codeshare carrier based on API response.
+Product does not handle delay in the offer screen . Need to check with 1A.
+1A: Flight informtion tool is planned for drop3.
+
+ AY 25.11. OK",
+US-Offer-03,Increment-1,Offers - View Cabin Details ,"I want to compare Cabin types with their respective details  - Prices, terms & conditions, services,..",So that agent can inform customers & help them to choose the most suitable one,"If Offer are found, then cabin details are presented to the agent must include
+- Cabin Type: Economy, Premium Economy, Business, First Class (as configured by Airlines)
+Each Cabin can contain multiple Fare Families (as per configuration)
+
+If Cabin is sold-out
+- Sold-Out indicator on the specific Cabin is shown for the Agent",F1.2 - SC_F2_2//Display_offers,AY 21OCT Ok,
+US-Offer-04,Increment-1,Offers - View Fare Familes Details,"I want to compare Fare Family types with their respective details - Prices, terms & conditions, services,..",So that agent can inform customers & help them to choose the most suitable one,"If Offer are found, then Fare Family details are presented to the agent must include
+- List of Fare Familes per Cabin: Eco Light, Eco Comfort, Eco Flex (as configured by Airlines)
+- Amentites
+- List of Services
+- Terms & Conditions
+
+If a Fare Family is sold-out
+- Sold-Out indicator on the specific Fare family is shown for the Agent",F1.2 - SC_F2_2//Display_offers,"AY 21OCT ATPCO benefits and Full fare notes to be included. Full fare notes should be accessible, but no needed on ""default view"", can be hidden behind separate Tab.
+Full Price per fare family should be displayed, tax and price breakdown can be expanded when needed.
+
+TCS 28Oct: Yes. it is handled in seperate tab. 
+Full Price per fare family should be displayed, tax and price breakdown can be expanded when needed.--> Noted and aligned.
+AY 25.11. OK",
+US-Offer-05,Increment-1,Offers - Included Service details per Offer,I want the system to display the list of services included in the Offer per Bound,So that agent can inform customers about what they are entitled to during their journey and help them make informed decisions.,"If Offer are found, then list of Service details are presented to the agent must include (Fare family contain list of entitled Services)
+- Checked in Bags or Carry Bags
+- Seat Selection
+- Lounge, Meal,...
+
+Note: Service details vary per PTC",F1.2 - SC_F2_2//Display_offers,"AY 21OCT Our expectation is to have ATPCO fare benefits displayed. 
+
+TCS 28Oct: Need to discuss with 1A
+1A: Fare benefits is part of Q3 bpt drop2.
+
+AY 25.11. OK",
+US-Offer-06,Increment-1,Offers - Amentities per Flight in the Offer,I want the system to display the list of Amentities or Special features included in the flight,,"If Offer are found, then list of Amenties details are presented to the agent must include per Flight
+- Wifi, In Seat Power, ...",F1.2 - SC_F2_2//Display_offers,"AY 21OCT Pls clarify how this differs from previous use case (service details). Is the source different? 
+
+TCS 28Oct: Sources is same .Amenities usually are the things available in the flight, like onboard entertainment, are meals available, something like this.. 
+ 
+Services are specific, like baggage, wifi and so on.",
+US-Offer-07,Increment-1,Offers - Terms & Conditions per Offer,I want the system to display the list of Terms & Conditions included/ associated with each flight Offer per Bound,So that agent can clearly communicate the fare rules to the customer and help them make informed decisions.,"If Offer are found, then list of Terms & Condition details are presented to the agent must include
+- Change policies, Penalties
+- Refund and cancellation policies
+- No Show Policy
+- Baggage Allowance
+- Restrictions,...
+
+Note: Terms & Conditions can vary per PTC","F1.25 - SC_F2_33//Terms_&_Conditions/_Fare_Rules__31,_33,_5,_6,_7","AY 21OCT ATPCO benefits and Full fare notes to be included. Full fare notes should be accessible, but no needed on ""default view"", can be hidden behind separate Tab.
+
+TCS 28Oct: Yes. it is handled in seperate tab.",
+US-Offer-08,Backlog,Offers - Access detailed Fare rules & benefits/ Mini-Rules,"I want the system to provide access to the detailed fare rules/ condition/ mini-rules will display benefits details for the agent
+F1.86 - Fare rules [TODO]
+F1.32 - Mini rules [TODO]",So that access to comprehensive fare rules ensures accurate information can be provided to customers.,"For each flight offer, the system must provide a mechanism (e.g., a link or button) to access the detailed fare rules as provided by the airline.",F1.2 - SC_F2_2//Display_offers,"AY 21OCT ATPCO benefits and Full fare notes to be included. Full fare notes should be accessible, but no needed on ""default view"", can be hidden behind separate Tab.
+
+TCS 28Oct: Yes. it is handled in seperate tab.",
+US-Offer-09,Increment-1,Offers - View Multiple Offers,I want the system to display multiple flight Offers,So that agent can compare and inform customers and help them make informed decisions,"Comparision in a tabular format showing
+- Flight times, Duration, Fare details, Prices,….",F1.2 - SC_F2_2//Display_offers,"AY 21OCT Comparison should return all cabins and all fare families. By default it should display economy (if not otherwise searched) and having possibility to change to premium economy or business comparison.
+
+TCS 28Oct: Yes we can do that.",
+US-Offer-10,Increment-1,Offers - Limited Seats,I want the system to display limited seats indicator ,So that agent inform customers and help them make quicker decisions,"If seat availability is low, then an indicator with the available seats is displayed",F1.2 - SC_F2_2//Display_offers,AY 21OCT OK,
+US-Offer-11,Increment-1,Offers - Stop Over Information,I want the system to return flight stop over information for a multi-leg bound,So that agent can clearly communicate leg break details to the customer,"If Offer has a multiple flight legs details are presented to the agent must include
+- Stop overs details: Connecting time, Leg Duration, Trip Duration,...",F1.2 - SC_F2_2//Display_offers,"AY 21OCT Terminal, Indication if connection from different airport (eg NRT/HND)
+
+TCS28Oct: Currently, we are displaying terminal info based on API response.
+Action on AY:  Need sample O&D to test.
+
+AY 25.11. Please see the example below:
+RP/HELAY0109/
+  1  AY 073 J 10MAR 2 HELNRT HK1  1645    1745 1410+1 359 E 0 HC
+     INT TRANSIT VIA TOKYO NRT MUST BE ON THE SAME DAY
+     SEE RTSVC
+  2  JL 051 J 11MAR 3 HNDSYD HK1       3  1915 0650+1 773 E 0 M
+     SEE RTSVC
+
+FXR
+01 P1
+ITINERARY REBOOKED
+LAST TKT DTE 10MAR26
+------------------------------------------------------------
+     AL FLGT  BK T DATE  TIME  FARE BASIS      NVB  NVA   BG
+ HEL
+XTYO AY    73 D *D 10MAR 1745  DNN0S9CZ                   2P
+ SYD JL    51 D *D 11MAR 1915  DNN0S9CZ                   2P
+
+EUR  4492.00      10MAR26HEL AY X/TYO JL SYD5240.92NUC
+                  5240.92END ROE0.857101
+EUR   142.47-YQ   XT EUR 6.27-DQ EUR 12.31-FI EUR 0.90-XU
+EUR     3.30-YQ   EUR 16.39-SW EUR 3.73-WG EUR 21.00-WY
+EUR    60.60-XT
+EUR  4698.37",
+US-Offer-12,Increment-1,Offers - Next Day Arrivals,I want the system to inform when a flight arrives on the next calendar day,So that agent can clearly inform customer about the next day arrival,"For flights that arrive on the next calendar day 
+- Indicate with +1 or time (+1)",F1.2 - SC_F2_2//Display_offers,AY 21OCT OK,
+US-Offer-13,Increment-1,Offers - Overnight Layovers,I want the system to inform when a flight includes an overnight layover,So that the customer can consider Airport hotel accomodations,"For connecting flights with Overnight layovers
+- Provide an Indicator",F1.2 - SC_F2_2//Display_offers,AY 21OCT OK,
+US-Offer-14,Increment-1,Offers - Total Price,I want the system to clearly display total price for each flight offer,So that agent can clearly  inform customer about the total price,,F1.2 - SC_F2_2//Display_offers,AY 21OCT OK,
+US-Offer-15,Increment-1,Offers - Breakdown of Fare Components,"I want the system to display a detailed breakdown of each fare component in the flight offer per PTC
+",So that agent can transparently communicate pricing structure to customers,"The system shall display price breakdown details for each flight Offer.
+Break down includes:
+Base Fare, Taxes, Fees, Surcharges ,...
+
+All amounts should be shown in the currency used for pricing. 
+
+Note: Fare Components & Prices vary per PTC",F1.7 - SC_F2_7//Fair Breakdown,AY 21OCT OK,
+US-Offer-16,Increment-1,Offers - Tax Breakdown,"I want the system to show a breakdown of the fare, taxes, VAT, GST and surcharges for each flight offer",So that agent can transparently  communicate tax breakdown to helps customers understand the different charges.,"For each flight offer, the system must display a detailed breakdown showing the  the amount of taxes, and the amount of any surcharges.
+
+Note: Taxes vary per PTC",F1.7 - SC_F2_7//Fair Breakdown,AY 21OCT OK,
+US-Offer-17,Increment-1,Offers - How many Paxs are being priced,I want to know how many passengers are being priced and how total fare is calculated,"System generated accurate fare quotes, tax calculations based on the PTC and count","The system must display
+- Number of Passenger & PTCs
+- Fare per PTC
+- Combined Total for all Passenger
+
+Any discounts (Infants, Child discount,…) must be also listed",F1.2 - SC_F2_2//Display_offers,AY 21OCT OK,
+US-Offer-18,Increment-1,Offers - Discount Code (ADT - MIL),I want the system to display if any discount applied to the flight Offer based on the PTC discount code,So that special fares  can be applies during search,"The system must display
+- Discount amount or percentage
+- Discount must appear as a separate line in the price breakdown",F1.2 - SC_F2_2//Display_offers,"AY 21OCT Same should apply to other discounts that applies (e.g. codes, air promo codes etc)
+ 
+TCS29Oct: Yes, discounts are applied on  nevio API. product  will show that in our UI.",
+US-Offer-19,Backlog,Offers - Miles info,I want to see and compare how many miles customer will earn for a specific flight offer,So that customer can choose the most rewarding fare ,The system will display miles/ points earned based on Fare family,F1.2 - SC_F2_2//Display_offers,"AY 21OCT Is this available in MVP? 
+
+TCS29Oct: Miles information is not available in MVP.
+
+AY 25.11. OK to have it in later phase.",
+US-Offer-20,Backlog,Offers - Change Currency (for Display only or Sell?),I want the system to allow me to change the displayed currency of the flight offers (as per configuration),So that agent can present prices in the customer's preferred currency,"The system must provide an option to change the displayed currency from a list of currencies configured for the Point of Sale. 
+The flight offer prices must be updated to the selected currency.",F1.2 - SC_F2_2//Display_offers,"AY 21OCT Ability to select any currency is needed, not only based on Point of sale. 
+Clarification is needed if point of sale equals with PSS Office ID? 
+As Each point of sale has only 1 currency defined. If the country site is selected, does the default currency be given based on that selection?
+To be confirmed, if there is also a need to select office IDs because of payment done in PSS in the beginning of Nevio UI usage.
+Our requirement is to have capability to select point of sale in the beginning or in later (any) phase of booking flow without interrupting the booking flow. Currency in use should be updated accordingly.
+
+TCS29Oct: This is backlog item. we will give more information when we take it for development.",
+US-Offer-21,Backlog,Offers - Offer Time Limit,I want the system to display an Offer time limit/ Expiration counter or the validity time for each flight offer ,So that agent can inform the customer how long the quoted price is guaranteed.,"For each flight offer, the system must display either a countdown timer indicating the remaining time the offer is valid or a specific date and time by which the offer expires.",F1.2 - SC_F2_2//Display_offers,"AY 24OCT Pls clarify the process with timer. In which step the timer starts? Should it be after selecting the offer and adding it to cart instead of this step?
+
+TCS29Oct: This is backlog item. Currently, API does not support this.",
+US-Offer-22,Backlog,Offers - Offer has Expired,"I want the system to automatically detect and notify when a displayed flight offer has expired
+",So that the agent do not select an expired offer to a cart,"* Once offer timelimit has reached, the offer status in the should be marked as Expired
+*The system should prevent the cart creation process for expired items
+*System should provide option to refresh the search results to retrieve new offers",F1.2 - SC_F2_2//Display_offers,"AY 24OCT We should be able to reuse the previously imputted data to new cart creation. Acceptance criteria of preventing the cart creation process for expired items needs to be clarified.
+
+TCS29Oct:  This is backlog item. ",
+US-Offer-23,Increment-1,Sort Offers - Best Match,I want the system to sort flight offers by the airline's definition of best match,so that I can quickly present the most relevant options to the customer.,"The system must sort flight offers based on a pre-configured ""Best Match"" algorithm determined by the Amadeus APIs.
+Best match must be displayed based on ""ranking"" field in Amadeus response. ",F1.2 - SC_F2_2//Display_offers,"AY 24OCT Clarifications of algorithm definitions in use needed, and option to impact when needed
+
+TCS29Oct:  1A need to clarify alogorithm
+1A: Whatever offer return from API response for best match we are displaying that in UI. There is no algorithm mechanism applied here.
+
+AY 26.11. ok",
+US-Offer-24,Increment-1,Sort Offers - Departure time,I want to sort flight offers by departure time ,So that agent can easily find the preferred flights for the customer.,The system must allow sorting of flight offers based on the departure time for each bound. (Both Ascending and Descending).,F1.2 - SC_F2_2//Display_offers,AY 24OCT OK,
+US-Offer-25,Increment-1,Sort Offers - Arrival time,I want to sort flight offers by arrival time,,The system must allow sorting of flight offers based on the arrival time for each bound. (Both Ascending and Descending),F1.2 - SC_F2_2//Display_offers,AY 24OCT OK,
+US-Offer-26,Increment-1,Sort Flight Offers - Total Price,I want to sort flight offers by total Price,So that agent can immediately inform customers the most economical options.,The system must allow sorting of flight offers based on the total price of all passengers. (Both Ascending and Descending),F1.2 - SC_F2_2//Display_offers,AY 24OCT OK,
+US-Offer-27,Increment-1,Sort Flight Offers - Duration,I want to sort flight offers by Duration,,,F1.2 - SC_F2_2//Display_offers,AY 24OCT OK,
+US-Offer-28,Increment-1,Filter Flight Offers - No of Stops,I want to filter flight offers by Number of Stops,So that customer can avoid multi-stop itineraries,"Filter options include - Nonstop, 1 Stop, …
+The Offers must reflect dynamically",F1.2 - SC_F2_2//Display_offers,AY 24OCT OK,
+US-Offer-29,Increment-1,Filter Flight Offers - Price Range,I want to filter flight offers by Price range,So that agent can view offers only within customer budget,Display price slider ,F1.2 - SC_F2_2//Display_offers,"AY 24OCT Please clarify the planned logic of the slider.
+TCS29Oct: Agent will see three price ranges between   0 to costiest for the current search. there is no price slider. removed from acceptance criteria.
+AY 9.12. What is the benefit of this solution? Adding more irrelevant text into UI.
+TCS20JAN: Savitha need to check.
+TCS 25 Feb : The product handles price as filter option to look for offer that fall under a particular price range.",
+US-Offer-30,Increment-1,Filter Flight Offers - Time Window (local time),I want to filter flight offers by departure and arrival time window,So that agent can view offers only that match customer schedule,"Time filters
+- Departure time (6 am-12pm)
+- Arrival time (4pm-6pm)",F1.2 - SC_F2_2//Display_offers,"AY 24OCT Capability to select own preferred filter is also needed in addition to predefined ones (""morning/afternoon/evening flights""). In case of time window filter, the range should be visible for the user. 
+
+TCS29Oct: Yes, we will show in dropdown. will take care these capabilities(Morning, evening, afternoon, early mornining, late night). Agent can't type any time value. he can choose from drop down.
+
+AY 9.12. Ok to use drop down. AY wants to influence for the options visible in UI. Visibility behind the selected ""Time range e.g. Morning"" is needed (Morning - 00 - 09.00 AM as an example).
+TCS20Jan: Noted and aligned.",
+US-Offer-31,Increment-1,Filter Flight Offers - Duration,I want to filter flight offers by total travel duration,So that customer can avoid long layovers or inefficient connections,Duration filter with an option to choose maximum travel time,F1.2 - SC_F2_2//Display_offers,AY 24OCT OK,
+US-Offer-32,Increment-1,Filter Flight Offers - Cabin,I want to filter flight offers by cabin class,So that agent can view offers only within customer budget & comfort,Filter by Cabin,F1.2 - SC_F2_2//Display_offers,AY 24OCT OK,
+US-Offer-33,Increment-1,Filter Flight Offers - Fare Family,I want to filter flight offers by departure and arrival time window,,Filter by Fare Families,F1.2 - SC_F2_2//Display_offers,"AY 24OCT Option to filter with carrier, group of carriers, alliance, eqt type, certain city (via point) is also needed.
+
+TCS29Oct: Will disccuss this requirment internally and will add this in our backlog.
+TCS 25 Feb : Added to backlog",
+US-Offer-34,Increment-1,Filter Flight Offers - Clear all Filter,I want to clear all applied filters at once,So that agent can return to the full set of flight Offers,Option to reset all filters,F1.2 - SC_F2_2//Display_offers,"AY 24OCT option to clear only certain filters is also needed (in addition to ALL)
+
+TCS29Oct: Every filter have option of no selection where agent can reset filter.",
+US-Offer-35,Backlog,Offers - Promotional Offer,I want the system to display if any promotion applied to the flight Offer,So that agent can idenfity and inform customer about the promotion offer when booking,"The system must display - visual indicator
+- Promotion indicator (Promo Fare)",,"AY 24OCT The basis for the promotion should be visible. Original price should be indicated with strike through (or other way to indicate not being valid anymore)
+
+TCS29Oct: This is backlog item and it is new feature request from AY. Need to review it with 1A.
+1A:- Savitha need to discuss internally and planned accordingly.
+Action on AY: please provide test data to validate.
+
+AY 9.12. Plese clarify how this is a new requirement. We currently have original & new price visibility in ARDWeb also.  Test data to be provided.
+TCS 25 Feb : Agreed. Will get back if the provided test data does not work.",
+US-Offer-36,Backlog,Offers - Discount Offer,I want the system to display if any discount applied to the flight Offer,So that agent can idenfity and inform customer about the discount offer when booking,"The system must display - visual indicator
+- Discount indicator (Special Offer or Discounted)",,"AY 24OCT The basis for the discount should be visible and the original + discounted price. Original price should be indicated with strike through (or other way to indicate not being valid anymore)
+
+TCS29Oct: This is backlog item and it is new feature request from AY. Need to review it with 1A.
+1A:- Savitha need to discuss internally and planned accordingly.
+Action on AY: Please provide test data to validate.
+
+AY 09DEC Additional definition needed, that in which cases the new and original prices should be displayed (not for the PTC discounts for example).
+TCS20JAN: Savitha need to check.
+TCS 25 Feb : Agreed. The original fare will be striked and discounted fare will be shown. Will get back if the provided test data does not work.",
+US-Cart-01,Increment-1,Cart - Add Flight Offer(s),I want the system to add the selected flight offers into a cart,So that agent can review the selected itinerary and fare details before checkout,"Cart section must display
+- Full Itinerary (dates, times, airlines, duration,…)
+- Fare summary & rules per PTC
+- Passenger Count
+- Taxes and Fees breakdown
+- Combined Total cost
+
+Iteration 1: Support OW & RT Trip type",F1.3 - SC_F2_3//Select_Offer,"AY 24OCT Prices per PTC, fare family  if not already included , price per each passenger, selected cabin and RBD are also needed. Clarification of fare summary is needed. Does this incude details of fare basis and ATPCO fare benefits. 
+
+TCS29Oct: Currently, Prices per PTC per fare family, and fare summarry(prices+taxes). For RBD need to check with 1A
+1A:- We are not getting anything related to RBD in Nevio API response.
+Fare Summary includes:
+Total amount
+Fare breakdown at bound level
+Sub total  at PTC level
+Selected CFF
+Taxes Fees Surcharges at PTC level
+""Pay Now"" option
+
+AY 09DEC To be internally checked",
+US-Cart-02,Increment-1,"Cart - View Flight, Pax & Price details",I want to view complete details of the flight offer in the cart,So that agent verify itinerary and pricing before check,,,"AY 24OCT Prices per PTC, fare family  if not already included , price per each passenger, selected cabin and RBD are also needed. Clarification of fare summary is needed. Does this incude details of fare basis and ATPCO fare benefits. 
+
+TCS29Oct: Currently, Prices per PTC per fare family, and fare summarry(prices+taxes). For RBD need to check with 1A
+1A:- We are not getting anything related to RBD in Nevio API response.
+Fare Summary includes:
+Total amount
+Fare breakdown at bound level
+Sub total  at PTC level
+Selected CFF
+Taxes Fees Surcharges at PTC level
+""Pay Now"" option
+
+AY 09DEC visibility of RBD to be checked internally. 
+Price should be per passenger not per PTC level. 
+In fare breakdown the bound level is not important if RBD is available. Without it, then the bound information may be needed.
+
+1A 27Feb: When order is created, RBD/Booking Class is displayed in Order Viewer. RBD is also available in Cart. ",
+US-Cart-03,Increment-1,Cart - Modify Flight Offer,I want to change the selected flight Offer in the cart,So that agent can replace with a better Offer based on customer instructions,"Agent selects a new flight offer from the Flight Offer page
+- Removes the old flight offer
+- Adds the new flight offer to the cart
+- Updates total pricing and itinerary",F1.3 - SC_F2_3//Select_Offer,"AY 24OCT Is the new offer added automatically in to cart and price updated accordingly, or are some manual steps needed.
+
+TCS29Oct:  No manual step involved in to update the cart with new offer and price.",
+US-Cart-04,Increment-1,Cart - Remove Flight Offer,I want to remove a flight Offer in the cart,So that agent can discard Flight Offer that is no longer wanted by customer,Remove option to each flight offer in the cart,F1.3 - SC_F2_3//Select_Offer,AY 24OCT OK,
+US-Cart-05,Backlog,Cart - Flight Offer Time Limit,I want the system to display an Offer time limit/ Expiration counter or the validity time for each flight offer ,So that agent can complete the booking before the flight Offer expires,,F1.3 - SC_F2_3//Select_Offer,"AY 24OCT Pls clarify that this is related to cart validity (instead of ticketing time limit).
+TCS29Oct: This is offer validity limit in Cart. This is also backlog item.",
+US-Cart-06,Backlog,Cart - Expired Flight Offer,"I want the system to automatically detect and notify when a displayed flight offer has expired
+",So that the agent do not select an expired offer to a cart,"* Once offer timelimit has reached, the offer status in the should be marked as Expired
+*The system should prevent the cart creation process for expired items
+*System should provide option to refresh the search results to retrieve new offers",F1.3 - SC_F2_3//Select_Offer,"AY 24OCT Clarification is needed related to validity process
+
+TCS29Oct: This is backlog item.",
+US-Cart-07,Increment-1,Cart - Validate (Refresh),"I want the system to refresh/ validate the cart in realtime for any offer selection, adding pax details,...",So that agent can clearly communicate the customer,"System should return old and current price info on cart repricing
+Given a cart undergoes repricing,
+When repricing is completed,
+Then the cart response must include the following for each cart item (excluding taxes and fees): previous_price, current_price,  price_difference, price_change_type (values: higher, lower, same)",F1.3 - SC_F2_3//Select_Offer,"AY 24OCT use case to be clarified.
+
+TCS29Oct: product will validate the cart, offer availability in cart before payment.",
+US-Cart-08,Increment-1,Cart - Validate Cart before Checkout,I want the system to validate flight Offers before Checkout,So that agent can avoid errors during payment,Availability & Fare is checked by the system via Amadeus APIs,F1.3 - SC_F2_3//Select_Offer,"AY 24OCT please clarify the process of price being quaranteed. Our assumption is that inventory should be blocked at the time of cart is being created.  Is there possibility that price could still change during the validation stage.
+
+TCS29Oct: Product depends on Nevio API response for cart validtion. Amadeus needs to response for price change after cart validation.
+TCS 25 Feb : Cart refresh is part of Drop 2.",
+US-Cart-09,Increment-1,Cart - Add Pax Information,I want the system to add Paxs information to the cart,So that agent can update the customer information entered in the Passenger Information page,System can show all previous entered passenger details in the cart summary,F1.3 - SC_F2_3//Select_Offer,AY 24OCT OK,
+US-Cart-10,Increment-1,Cart - Update Pax Information,"I want the system to update Paxs information to the cart 
+- Update/ Edit the Paxs information in the cart",So that agent can fix mistakes or make changes,"Agent can click 'edit' to modiy any field
+- Validation rules apply again upon editing
+- System shows a success confirmation once data is updated",F1.3 - SC_F2_3//Select_Offer,AY 24OCT OK,
+US-Cart-11,Backlog,Cart - Reprice in new Currency,"An agent has added items to their cart while browsing in USD. Before adding anything else, they manually change their selected currency to EUR to view the cart totals in that currency",,"Given a request has been made to change the cart’s currency,
+When the system processes the currency update,
+Then all items currently in the cart must be repriced to reflect the new currency selection",F1.3 - SC_F2_3//Select_Offer,"AY 24OCT How does this link to office Ids? Is the PNR already being created? 
+
+TCS29Oct: This is backlog item. Need to check internally.",
+US-Cart-12,Increment-1,Cart - Clear Cart ,I want the system to clear the cart once the Order has been sucessfully created,,"Given an cart,
+When an order is created from the cart
+Then clear the cart",F1.3 - SC_F2_3//Select_Offer,AY 24OCT OK,
+US-PaxInfo-01,Increment-1,Pax Info - Pax Info Details,I want the system to allow agent to enter information for each passenger in the booking.,So that I can accurately record passenger details required for travel.,"* The system must provide fields to enter passenger details such as name (first, middle, last), title, gender. 
+ * The system should allow adding information for the number of passengers selected in the previous flight selection step","F1.10 - SC_F2_10//Passenger_Information_details_(Contact,_Name,_FF_Numbers,…)","AY 24OCT When a title is selected, gender should be autopopulated. For chd/inf/ins there needs to be an option to add Date of birth in order the check the eligibility. Option to copy/autopopulate/select same last name when needed (family travelling together) without the need to type it for each passenger.
+
+TCS29Oct: When a title is selected, gender should be autopopulated--> Need to check with 1A
+Option to copy/autopopulate/select same last name when needed (family travelling together) without the need to type it for each passenger.--> This is new feature. need to review it internally.
+1A&TCS: Currently, We are not autopopulating gender based on title. Title like Dr, Prof, Captain, we can not determine the gender based on these title. We can discuss it further.
+
+AY 09DEC Gender should be then mapped to title (e.g. Male to MR, Female to MS). Title should be optional.
+Also add the option to copy/autopopulate/select same last name when needed (pls see the comment above)
+TCS20JAN: Noted & Aligned.",
+US-PaxInfo-02,Increment-1,Pax Info - Contact Details,I want the system to allow me to enter contact details for at least one adult passenger.,So that the airline can communicate important booking information and travel updates to the customer.,"* The system must provide fields to enter contact details such as phone number and email address. 
+ * The system must ensure that contact details are captured for at least one adult passenger 
+ * The system should allow capturing contact details for other passengers.","F1.10 - SC_F2_10//Passenger_Information_details_(Contact,_Name,_FF_Numbers,…)","AY 24OCT Reconstruction process to be clarified. Option needed to copy/use same contact details easily when needed.
+
+TCS29Oct: Product will allow option to use same contact details for all traveler.",AY internal action: reconstruction process to be checked with Ramya for online
+US-PaxInfo-03,Increment-1,Pax Info - Emergency Details,I want the system to allow me to enter 1 or more Emergency contact details,,,"F1.10 - SC_F2_10//Passenger_Information_details_(Contact,_Name,_FF_Numbers,…)",AY 24OCT OK ,
+US-PaxInfo-04,Backlog,Pax Info - Passport Information,I want the system to allow me to enter passport information for passengers when required.,So that I can ensure compliance with international travel regulations.,"* The system must provide fields to enter passport details such as passport number, issuing country, and expiry date. 
+ * The requirement for passport information should be configurable per airline","F1.10 - SC_F2_10//Passenger_Information_details_(Contact,_Name,_FF_Numbers,…)",AY 28.10 OK,
+US-PaxInfo-05,Backlog,Pax Info - Travel Visa Information,I want the system to allow me to enter travel visa information for passengers when required.,So that I can ensure compliance with international travel regulations.,"* The system must provide fields to enter visa details such as visa number, issuing country, and expiry date. 
+ * The requirement for visa information should be configurable per airline.","F1.10 - SC_F2_10//Passenger_Information_details_(Contact,_Name,_FF_Numbers,…)","AY 28.10 All relevant APIS, information (e.g.  Known Traveller, destination address etc )information needs to be also visible and editable when needed. 
+TCS30Oct: This is backlog item. We will take care once we plan for development.
+
+AY 09DEC Is all US flight management on backlog and not for our MVP?
+TCS20Jan: We are providing relevant APIS information based on API availalibility in Drop1.
+TCS 25 Feb : The travel document is handled as part of Drop 1. ",
+US-PaxInfo-06,Backlog,Pax Info - National ID Information,I want the system to allow me to enter National ID information for passengers when required.,So that I can record alternative identification details for domestic or specific travel requirements.,"* The system must provide fields to enter National ID details such as ID number and issuing country. 
+ * The requirement for National ID information should be configurable per airline.","F1.10 - SC_F2_10//Passenger_Information_details_(Contact,_Name,_FF_Numbers,…)",AY 28.10 OK,
+US-PaxInfo-07,Increment-1,Pax Info - Validation,"I want the system to perform basic validation on the entered passenger information based on the configuration - PTC Age limit, Email address, Mobile regular expression per country code",So that I can minimise data entry errors and ensure data quality.,"* The system must validate the format of the phone number. 
+ * The system must validate the format of the email address. 
+ * The system must validate the date of birth based on the passenger type (Adult1 , Child3 , Infant4 ) and airline configuration. 
+ * The system must validate the selection of a title for each passenger.","F1.10 - SC_F2_10//Passenger_Information_details_(Contact,_Name,_FF_Numbers,…)","AY 28.10 Validation of FF number and name (length of the name) should be available. 
+TCS30Oct: Product don't have connection with any loyalty system. Only format([a-zA-Z0-9]{1,25}) validtion of FF can be done.
+AY 09DEC How is the tier check processed? 
+TCS 25 Feb : Nevio API should do the validation of FF number. 1A to confirm
+1A 27Feb: FF Number/Name validation will be done by the APIs and give error in case of mismatch with the backend. Length validation is not performed by API.",
+US-PaxInfo-08,Increment-1,Pax Info - Field Configuration,"As an Airline Administrator, I want to be able to configure which passenger information fields are mandatory, optional and required validation regular expressions
+Note: Fields could vary per Airline",So that the airline can collect the necessary data based on regulatory requirements and business needs.,"* The system must provide an administrative interface to configure mandatory passenger information fields. 
+ * Mandatory fields should be configurable at the airline level. 
+ * The system must prevent the agent from proceeding if mandatory fields are not completed.","F1.10 - SC_F2_10//Passenger_Information_details_(Contact,_Name,_FF_Numbers,…)",Ay 28.10 OK,
+US-PaxInfo-09,Increment-1,Pax Info - Modify Pax details,"I want to modify the passenner contact in the contact
+",So that agent can correct the mistakes if any to proceed with the booking,"System should provide an option to modify the passenger contact details  
+(Add New, Delete Existing Contact, Change the existing contact)
+Contact Details include - Phone, Email, Address","F1.10 - SC_F2_10//Passenger_Information_details_(Contact,_Name,_FF_Numbers,…)","AY 28.10. Name element needs to be also editable with mentioned options
+TCS30Oct: Agent will be able to edit name before payment.",
+US-PaxInfo-10,Increment-1,Pax Info - Retain Paxs details,I want the system to retain passenger and contact details when modifying offers,So that agent dont need to re-enter and complete booking quickly,"Passenger data should persist in the cart unless incompatible with new offer
+Cart must preserve FFN, PTC, Contact Info, Regulatory Doc ","F1.10 - SC_F2_10//Passenger_Information_details_(Contact,_Name,_FF_Numbers,…)",AY 28.10 OK,
+US-PaxInfo-11,Increment-1,Pax Info - Loyalty info,I want to add loyalty Program & its number,So that the customer can earn points/ miles,"For each Passenger:
+- List of eligible Loyalty Programs are shown (as per configuration)
+- Input field with loyalty number
+
+Validate format per Airline Loyalty Program
+Recognize tier level per Airline Loyalty Program (Not in Scope)","F1.10 - SC_F2_10//Passenger_Information_details_(Contact,_Name,_FF_Numbers,…)","AY 29.10  Where is the control of configurations (admin tool?). Please clarify the tier recognition being out of scope. We need to have visibility of our own and alliance tier levels. 
+TCS30Oct: Supported loyalty program is configurable.Product don't have connection with any loyalty system to recognize their tier level.",
+US-PaxInfo-12,Increment-1,Pax Info - Infant association,I want to assign an Infact to an Adult passenger,So that the airline can meet seating and safety requirements,"One Infant per Adult passenger
+If number of Infants exceeds number of Adult - show error","F1.10 - SC_F2_10//Passenger_Information_details_(Contact,_Name,_FF_Numbers,…)","AY 29.10 OK. Error text needs to be defined being informative (user friendly)
+TCS30Oct: Yes, Error message will be informative.",
+US-PaxInfo-13,Backlog,Pax-Info - Bulk Upload of Pax Info via CSV or AI,I want the system to present an option to bulk upload passenger information & contact details,,,"F1.10 - SC_F2_10//Passenger_Information_details_(Contact,_Name,_FF_Numbers,…)","AY 29.10 OK in overall. Please clarify the feature more in detail level, as currently being on backlog increment. Should we revisit this on later phase?
+
+TCS30Oct: This is backlog item. we will review this US once we plan for development.",
+US-Pay-01,Increment-1,Pay - Fare Summary,I want to see a final fare summary before generating a payment link,So that agent know the exact amount customer will be charged,Total Fare summary with selected currency,F1.7 - SC_F2_7//Fair Breakdown,"AY 29.10 Summary should also contain the full price breakdonw (fare, taxes etc.). Please explain the ""selected"" currency, does it mean preselected?
+TCS30Oct:  Yes, Summary will contain the full price breakup in cart. Currency get automatic selcted based on PoS.",
+US-Pay-02,Backlog,Pay - Trigger to generate Payment Link,I want the system to provide me with the option to generate a secure payment link for the current order.,So that agent can easily facilitate payment from the customer remotely.,"* The system must provide a button or function to generate a payment link. 
+* Once generated, the link should be secure and unique to the specific order. ",F1.8 - SC_F2_8//Only order creation without payment (No Payment_methods),AY 29.10 OK,
+US-Pay-03,Backlog,Pay - Payment link delivery method - Configurable per Airline,"I want the system to send the payment link to the customer via email or SMS orboth or  to a different email address as configured by Airlines
+- Option to get Payment link to a different email address or existing passenger contacts","So that customer can receive the payment link as per preferred delivery methods (email, sms or both)",,F1.8 - SC_F2_8//Only order creation without payment (No Payment_methods),AY 29.10 OK,
+US-Pay-04,Backlog,Pay - Regenerate New Payment Link,"I want the system to provide me with the option to regenerate a secure payment link for the current order.
+
+My Previous payment link has to be invalid",So that the customer can complete the payment without starting the Offer process again,"If the customer was not able to access the Payment link or exceeded maximum retrys with the payment link.
+System allows regeneration only if the Order has a 'Pending Payment' or 'Failed Payment'.
+Customer is notified via preferred contact delivery once the new payment link is generated
+
+Note: Previously generate Payment Link should be invalidate any previous payment links  for the customer to prevent duplicate payments",F1.8 - SC_F2_8//Only order creation without payment (No Payment_methods),"AY 29.10 We need to have possibility to (re)send links even the existing link is still valid. What is the planned process for UI to invalidate previous payment links?   Clarification needed whether there will be a possibility to resend existing link, or is the link sending always creating a new one. We should have capability to (re)send the payment link regardless of the payment status (if any unpaid items exist). 
+Additional comment; we currently have definitions of link validity but not amount of maximum retrys (managed in AY payment platform).
+TCS30Oct - Payment discussion is in-progress between AY-1A-TCS. This is a backlog item.",
+US-Pay-05,Backlog,Pay - Display Payment Time Limit,"When a payment link is generated, I want the system to display a countdown timer indicating the time limit within which the customer must complete the payment.","So that the customer is aware of the payment deadline, and the system can automatically manage uncompleted transactions.","* Upon generating a payment link, a visible countdown timer should appear. 
+ * The timer should clearly display the remaining time (e.g., in minutes and seconds). 
+ * The payment time limit should be configurable by the airline. 
+ * The system should indicate what happens if the payment is not completed within the time limit (e.g., order cancellation).",F1.8 - SC_F2_8//Only order creation without payment (No Payment_methods),AY 29.10 OK,
+US-Pay-06,Backlog,Pay - Handle Payment timeouts,I want the system to handle Payment timeouts or when the Payment time limit has  exceeded for the selected Order,"So that agent can notify customer before Payment timeout
+- Customer can receive a reminder shortly before payment link expires","If the payment time limit has exceeded for an Order
+Then the system has to automatically cancel/ close the created Order after payment timeout",F1.8 - SC_F2_8//Only order creation without payment (No Payment_methods),"AY 31OCT  Different time limit definitions needs to be clearly clarified before agreeing the final solution.
+
+TCS18Nov - This is a backlog item.",
+US-Pay-07,Backlog,Pay - Extend Payment Time limit,I want to extend the payment time limit for an unpaid Order,So that agent provide additional time to the customer to complete the payment without losing the Order,"Payment time limit extension is only available for the Order(s) with 'Payment Pending' or 'Unpaid' status  or the Payment time-limit shouldn't be expired
+- Extension based on Airline configuration or customer can buy extra time by paying for it
+- Original payment link remains valid during the extension period
+- Confirmation message (email/ sms) is sent indicating the new expiration time",F1.8 - SC_F2_8//Only order creation without payment (No Payment_methods),"AY 31OCT  Different time limit definitions needs to be clearly clarified before agreeing the final solution.
+
+TCS18Nov - This is a backlog item.",
+US-Pay-08,Backlog,Pay - Modify Flight Offer/ Cart & Generate new Payment Link,"I want an agent to be able to modify or choose a different offer and update the cart this resulting in change of prices, due to this agent should be able to generate a new payment link ",So that agent can assist customer to revise the offer reflecting the correct price according to customer's changes before Payment,"Given that the cart has been updated,
+When the agent finalizs the new selection
+When the new offer is added to the cart,
+Then the total price should be revalidated resulting in change of Price
+Then the system should generate a new payment linkg corresponding to the updated price
+
+Note: Previously generate Payment Link should be invalid for the customer to prevent duplicate payments",F1.8 - SC_F2_8//Only order creation without payment (No Payment_methods),"AY 31OCT Clarification needed, is a new link needed, or could same link be used but directing to  checkout page, which has updated content.
+
+TCS18Nov - This is a backlog item.",
+US-OrderConfirm-01,Increment-1,Order - View (PNR) details,I want the system to display a comprehensive summary of the order details,"So that both the agent and the customer have a clear overview of what they are paying for, ensuring accuracy and reducing potential disputes.","Order View must display all relevant order details, including: 
+ * Flight information (origin, destination, dates, times, flight numbers). 
+ * Primary Passenger & Contact details
+ * Passenger details (names).   
+* Total price including all applicable taxes and fees. ",F1.8 - SC_F2_8//Only order creation without payment (No Payment_methods),"AY 31OCT Also services needs to be included (future drops).
+ Full Itinerary (dates, times, airlines, duration,…)
+- Fare summary & rules per PTC
+- All Passengers with contact details, Loyalty Tier, 
+- Taxes and Fees breakdown
+- Combined Total cost
+Prices per PTC, fare family  if not already included , price per each passenger, selected cabin and RBD are also needed. 
+Question: In which phase do we have possibility to use Avios as payment method for offline processes as in online
+
+TCS18Nov:  Currently we are displaying :
+Full Itinerary (dates, times, airlines, duration,…)
+- Fare summary & fares rules per PTC
+- All Passengers with contact details, Frequent flyer, 
+- Taxes and Fees breakdown
+- Combined Total cost
+Prices per PTC, price per each passenger, selected fare family.
+
+For use of Avios as payment method  Amadeus needs to respond.
+1A 18Nov (MS): Payment discussion are still in progress.",
+US-OrderConfirm-02,Increment-1,Order - Record Locator,I want the system to display Record Locator of the Order,,Record Locator/ PNR & owner code,F1.8 - SC_F2_8//Only order creation without payment (No Payment_methods),"AY 31OCT Pls clarify the owner code. Order ID and office ID should be also visible
+
+TCS18Nov: Agent Id, date & time, OrderId will be displayed. Owner code is marketing flight. 
+ Display OfficeID in order confirmation - Prasad/Ashwin (1A)  need to respond.
+1A:AD:20NOV:Office Id is returned when Order Id is created. It can be used for display.",
+US-OrderConfirm-03,Increment-1,Order - Breakdown of Fare & fees,"I want the system to display a detailed breakdown of each fare component of the Order
+","So that agent can clearly inform customer - total fare, fare breakdown, applied discounts, …",Detailed Order - Breakdown of Fare & Fees are displayed,F1.8 - SC_F2_8//Only order creation without payment (No Payment_methods),"AY 31OCT Information if Dynamic pricing has been used (until product evolution is in such level, that all pricing is based on dynamic pricing)
+TCS18Nov: Amadeus needs to clarify.
+1A 18Nov (MS): Pricing will have a breakup of  Base Fare, Total Fare, Taxes, Total Taxes, Surcharges, Total Surcharges, Fees, Total Fees.",
+US-OrderConfirm-04,Increment-1,Order - Creation details,I want the system to display Order Creation details ,So that agent understand how and when the order was created,"Order Created Timestamp (Date & Time)
+Agent ID, Name, Branch name,…
+Channel, NDC, .com, Mobile App,…",F1.8 - SC_F2_8//Only order creation without payment (No Payment_methods),"AY 31OCT Channel SCUI needs to be included as channel. 
+TCS18Nov: Needs to discuss with Amadeus. How to include SCUI as channel.
+1A 19Nov (MS): The solution to display 'Channel' is currently in the solutioning phase, and confirmation will only be possible once the solution has been finalized.",
+US-OrderConfirm-05,Increment-1,Order - Payment status & Time-limit,I want the system to display Payment Status and Payment Time limit of the Order,"So that agent can view whether the payment for an order has been completed, pending or failed","Possible Payment Status: Unpaid, Paid,…
+Payment time limit: Date & Time - Valid or Expired",F1.8 - SC_F2_8//Only order creation without payment (No Payment_methods),"AY 31OCT All statuses should be supported. Pls clarify all the statuses that are planned to be covered. Payment status should be displayed by each order service item
+TCS18Nov: Amadeus needs to clarify.
+1A 18Nov (MS): Payment discussion are still in progress.",
+US-OrderConfirm-06,Increment-1,Order - Order Status,I want the system to display Order Status,So that agent can view the current status of the order,"Possible Order Status: Confirmed, Closed, Opened,..",F1.8 - SC_F2_8//Only order creation without payment (No Payment_methods),"AY 31 OCT What are all planned statuses in use.
+TCS18Nov - We are supporting only status which we got from API.Currently we are getting ""Holding confirmed"".
+Amadeus needs to clarify for other order status.
+1A 18Nov (MS): Following status codes will be available at the flight bound level at Order Creation:
+Operational status: HK = confirmed, HL = waitlist, TK = schedule change confirmed, TL = schedule change waitlist, UN = unable to confirm not operating, UC = unable to confirm, HX = have cancelled, NO = no action taken.
+At shopping time, the only status that can be returned is HL=waitlist",
+US-OrderConfirm-07,Backlog,Order - OrderItem Status,I want the system to display OrderItem(s) Status of the Order,"So that agent can view the status of each item in the order - flight, seats, bags, meals,…","Possible Order Status: Confirmed, Closed,..",F1.8 - SC_F2_8//Only order creation without payment (No Payment_methods),"AY 31 OCT What are all planned statuses in use.
+TCS18Nov - This is a backlog item.",
+US-OrderConfirm-08,Backlog,Order Confirmation - Send,"As an agent, I want to have quick action buttons to print, email or SMS the order confirmation.
+",So that I can easily choose the preferred communication method for the passenger,*The Agent should see the checkboxes to select multiple ways for sending itinerary information to the passenger,F1.13 - SC_F2_14//Notify_Order_Confirmation,"AY 31OCT Option needs to be available to use contact details in the order, or use some additional contact detail which is not visible in the order. A capability to send the confirmation to one or multiple customers in the order
+TCS18Nov- This is a backlog item.",
+US-OrderConfirm-09,Backlog,Order Confirmation - Print,"As an agent, I want to print the order details after successful booking.
+",So that I can provide a copy of the travel information to the passenger,"*Agent can click on Print Order from order view page.
+*System generates printable/PDF  with required PNR,Flight details, pax details and ancillary services if any.
+*System allows selection of printer and print settings",F1.13 - SC_F2_14//Notify_Order_Confirmation,AY 31OCT ok,
+US-OrderConfirm-10,Backlog,Order Confirmation - Email,"As an agent, I want to send the order confirmation via email to the passsenger.
+",So that Passenger can receive their booking information via email,"*Agent can click on ""Send Email"" from the order view page,
+*System auto-fills the email id, if available
+*System provides an option to add or edit the email address
+*System sends email itinerary and ancillary services if any",F1.13 - SC_F2_14//Notify_Order_Confirmation,AY 31OCT OK,
+US-OrderConfirm-11,Backlog,Order Confirmation - SMS,"As an agent, I want to send the order confirmation via SMS to the passsenger.
+",So that Passenger can receive their booking information via SMS,"*Agent can click on ""Send SMS"" from the order view page,
+*System auto-fills the phone number, if available
+*System provides an option to add or edit the phone number
+*System sends SMS itinerary and ancillary services if any",F1.13 - SC_F2_14//Notify_Order_Confirmation,AY 31OCT OK,
+Increment-2 US,,,,,,,,
+US-Config-16,Increment-2,Configure- Configuration of SSRs by Category,"As a System Administrator, 
+I want to maintain a configuration table that maps SSRs to their respective categories","So that SSRs can be easily configured, managed, and updated for different categories without code changes.","1. The system shall allow adding new SSR codes with their associated categories.
+2. The system shall allow updating category details for existing SSR codes.
+3. The system shall prevent duplicate SSR code entries.
+4. The system shall allow deleting SSR code entries if no longer required.
+5. The configuration table shall be accessible to authorized users only.
+","F1.4-SC_F2_4//Search_ancillaries
+F1.9 - SC_F2_9//Special_Assistance,_Free_Services","AY 26.11. What is the linkage between Product catalogue and Admin ui? Do we need to maintain same information in 2 places? Can we setup the categories for SC UI in Product catalogue?
+TCS &1A12JAN: We retrieve data from the product catalog and configure the required data in the configuration to display on SCUI. Service center UI have capabilities to group and control the products are display or not. This is configurable by admin UI.
+
+    ",
+US-Config-17,Increment-2,Configure- Configuration to filter services for PTC,"As a System Administrator, 
+I want to maintain a configuration table that maps eligible services to passenger type codes (PTCs)","So that agents can only offer relevant services for each passenger type (e.g., child, infant, adult), ensuring compliance and accuracy","1. The configuration table allows administrators to assign each ancillary/service to one or more PTCs (e.g., Adult, Child, Infant).
+2. Only services mapped to the specified PTC are shown to agents.
+3. The system ensures that services excluded for a PTC are never displayed or selectable for that passenger type.
+4. Administrators can edit, add, or remove PTC mappings for services in the configuration table.
+5.  The configuration supports real-time updates or updates on next system refresh.
+","F1.4-SC_F2_4//Search_ancillaries
+F1.9 - SC_F2_9//Special_Assistance,_Free_Services","AY 26.11. repeating the previous question. Should this information be defined & maintained in Service catalogue?
+
+TCS &1A12JAN: We retrieve data from the product catalog and configure the required data in the configuration to display on SCUI. Service center UI have capabilities to group and control the products are display or not. This is configurable by admin UI.",
+US-Config-18,Increment-2,Configure- Services Grouping Mechanism (Configurable),"As a System Administrator, 
+I want the system to provide an ability to Group the Services logically",So that I can group the services logically under specific categories,"1. Logical Grouping
+•	Services should be grouped at two levels: 
+o	Category Level (e.g., Meals, Baggage, Additional Services)
+o	Sub-category/Service Level (e.g., Extra Baggage, Heavy Baggage, Sports Equipment under Baggage)
+•	Grouping logic should follow airline-defined configuration.
+
+2. Configurable Logic
+•	Admin should be able to configure: 
+o	Categories and sub-categories.
+o	Which services belong to which group.
+
+3. Display Indicator Active/Inactive
+•	Each service should have an Active/Inactive status.
+•	If a service is Inactive, it should not be displayed on the UI.
+•	Make the services disabled automatically if Category is disabled in quick access and custom view
+•	Enable/disable the services individually when the category is enabled/disabled
+
+4. Display Order
+•	Ability to configure the order of categories and services.
+•	UI should display services in the configured order.
+
+5. Quantity & Capacity
+•	Each service should have: 
+o	Quantity selection (where applicable).
+o	Maximum capacity limit (where applicable)
+•	If maximum capacity is reached: 
+o	Display “Service not available” message.
+o	Disable further selection.
+o	Refer to BR009, BR010
+
+6. Offered Level
+•	Services should be offered at: 
+o	Bound level (specific flight segment).
+o	Flight level.
+•	UI should reflect the correct level based on configuration.","F1.4-SC_F2_4//Search_ancillaries
+F1.9 - SC_F2_9//Special_Assistance,_Free_Services","AY 26.11 Same comment as above; linkage between Product Catalogue & Admin UI. Maintaining rules in 2 places makes the solution complicated.
+
+TCS &1A12JAN: We retrieve data from the product catalog and configure the required data in the configuration to display on SCUI. Service center UI have capabilities to group and control the products are display or not. This is configurable by admin UI.",
+US-RetrieveAnc-01,Increment-2,RetrieveAnc-  Retreive Ancillaries from catalogue,"As an Airline Agent,
+I want to retrieve  all  ancillary services from the service catalogue for a given cart reference.",So that agents can view and select additional services relevant to their customer's booking.,"1. The system shall allow retreive all ancillaries using a valid Cart reference ID. 
+2. The retreive results should display all available ancillaries from the service catalogue applicable to that cart.
+3. Each ancillary must include type, description, price, Quota based on API.
+4. The results should reflect eligibility based on cart details (e.g., passenger type, flight Id etc.).
+5. If no ancillary services are available for the cart, the system should display a clear message:“No ancillary services exists”.
+
+*Disclaimer: Error meesage will be covered in test scenarios.","F1.4-SC_F2_4//Search_ancillaries
+F1.9 - SC_F2_9//Special_Assistance,_Free_Services","AY 26.11. Indicator whether a service is chargeable, not chargeable, excempted, included in Tier/ticket benefits should be visible. 
+TCS 23Dec: Currently, we are displaying whatever comes from the API. We will review and discuss internally.
+
+TCS&1A12Jan: Amadeus has confirmed that the benefits will reflect in price section  as part of response. there is no specific indicator the price change due to which  Tier/ticket benefits.
+
+",
+US-RetreiveAnc-02,Increment-2,RetreiveAnc - Group Ancillaries based on Category,"
+I want Service Center UI should have the capability to Group ancillaries based on their categories.",so that I can easily view and manage related services together.,"1. Ancillaries shall be grouped under predefined categories (e.g. Baggage, Seat, Meals, Insurance, etc.).
+ 2. The system should display grouped ancillaries in a structured format.
+3. Each ancillary must belong to at least one category.
+4. The airline agent should be able to view all categories and their respective ancillaries.
+5. Categories and their order should follow configuration defined by the airline.
+","F1.4-SC_F2_4//Search_ancillaries
+F1.9 - SC_F2_9//Special_Assistance,_Free_Services",AY 26.11. OK,
+US-ViewAnc-01,Increment-2,ViewAnc -View Ancillaries grouped by category and pricing type ,"As an Airline Agent,
+I want the system to display ancillary services grouped by category and separated into FREE and CHARGEABLE sections",So that I can easily view which services are included in the offer and which are  add-ons,"1. System displays all the available services grouped by category (Eg.  BAGGAGE, MEAL, LOUNGE etc)
+2. System shall display the available services based on pricing category (FREE & CHARGEABLE)","F1.5-SC_F2_5//Display_&_Select_Ancillary
+F1.9 - SC_F2_9//Special_Assistance,_Free_Services
+F1.6-SC_F2_6//Ancillary__Seatmap_(Display,_Select,_View_Price,_Add_per_Paxs,..)","AY 26.11 Please rephrase word PAID with CHARGEABLE. Information of Not chargeable, excempted, included in Tier/ticket benefits should be also here visible
+
+TCS 23Dec: Currently, we are displaying whatever comes from the API. We will review and discuss internally. The term ‘Paid’ has been rephrased to ‘Chargeable’.
+
+TCS&1A07DEC: Need to check with Ashwin.
+TCS&1A12JAN: Amadeus has confirmed that the benefits will reflect in price section  as part of response. there is no specific indicator the price change due to which  Tier/ticket benefits.",
+US-ViewAnc-02,Increment-2,ViewAnc - View the Ancillary/services part of the offer,"As an Airline Agent, 
+I want the system to display the list of services that part of the selected offer",So that I can assist the passenger in making an informed decision. ,The system shall display the list of applicable ancillaries that are part of the selected offer. ,"F1.5-SC_F2_5//Display_&_Select_Ancillary
+F1.9 - SC_F2_9//Special_Assistance,_Free_Services
+F1.6-SC_F2_6//Ancillary__Seatmap_(Display,_Select,_View_Price,_Add_per_Paxs,..)","AY 26.11. Please clarify; does this mean. Is it  a summary of ancillaries that are ""selectable"" but yet not selected. 
+
+TCS 23Dec: Yes.",
+US-ViewAnc-03,Increment-2,ViewAnc - View the Price of Each Ancillary service,"As an Airline Agent, 
+I want to view the applicable price of each Ancillary service from the catalogue",So that I  can accuratley inform passenger about pricing,"1. Each Ancillary should should display its corresponding price next to the service.
+2. Should display correct currency and amount.
+3. Any Ancillary without price should display as FREE ","F1.5-SC_F2_5//Display_&_Select_Ancillary
+F1.9 - SC_F2_9//Special_Assistance,_Free_Services","AY 26.11. OK.  Please add also indication why the price is free (Tier/ticket benefit etc). 
+If non chargeable - word ok being FREE
+If reason for being free is something else, additional information should be included e.g. Excempted, Included in ticket/tier benefit 
+Would it be possible to have word FREE written in green.
+
+TCS 23Dec: Currently, we are displaying in SCUI whatever we receive from API. We will show FREE as green once we start getting these infromation from API.
+TCS07Dec: Need to check with Ashwin.
+TCS&1A12JAN: Amadeus has confirmed that the benefits will reflect in price section  as part of response. there is no specific indicator the price change due to which  Tier/ticket benefits.",
+US-ViewAnc-04,Increment-2,ViewAnc - View baggage services,"As an Airline Agent, 
+I want to view a list of baggage allowance options by passenger type(PTC) and segment, with the price per baggage count.",so that I can clearly present and select the most suitable baggage option for each passenger,"1. The baggage options display as a list of available baggage services in baggage section.
+2. List displays the corresponding price for the number of bags and passenger type.
+3. Agents can select a baggage option directly from the list for each passenger and segment.
+4. The total price for selected baggage is calculated and displayed.
+5. When a selection is made, the choice is stored in the booking.
+6. Prices fetched from service catalogue.","F1.5-SC_F2_5//Display_&_Select_Ancillary
+F1.9 - SC_F2_9//Special_Assistance,_Free_Services","AY 26.11. It seems that there is a difference between Acceptance criteria described here and the Wireframe that was presented. Please confirm which has the latest information.
+TCS 23Dec: Wireframe has the latest information. 
+User story and acceptance criteria updated.",
+US-SelectAnc-01,Increment-2,SelectAnc - Select Ancillaries ,"As an Airline Agent,
+I want to select one or more available ancillaries for a passenger's trip",So that I can offer passengers customized options based on their preference. ,"1. The system shall display all available ancillaries for the selected flight.
+2. The user shall be able to view ancillary details such as name, description, and price.
+3. The user shall be able to select one or more ancillaries.
+4. The system shall update the total price dynamically based on selected ancillaries.
+5. The system shall allow the user to deselect previously selected ancillaries.
+6. Selected ancillaries shall be retained when proceeding to the next booking step.
+7. The system shall validate availability before confirming ancillary selection.
+8. Error message shall be displayed if an ancillary selection fails.
+9. Screen should be responsive and aligned with UI guidelines.
+
+","F1.5-SC_F2_5//Display_&_Select_Ancillary
+F1.9 - SC_F2_9//Special_Assistance,_Free_Services","AY 27NOV Visibility of Ancillary quota and status (as all are not autoconfirmed)
+TCS 23Dec: If it is coming in API we will show that.",
+US-SelectAnc-02,Increment-2,SelectAnc - Specify Ancillary Quantity  during selection,"As an Airline Agent,
+I want to specify the quantity of each ancillary service ",So that the agent can assist passengers in purchasing the required quantity of ancillaries based on their travel needs.,"1. User can select multiple ancillaries and specify the quantity for each.
+2. The system validates that the quantity entered is within allowed limits. 
+3. The total quantity of each ancillary is reflected in the booking summary.
+4. User can update or remove the quantity of an ancillary before confirming the booking.
+
+*System allow to specify the required quantity for a service. By default the count is 1. 
+*Some services are limited to one occurence per passenger and flight
+use - OncePerPassengerPerFlight : true/false to identify such items
+",F1.5-SC_F2_5//Display_&_Select_Ancillary,AY 27NOV OK ,
+US-SelectAnc-04,Increment-2,SelectAnc - Select Paid/Free Ancillaries,"As an Airline Agent, 
+I want to select both paid and free ancillaries from the available list.",So that I can offer tailored booking experience to passengers based on their preference,"1. The system shall display a list of available ancillaries (both paid and free).
+2. Paid ancillaries shall clearly display their price.
+3. Free ancillaries shall be marked as ""Free"".
+4. User shall be able to select one or multiple ancillaries.
+5. Total price shall be updated dynamically based on selected paid ancillaries.
+6. User should be able to deselect ancillaries before proceeding.
+7. Selection should be saved and carried forward to the next step.
+","F1.5-SC_F2_5//Display_&_Select_Ancillary
+F1.9 - SC_F2_9//Special_Assistance,_Free_Services","AY 27NOV Pls see the comments related wording and additional information of services being FREE (US-ViewAnc-03)
+Pls Clarify the Saving process; does auto-save apply, what will happen if page is refreshed? Is part of the progress still saved?
+TCS 23Dec: Need to check with Savitha and design team.
+TCS&1A12JAN: Savitha to update
+TCS 25 Feb: Cart ID will be remembered and already saved seat and services selection can be reconstructed after refresh. The selections that were not added to cart at the point of refresh will be lost.",
+US-SelectAnc-05,Increment-2,SelectAnc - Proceed Without Ancillaries,"As an Airline Agent, 
+I want to confirm my order even if I do not select any optional ancillaries",So that I can complete the booking when no optional services are chosen.,"1. User should be able to proceed without selecting any ancillary.
+2. System should confirm that no ancillaries are selected.
+3. Order completion should be allowed without ancillary selection.
+4. Order summary should exclude ancillaries if none are selected.
+5. No error message should be displayed for skipping ancillaries.","F1.5-SC_F2_5//Display_&_Select_Ancillary
+F1.9 - SC_F2_9//Special_Assistance,_Free_Services","AY 27NOV OK to enable agents to proceed without adding ancillaries. 
+However, the UI should automatically display the key ancillaries (based on the personalization) to be promoted/offered for the customer without opening separate tabs.
+
+Additional Button ""Customer declined from purchasing ancillaries"" that needs to be clicked if no ancillaries are selected. 
+TCS 23Dec: Need to check with Savitha & design team to confirm on recommendation.
+TCS&1A12DEC:- Personalization - Ashwin will check and update.
+
+1A 19JAN: Personalization will affect the Catalogue and fetch results in the catalog, as per specific personalization.",
+US-Cart-13,Increment-2,Cart - Add selected ancillaries to cart for passengers,"As an Airline Agent,
+I want to add selected ancillaries to my booking.",So that I can include additional services for passengers before checkout.,"1. User should be able to view the list of available ancillaries.
+2. User should be able to select one or more ancillaries.
+3. User should be able to assign selected ancillaries to one or more passengers. 
+4. System should calculate and display the total ancillary price before adding to cart. 
+5. Upon confirmation, selected ancillaries should be added to the cart. 
+6. System should display a success message after ancillaries are added to cart.
+7. Error handling must be available for:
+No ancillary selected
+System failure
+Price fetch failure
+8. Ancillaries added must be visible in cart summary with passenger mapping.
+
+EndPoint: /v2/shopping/carts/{{cartId}}/services",F1.5-SC_F2_5//Display_&_Select_Ancillary,"AY 08DEC ok from data perspective, additional discussion needed related to UI design.
+
+AY 15DEC ok",
+US-Cart-14,Increment-2,Cart- View Ancillaries in Cart,"As an Airline Agent,
+I want to view the ancillaries selected in the cart
+",So that I can review all the ancillaries selected before confirming the order,"1. The cart should display all selected ancillaries.
+2. Ancillaries should be grouped per passenger per segment. 
+3. User should be able to navigate back to modify ancillary selection.","F1.5-SC_F2_5//Display_&_Select_Ancillary
+F1.9 - SC_F2_9//Special_Assistance,_Free_Services","AY 08DEC design to be jointly discussed, current solution is not clear for agents. Information should also contain information if something is included in price etc. 
+
+AY 15DEC: During wireframe feedback the logic of displaying the ancillaries. The preferred option would be to display them per segment and per passenger.
+TCS 23Dec: Noted and aligned.Need to update Savitha/Ranjith.
+TCS&1A 12JAN: Design team need to confirm design update.
+TCS 25 Feb : Latest wireframes allows agent to select service per passenger per segment.",
+US-Cart-15,Increment-2,Cart-View Price Breakdown of ancillaries in Cart,"As an Airline Agent,
+I want to see  the price breakdown of  ancillaries in the cart
+",So that I can provide detailed price information with customer," 1. User can view price breakdown of each ancillary in the cart based on API.
+ 2. Breakdown includes unit price, quantity, and total amount.
+ 3. Total ancillary amount is calculated correctly.
+ 4. Price details are displayed in booking currency.
+ 5. Applicable taxes will shown separately.
+","F1.5-SC_F2_5//Display_&_Select_Ancillary
+F1.9 - SC_F2_9//Special_Assistance,_Free_Services",AY 15DEC: ok,
+US-Cart-16,Increment-2,Cart- View Grand Total for Ancillaries in Cart,"As an Airline Agent,
+I want to view the grand total of all the  ancillaries in the cart.",So that I can review the total cost before proceeding to payment.,"1. Grand total of all selected ancillaries is displayed in the cart based on API.
+2. Total updates automatically when ancillaries are added or removed. 
+3. Amount is displayed in booking currency. 
+4. Total applicable taxes will shown separately.
+5. Total is visible before proceeding to payment.","F1.5-SC_F2_5//Display_&_Select_Ancillary
+F1.9 - SC_F2_9//Special_Assistance,_Free_Services",AY 15DEC: ok,
+US-Cart-17,Increment-2,Cart- Modify or Delete Ancillaries in Cart,"As an airline agent,
+I want the ability to modify or delete ancillaries in the passenger’s cart.",So that I can update the passenger’s order based on their latest preferences without needing to recreate the entire booking.,"Modify Ancillary
+1. Agent should be able to change the quantity or details of an ancillary already added to the cart.
+2. System should recalculate the total fare after modification.
+3. Updated ancillary details should be reflected in the cart summary.
+4. System should validate the availability before confirming modification.
+ 
+Delete Ancillary
+1. Agent should be able to remove an ancillary item from the cart.
+2. System should ask for confirmation before deletion.
+3. Total cart price should be updated after removal.
+4. Removed ancillary should no longer appear in the cart summary.
+
+*If modification or deletion cannot be performed, a clear error message should be displayed.","F1.5-SC_F2_5//Display_&_Select_Ancillary
+F1.9 - SC_F2_9//Special_Assistance,_Free_Services",AY 15DEC: ok,
+US-BagPolicy01,Increment-2,FBA - View the  Check in Baggage Allowance,"As an Airline Agent,
+I want to view the check in baggage policies based on the selected offer(s)",So that I can communicate  check in baggage allowances to the traveler,"1. Agent can see the free check-in baggage allowance based on the selected offer.
+2. Baggage allowance information is displayed clearly on the booking summary.
+3. The system updates baggage allowance automatically if the booking cabin or route changes.
+
+* Display the Free Check-in Baggage allowance applicable for the cart contents with policy details and baggage specifications
+* Show the policy applicability per passenger per segment. 
+",F1.26 - SC_F2_34//Baggage_Policy_details,AY 15DEC: ok,
+US-BagPolicy02,Increment-2,FBA - View the  Carry on  Baggage Allowance,"As an Airline Agent,
+I want to view the carry on baggage policies based on the selected offer(s)",So that I can communicate carry on baggage allowances to the traveler,"1. Agent can see the allowed number of carry-on bags for the selected offer.
+2. Agent can see the allowed weight and/or dimensions for carry-on bags.
+3. Information is displayed clearly on the Order summary or baggage section.
+4. Carry-on Baggage allowance differs by Cabin and PTC , the correct allowance should be displayed based on the Offer selected. 
+
+*Display the Free carry on Baggage allowance applicable for the cart contents with policy details and baggage specifications
+*Show the policy applicability per passenger per segment. ",F1.26 - SC_F2_34//Baggage_Policy_details,AY 15DEC: ok,
+US-Seat-01,Increment-2,Seat- Retrieve Seatmap for the offer,"As an Airline Agent,
+I want the system to retrieve the seatmap of each segment of the selected flights",So that I can assist passenger in seat selection,"1. System should retrieve the seatmap per segment for the flights included in the offer
+2. If the offer includes flights operated by other airlines the system should show a vaild information message 
+3. The system should handle any other error while retrieving seatmap
+
+*Disclaimer: Error meesage will be covered in test scenarios.","F1.6-SC_F2_6//Ancillary__Seatmap_(Display,_Select,_View_Price,_Add_per_Paxs,..)",AY 15DEC: ok,
+US-Seat-02,Increment-2,Seat - View seat service under Services Category,"As an airline agent, 
+I want to include seat service under the services category.",So that passengers can view and select seats as part of the available services during booking.,"1. Seat service should appear under the Services category.
+2. System should display available seat options based on flight and cabin class.
+3. Seat service should be selectable and added to the order.
+4.Seat availability and pricing should be fetched from the existing seat inventory.
+","F1.6-SC_F2_6//Ancillary__Seatmap_(Display,_Select,_View_Price,_Add_per_Paxs,..)",AY 15DEC: ok,
+US-Seat-03,Increment-2,Seat- View Seat Map with Seat Types and Prices,"As an Airline Agent,
+I want to view a flight segment's seat map to see available, occupied, blocked, and paid seats with their types and prices",So that I can help passengers choose seats based on their preference and pricing,"1. System should display the seat layout for that segment with all available, occupied, and special seats.
+2. Seats should be color coded or marked as Available , Unavailable, Special (extra legroom , exit row etc)
+3. System should display only the seat map corresponding to that segment.
+4. Detail information should appear on Hover eg seat number, type, price if applicable and attributes like Window , Aisle)
+5. Seat Charcterstics should be shown as we are getting from API.
+6. The price should be shown for Paid seats and Free indicated for non chargeable seats.
+7. Seat avaialblity should be real time.
+8. If seat map is not available proper error message should be shown as ""Seat selection is not available on this flight. 
+9. Exit row seat will not be available for non ADT passenger i.e: CHD","F1.6-SC_F2_6//Ancillary__Seatmap_(Display,_Select,_View_Price,_Add_per_Paxs,..)","AY 15DEC: System should automatically based on the details in order (see above comment) highlight the seats suitable for certain attributes (e.g. seat suitable for PETC, WCH, INF…)  Also possibility to filter/highlight seats available for certain attributes is needed. 
+Additional comment of terminology: please use wording Chargeable instead of Paid seat
+TCS 23Dec: We need to discuss this with 1A.
+TCS&1A 07DEC: Seat map requests typically return attributes like extra legroom, aisle seat, window seat, lavatory proximity, and bassinet availability, but not specific support for wheelchairs or pets in cabin.
+
+TCS&1A12JAN: This is backlog items. ",
+US-Seat-04,Increment-2,Seat - View Seat Map for Multi-Segment Itinerary,"As an Airline Agent,
+I want to view the seat map for all passengers across all segments in a multi-segment itinerary.",So that I can review seat assignments and manage seat allocation efficiently.,"1. Seat map should display for each segment in the itinerary.
+2. All passengers in the booking should be visible on the seat map.
+3. Seat status should be indicated (e.g., available, occupied, blocked, chargeable).
+4. Agent should be able to switch between segments easily.
+5. System must show current seat assignments, if any.
+6. Seat map should display aircraft layout per segment.","F1.6-SC_F2_6//Ancillary__Seatmap_(Display,_Select,_View_Price,_Add_per_Paxs,..)",AY 15DEC: ok,
+US-Seat-05,Increment-2,Seat - Assign  Seats to the Passenger Across Segments,"As an Airline Agent,
+I want to assign seats to passengers across all flight segments.","So that passengers have confirmed seati assignment throughout their journey,","1. System allows assigning seats per passenger for each segment.
+2. Assigned seats are correctly displayed in the cart and order summary per segment.
+3. If no seat is selected on a segment, it is reflected as unassigned and display a notification when agent moved to next step.
+4. Any pre-selected seat services are correctly linked to the respective segment.
+5. Seat avaialblity should be real time.
+6. If seat map is not available proper error message should be shown.
+
+*Disclaimer: Error meesage will be covered in test scenarios.","F1.6-SC_F2_6//Ancillary__Seatmap_(Display,_Select,_View_Price,_Add_per_Paxs,..)",AY 15DEC: ok,
+US-Seat-06,Increment-2,Seat - Proceed with Order Without Seat Selection ,"As an airline agent, 
+I want to confirm a booking without selecting seats for passengers",So that I can complete the order even agent chosses not to select seats during the booking process,"1. Agent should be able to complete the order without requiring seat selection.
+2. Seat selection should be optional and can be bypass during the Order creation.
+3. Order should be successfully created without seat selection.
+4. Order Summary should indicate that ""Seat is not Assigned""","F1.6-SC_F2_6//Ancillary__Seatmap_(Display,_Select,_View_Price,_Add_per_Paxs,..)",AY 15DEC: ok,
+US-Seat-07,Increment-2,Seat-View Assigned Seats in Cart,"As an airline Agent, 
+I want to view the seats assigned to each passenger in the cart.",So that I can verify seat selections before proceeding to payment or booking confirmation.,"1. The cart should display seat numbers assigned to each passenger.
+2. Seat information should be shown alongside the respective passenger’s name.
+3. If no seat is assigned, the cart should show ""No seat selected"".
+4. The seat details should update in real-time if the seat is changed or removed.
+5. Seat information should be visible in both view and edit modes of the cart.","F1.6-SC_F2_6//Ancillary__Seatmap_(Display,_Select,_View_Price,_Add_per_Paxs,..)","AY 15DEC: Pls clarify the details visible in cart (definition of seat information and seat details) As minimun we should see the seat number, price and seat type (characteristic)
+TCS 23DEC: Yes, We are displaying seatno, seat type and price.",
+US-Seat-08,Increment-2,Seat- Modify or Delete Seats from Cart,"As an Airline Agent, 
+I want the ability to modify or delete a selected seat from the passenger’s cart.",So that I can update the seat selection as per the passenger’s request before finalizing the booking.,"1. Agent should be able to view all selected seats in the cart.
+2. Agent should be able to change the selected seat to another available seat.
+3. System should update the fare/taxes automatically (if applicable) after seat modification.
+4. Agent should be able to remove a seat selection from the cart.
+5. After deletion, system should reflect updated cart value and seat status should be released back to inventory.
+6. System should display confirmation messages for both modify and delete actions.","F1.6-SC_F2_6//Ancillary__Seatmap_(Display,_Select,_View_Price,_Add_per_Paxs,..)",AY 15DEC: ok,
+Increment-2 US(CRM & ARD Integration),,,,,,,,
+US-CRM-01,Increment-2,Automatic Agent authentication in SCUI,"As a service center agent, 
+I want to be automatically authenticated when accessing SCUI from CRM",so that I do not need to log in again and can continue my work without interruption.,"Agent is already authenticated in CRM.
+When the agent navigates from CRM to SCUI, no additional login prompt is shown.
+SCUI validates the agent’s authentication using SSO.
+Agent lands directly on the SCUI successfully.
+If the CRM session is invalid or expired, the agent is prompted to authenticate.
+CRM and ARDWeb integration need to work seamlessly.",F1.19-SC_F2_4-Integrate_with_CRM_Platfom.,"AY 23FEB Clarify the process for situation when SCUI is not been accessed for a while, but session is active in CRM. Relogin back to SCUI needs to also work seamlessly.
+TCS 25MAR: Yes, It will work seamlessly.",
+US-CRM-02,Increment-2,Launch Service Center UI from CRM,"As a contact center agent
+I want to launch the Offer-Order based Service Center UI from within CRM","So that users can seamlessly access SCUI without manual navigation or re-login.
+ ","User can launch SCUI directly from the CRM.
+SCUI opens in a new tab or embedded view as per configuration.
+User sees an error message if SCUI launch fails.",F1.19-SC_F2_4-Integrate_with_CRM_Platfom.,"AY 23FEB Question. Who is managing the configuration (new tab vs embedded view).
+Are there any differences in SCUI behavior depending of which solution will be selected (e.g. how many orders will be available to be worked simultaneously, or if agent is using external screens etc and possibility to jump between tabs is needed.  
+AY 23FEB Clarify the process for situation when SCUI is not been accessed for a while, but session is active in CRM. Relogin back to SCUI needs to also work seamlessly.
+TCS 25MAR: Savitha will check and Update.",
+US-CRM-03,Increment-2,Auto-populate customer details from CRM,"As a service center agent
+I want customer details to be auto-populated in the Service Center UI (SCUI) from the CRM.
+",so that agents can avoid manual data entry and handle customer requests faster and more accurately.,"SCUI automatically retrieves customer details from CRM when a customer record is identified. 
+Key customer fields (e.g., First name, Lastname, Email, Phone, Frequent flyer number) are populated without manual input. 
+Agent should be able to edit autopopulated data.
+System handles missing or unavailable CRM data gracefully with a clear message.
+Data retrieval follows security and data governance rules.",F1.19-SC_F2_4-Integrate_with_CRM_Platfom.,"AY 23FEB. Not only edit, removal of data (not to include certain data content) needs to be also available easily.
+TCS 25MAR: Yes, We can edit, remove both  are possible.",
+US-CRM-04,Increment-2,Create Booking in SCUI Using CRM Customer Data,"As a service center agent
+I want the Service Center UI (SCUI) to create a booking using customer details retrieved from CRM.",so that agents can create bookings quickly and accurately without re-entering customer information.,"SCUI can fetch customer details (e.g., first name, last name, contact details) from CRM.
+Retrieved CRM customer data is auto-populated in the booking creation form in SCUI.
+Agents can review and edit customer details before confirming the booking.
+Booking can be successfully created in SCUI using the CRM-provided customer data.
+An error message is displayed if CRM data retrieval fails or is incomplete.",F1.19-SC_F2_4-Integrate_with_CRM_Platfom.,AY 23FEB OK,
+US-CRM-05,Increment-2,Handle Missing or Partial Customer Details from CRM,"As a service center agent
+I want the system to handle missing or partial customer details retrieved from CRM.",so that users can continue their tasks without errors while ensuring data accuracy and compliance.,"If customer details from CRM are missing or incomplete, the system shall display a clear indicator or message to the user.
+The system shall allow manual entry or update of missing customer information where permitted.
+Mandatory fields shall be validated before saving or proceeding
+The system shall not fail or block the flow due to partial CRM data.
+",F1.19-SC_F2_4-Integrate_with_CRM_Platfom.,AY 23FEB Ok,
+US-ARD-01,Increment-2,Seamless navigation using Single Sign-On (SSO),"As a service center agent, 
+I want to navigate from Service Center UI to ARDWeb using single sign-on.",So that I do not have to log in multiple times and can work without interruption,"ARDWeb can be launched from Service Center UI
+User is not prompted to re-enter credentials
+Existing SCUI session is reused via SSO
+Agent lands on ARDWeb  successfully.",F1.98-SC_F2_New_ARD_SCUI,"AY 23FEB pls clarify the relogin scenario (ARDWEB has not been used for a while). Relogin should happen seamlessly.
+TCS 25MAR: Login of salesforce is used. As long as login of salesforce  is alive it will seamless login into SCUI also.",
+US-ARD-02,Increment-2,Deep Link from SCUI to ARD Web Homepage,"As a service center agent,
+I want to open the ARD Web homepage directly from SCUI.",So that I can seamlessly continue my work without manual navigation.,"Clicking the ARD Web link in SCUI Order details page to opens ARD Web in a new browser tab.
+Agent is redirected to the configured ARD Web homepage
+",F1.98-SC_F2_New_ARD_SCUI,"AY 23FEB What is the process for following customers? Does the system always open a new Tab ? Do we end up having several tabs open at the end of day?
+TCS 25MAR: Savitha will discuss and update it.",
+US-ARD-03,Increment-2,Deep Link from SCUI to ARD Web with PNR,"As a service center agent,
+I want to deep link from SCUI to ARDWeb with the PNR.",So that the corresponding booking details automatically open in ARDWeb without manual search.,"Agent can initiate navigation to ARDWeb directly from SCUI.
+Selected PNR is securely passed during redirection.
+ARDWeb automatically loads the matching PNR details on landing.
+Agent is not required to manually re-enter the PNR.
+Proper error message is shown if the PNR fails to load.",F1.98-SC_F2_New_ARD_SCUI,AY 23FEB OK,
+US-ARD-04,Increment-2,Agent Instructions for Unavailable SCUI Features,"As a service center agent, 
+I want clear and consistent instructions in SCUI when a feature is not available",so that I know how to proceed using alternative systems or processes.,"In SCUI, The  global link is available for info block which clearly indicates when a feature is not available.
+Instructions explain the alternative action (e.g., deep link, manual process, or other system)
+Guidance is concise and easy for agents to understand.
+Instructions are consistent across all unavailable features.
+Content can be maintained or updated without code changes (configurable).",F1.98-SC_F2_New_ARD_SCUI,AY 09MAR OK,
+US-ARD-05,Increment-2, Payment Redirection,"As a service center agent, 
+I want to proceed to payment after creating an order from order confirmation page.",so that the payment is processed through ARDWeb seamlessly.,"The agent can click the “TO Pay” button from order confirmation page.
+From order confirmation page there should be a temporary link to redirect to ARDWeb.
+The system redirects the agent to ARDWeb with PNR details for payment processing with same logged-in office Id in SCUI.
+Any errors in order creation or redirection are displayed to the agent with actionable messages.",F1.98-SC_F2_New_ARD_SCUI,"AY 09MAR In wireframe presentation instead of ""proceed to Payment"" the text is ""To Pay"".  Finnair preferes ""To pay"" option. OK
+TCS 25MAR: Noted and aligned. Acceptance criteria updated.",
+US-ARD-06,Increment-2,Global Navigation Link from SCUI to ARDWeb,"As a service center agent, I want a global link in the Service Center UI (SCUI) that allows me to navigate to ARDWeb at any time.",so that I can access ARDWeb features without carrying any session or contextual data from SCUI.,"The global link to ARDWeb is visible and accessible from all screens in SCUI.
+Clicking the link redirects the user to ARDWeb successfully.
+No SCUI session data, user context, or transaction details are passed to ARDWeb.
+ARDWeb opens in a fresh state independent of the SCUI session.
+The navigation does not impact or terminate the active SCUI session.",F1.98-SC_F2_New_ARD_SCUI,AY 09MAR OK,

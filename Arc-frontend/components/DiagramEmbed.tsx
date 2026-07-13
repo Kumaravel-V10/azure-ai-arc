@@ -1,16 +1,57 @@
 "use client";
 
-import { useEffect, useRef, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { UI_CONFIG } from '@/lib/config';
 
 interface DiagramEmbedProps {
   xml: string | null;
 }
 
-export default function DiagramEmbed({ xml }: DiagramEmbedProps) {
+export interface DiagramEmbedHandle {
+  exportCurrentXml: () => Promise<string | null>;
+}
+
+const DiagramEmbed = forwardRef<DiagramEmbedHandle, DiagramEmbedProps>(function DiagramEmbed({ xml }, ref) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const exportResolverRef = useRef<((value: string | null) => void) | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isReady, setIsReady] = useState(false);
+
+  const parseMessage = (data: any): any => {
+    if (typeof data === 'string') {
+      try {
+        return JSON.parse(data);
+      } catch {
+        return data;
+      }
+    }
+    return data;
+  };
+
+  useImperativeHandle(ref, () => ({
+    exportCurrentXml: () => {
+      return new Promise<string | null>((resolve) => {
+        const iframe = iframeRef.current;
+        if (!iframe?.contentWindow) {
+          resolve(null);
+          return;
+        }
+
+        exportResolverRef.current = resolve;
+        iframe.contentWindow.postMessage(
+          JSON.stringify({ action: 'export', format: 'xml', spin: 'Saving edits...' }),
+          '*',
+        );
+
+        window.setTimeout(() => {
+          if (exportResolverRef.current) {
+            exportResolverRef.current(null);
+            exportResolverRef.current = null;
+          }
+        }, 3000);
+      });
+    },
+  }), []);
 
   useEffect(() => {
     const iframe = iframeRef.current;
@@ -35,8 +76,17 @@ export default function DiagramEmbed({ xml }: DiagramEmbedProps) {
     const handleMessage = (event: MessageEvent) => {
       console.log('DiagramEmbed: Received message', event.data);
       if (iframe.contentWindow && event.source === iframe.contentWindow) {
-        if (event.data === 'init' || event.data === 'ready') {
+        const msg = parseMessage(event.data);
+
+        if (msg === 'init' || msg === 'ready' || msg?.event === 'init' || msg?.event === 'ready') {
           loadDiagram();
+          return;
+        }
+
+        if (msg?.event === 'export' && exportResolverRef.current) {
+          const exportedXml = typeof msg.data === 'string' ? msg.data : (typeof msg.xml === 'string' ? msg.xml : null);
+          exportResolverRef.current(exportedXml);
+          exportResolverRef.current = null;
         }
       }
     };
@@ -84,4 +134,6 @@ export default function DiagramEmbed({ xml }: DiagramEmbedProps) {
       />
     </div>
   );
-}
+});
+
+export default DiagramEmbed;

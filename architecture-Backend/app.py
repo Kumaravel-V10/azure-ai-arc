@@ -26,6 +26,7 @@ from config import api_config, agent_config, validation_config, path_config, wor
 from reverse_engineer import ReverseEngineerOrchestrator
 from diff_analyzer import ArchitectureDiffAnalyzer, AIEnhancedDiffAnalyzer, DiffReportGenerator
 from diagram_modification_agent import DiagramModificationAgent, ModificationStrategy
+from architecture_modifier import router as architecture_modifier_router
 
 # LangGraph import (optional - falls back gracefully)
 try:
@@ -118,6 +119,8 @@ app = FastAPI(
     docs_url="/api/docs",
     redoc_url="/api/redoc"
 )
+
+app.include_router(architecture_modifier_router)
 
 
 @app.on_event("startup")

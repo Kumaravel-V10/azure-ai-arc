@@ -5,6 +5,7 @@ import { GenerateTab } from "@/components/generate-tab"
 import { ReverseEngineerTab } from "@/components/reverse-engineer-tab"
 import { ValidateTab } from "@/components/validate-tab"
 import { SessionHistoryTab } from "@/components/session-history-tab"
+import { UpdateTab } from "@/components/update-tab"
 import { GitBranch, Shield, Sparkles, History, Cpu, Zap } from "lucide-react"
 import { APP_CONFIG } from "@/lib/config"
 
@@ -68,6 +69,7 @@ export default function Home() {
             <TabsList className="h-12 p-1 bg-card/60 backdrop-blur-xl border border-border/40 shadow-xl shadow-black/5 rounded-2xl gap-1">
               {[
                 { value: "generate", icon: Sparkles, label: "Generate" },
+                { value: "update", icon: Sparkles, label: "Update" },
                 { value: "reverse", icon: GitBranch, label: "Reverse Engineer" },
                 { value: "validate", icon: Shield, label: "Validate" },
                 { value: "history", icon: History, label: "Sessions" },
@@ -94,6 +96,9 @@ export default function Home() {
             </TabsContent>
             <TabsContent value="validate" className="mt-0 focus-visible:outline-none focus-visible:ring-0">
               <ValidateTab />
+            </TabsContent>
+            <TabsContent value="update" className="mt-0 focus-visible:outline-none focus-visible:ring-0">
+              <UpdateTab />
             </TabsContent>
             <TabsContent value="history" className="mt-0 focus-visible:outline-none focus-visible:ring-0">
               <SessionHistoryTab />
