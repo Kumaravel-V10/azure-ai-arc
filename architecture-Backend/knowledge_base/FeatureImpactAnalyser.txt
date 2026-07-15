@@ -1,0 +1,162 @@
+Talk to Architecture - Feature Impact Analyzer
+Final Implementation Specification
+
+Status: Implemented
+Date: 2026-07-07
+
+Implemented in
+- Arc-frontend/app/page.tsx
+- Arc-frontend/components/feature-impact-tab.tsx
+- Arc-frontend/lib/config.ts
+- architecture-Backend/app.py
+
+Overview
+This capability adds a new Impact Analyzer tab to the main workspace after Sessions. The tab follows the same interaction pattern used in existing analysis screens: a left input panel and a right results panel with compact tabs, cards, and tables.
+
+Main UX flow
+1. User opens Impact Analyzer tab.
+2. User provides application and feature details.
+3. User sets context filters (layer, impact type, environment, view mode, confidence threshold).
+4. User clicks Analyze Architecture Impact.
+5. Frontend calls backend API.
+6. Backend returns structured existing/proposed architecture impact payload.
+7. UI renders impact views, discussion flags, and decision items.
+
+Frontend implementation details
+
+Navigation integration
+- Added a new tab after Sessions.
+- Label: Impact Analyzer.
+- Content component: FeatureImpactTab.
+
+FeatureImpactTab layout
+- Left panel:
+  - Application Name
+  - Feature Name
+  - Feature Description
+  - Business Capability
+  - Change Type
+  - Priority
+  - Target Release
+  - Architecture Layer filter
+  - Impact Type filter
+  - Environment
+  - View Mode
+  - Confidence Threshold
+  - Analyze Architecture Impact button
+
+- Right panel result tabs:
+  - Existing Architecture
+  - New Architecture
+  - Impact Summary
+  - Discussion Items
+  - AI Confidence
+
+Rendered result sections
+- Impact summary cards:
+  - Impact Level
+  - Impacted Components
+  - New Components
+  - Security Review
+- Existing architecture component cards
+- Proposed architecture component cards with change status highlighting
+- Architecture diff (Added, Modified)
+- Detailed impact table
+- New component recommendation cards
+- Minimal explanation panel
+- Discussion required items panel
+- Architecture decision panel
+- AI confidence and assumptions panel
+- Visual legend
+
+Status color semantics
+- Impacted: amber
+- New: green
+- Removed: red
+- Discussion-required context: purple accents
+
+API integration
+
+Frontend endpoint config
+- Arc-frontend/lib/config.ts
+- Added endpoint key:
+  FEATURE_IMPACT_ANALYZE: /api/feature-impact/analyze
+
+Frontend API call
+- Method: POST
+- URL: getApiUrl("FEATURE_IMPACT_ANALYZE")
+- Trigger: Analyze Architecture Impact button
+
+Backend API endpoint
+- File: architecture-Backend/app.py
+- Route: POST /api/feature-impact/analyze
+- Request model: FeatureImpactAnalyzeRequest
+- Response shape:
+  {
+    "status": "success",
+    "result": {
+      ...structured analysis payload...
+    }
+  }
+
+Request contract
+{
+  "application_name": "AgentAssist",
+  "feature_name": "Refund Eligibility Check",
+  "feature_description": "Agent should see refund eligibility before submitting refund request",
+  "business_capability": "Refund",
+  "change_type": "New Feature",
+  "priority": "High",
+  "target_release": "2026.Q4",
+  "architecture_layer": ["API", "Data", "Integration"],
+  "impact_type": ["Functional", "Security"],
+  "environment": "Prod",
+  "view_mode": "Technical View",
+  "confidence_threshold": "All"
+}
+
+Result contract fields used by UI
+- application
+- feature
+- existingArchitecture.components
+- proposedArchitecture.components
+- architectureDiff
+- impactSummary
+- detailedImpactTable
+- newComponentRecommendations
+- decisionPanel
+- minimalExplanation
+- aiConfidence
+- discussionItems
+- legend
+- requestedScope
+- timestamp
+
+Current analysis strategy
+- Deterministic rule-based payload generation in backend helper:
+  _build_feature_impact_analysis_payload()
+- Includes:
+  - synthesized current architecture baseline
+  - impacted components
+  - one new component recommendation
+  - decision items and discussion-required topics
+  - confidence assumptions and missing information
+
+What is intentionally not implemented yet
+- Retrieval of real existing architecture by application name from persistent architecture repository.
+- Diagram-canvas overlay/graph drawing in this tab.
+- Export, Save Analysis, Share with Architect actions.
+
+Compatibility notes
+- No breaking changes to existing Generate, Reverse Engineer, Validate, or Sessions tabs.
+- New endpoint is additive and isolated.
+
+Acceptance checklist
+- Header and intent represented in tab context: Yes
+- Input panel with feature metadata: Yes
+- Analyze button wired to API: Yes
+- Existing and proposed architecture views: Yes
+- Impact summary cards and detailed table: Yes
+- Discussion required markers and decision panel: Yes
+- AI confidence and assumptions section: Yes
+- Added after Sessions tab in main page: Yes

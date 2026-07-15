@@ -44,6 +44,8 @@ export const API_CONFIG = {
     REVERSE_ENGINEER_STORY: "/api/reverse-engineer/analyze-story",
     INTERACTION_RESPOND: "/api/interaction",  // + /{session_id}/respond
     CLARIFY: "/api/clarify",  // Pre-generation clarifying questions
+    FEATURE_IMPACT_ANALYZE: "/api/feature-impact/analyze",
+    FEATURE_IMPACT_STREAM: "/api/feature-impact/stream",
   },
   
   // Timeouts (in milliseconds)
@@ -119,6 +121,7 @@ export const AGENT_CONFIG = {
     ConnectionExpertAgent: { id: "connection", name: "Connection Expert" },
     RequirementsValidationAgent: { id: "validation", name: "Requirements Validator" },
     AzureArchitectureReviewAgent: { id: "review", name: "Architecture Reviewer" },
+    FeatureImpactAnalyzerAgent: { id: "impact", name: "Feature Impact Analyzer" },
   },
 } as const;
 

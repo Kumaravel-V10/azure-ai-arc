@@ -25,6 +25,7 @@ from agents.components import ComponentExtractionAgent
 from agents.references import AzureArchitectureReferenceAgent
 from agents.validation import RequirementsValidationAgent
 from agents.review import AzureArchitectureReviewAgent
+from agents.feature_impact import FeatureImpactAnalyzerAgent
 from agents.orchestrator import AgentOrchestrator
 
 __all__ = [
@@ -48,6 +49,7 @@ __all__ = [
     "AzureArchitectureReferenceAgent",
     "RequirementsValidationAgent",
     "AzureArchitectureReviewAgent",
+    "FeatureImpactAnalyzerAgent",
     # Orchestrator
     "AgentOrchestrator",
 ]

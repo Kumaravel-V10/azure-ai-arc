@@ -1,5 +1,9 @@
 ﻿import json
 import logging
+import html
+import re
+import xml.etree.ElementTree as ET
+from pathlib import Path
 from typing import Dict, List, Any, Optional, Tuple
 from datetime import datetime
 from openai import AsyncAzureOpenAI
@@ -242,6 +246,248 @@ class ArchitectureAgent(BaseAgent):
     
     def __init__(self, openai_client: Optional[AsyncAzureOpenAI] = None):
         super().__init__(name="ArchitectureAgent", openai_client=openai_client, agent_type="architecture")
+        self._similar_architecture_principles_context: Optional[str] = None
+
+    @staticmethod
+    def _normalize_drawio_text(value: str) -> str:
+        decoded = html.unescape(value or "")
+        decoded = decoded.replace("&#xa;", "\n").replace("&nbsp;", " ")
+        decoded = decoded.replace("\n", " ")
+        decoded = re.sub(r"\s+", " ", decoded)
+        return decoded.strip().lower()
+
+    @staticmethod
+    def _append_style_once(style: str, extra: str) -> str:
+        style = style or ""
+        if extra in style:
+            return style
+        if style and not style.endswith(";"):
+            style += ";"
+        return style + extra
+
+    @staticmethod
+    def _find_existing_drawio_label_matches(root: ET.Element, names: List[str]) -> Dict[str, ET.Element]:
+        matches: Dict[str, ET.Element] = {}
+        wanted = {name.strip().lower(): name for name in names if name}
+        if not wanted:
+            return matches
+
+        for cell in root.findall(".//mxCell"):
+            value = cell.get("value") or ""
+            if not value:
+                continue
+            normalized = ArchitectureAgent._normalize_drawio_text(value)
+            for lookup in wanted:
+                if lookup and lookup in normalized and lookup not in matches:
+                    matches[lookup] = cell
+        return matches
+
+    @staticmethod
+    def _next_numeric_cell_id(root: ET.Element) -> int:
+        max_id = 1000
+        for cell in root.findall(".//mxCell"):
+            cell_id = cell.get("id") or ""
+            if cell_id.isdigit():
+                max_id = max(max_id, int(cell_id))
+        return max_id + 1
+
+    @staticmethod
+    def build_proposed_architecture_from_existing_diagram(
+        existing_drawio_xml: str,
+        proposed_architecture: Dict[str, Any],
+    ) -> str:
+        """Create a proposed architecture by copying existing drawio XML, highlighting impacted components,
+        and adding new components without disturbing unchanged layers/components.
+        """
+        if not existing_drawio_xml:
+            return existing_drawio_xml
+
+        try:
+            root = ET.fromstring(existing_drawio_xml)
+        except ET.ParseError:
+            return existing_drawio_xml
+
+        components = proposed_architecture.get("components", []) if isinstance(proposed_architecture, dict) else []
+        impacted_names = [
+            str(component.get("name") or "").strip()
+            for component in components
+            if isinstance(component, dict) and component.get("changeStatus") == "Impacted"
+        ]
+        new_components = [
+            component for component in components
+            if isinstance(component, dict) and component.get("changeStatus") == "New"
+        ]
+
+        impacted_matches = ArchitectureAgent._find_existing_drawio_label_matches(root, impacted_names)
+        for _, cell in impacted_matches.items():
+            style = cell.get("style") or ""
+            cell.set(
+                "style",
+                ArchitectureAgent._append_style_once(
+                    style,
+                    "fontStyle=1;fontColor=#b45309;labelBackgroundColor=#fef3c7;rounded=1;spacing=4;",
+                ),
+            )
+            value = cell.get("value") or ""
+            if "(Impacted)" not in html.unescape(value):
+                cell.set("value", f"{value}&#xa;(Impacted)")
+
+        graph_root = root.find(".//root")
+        if graph_root is None:
+            return ET.tostring(root, encoding="unicode")
+
+        func_group = root.find(".//mxCell[@id='11']")
+        func_section = root.find(".//mxCell[@id='func-section']")
+        parent_id = "11" if func_group is not None else "1"
+
+        existing_icons = [
+            cell
+            for cell in root.findall(f".//mxCell[@parent='{parent_id}']")
+            if "image=" in (cell.get("style") or "")
+        ]
+
+        xs: List[float] = []
+        ys: List[float] = []
+        for cell in existing_icons:
+            geometry = cell.find("mxGeometry")
+            if geometry is None:
+                continue
+            xs.append(float(geometry.get("x", 0)))
+            ys.append(float(geometry.get("y", 0)))
+
+        base_x = (max(xs) + 110) if xs else 30
+        base_y = min(ys) if ys else 50
+        row_limit = 1680 if parent_id == "11" else 1800
+        width_expand = 0
+
+        next_numeric_id = ArchitectureAgent._next_numeric_cell_id(root)
+        for index, component in enumerate(new_components):
+            component_name = str(component.get("name") or f"New Component {index + 1}")
+            resource_type = str(component.get("resourceType") or "").lower()
+
+            icon_id = f"proposed-new-icon-{next_numeric_id + (index * 2)}"
+            label_id = f"proposed-new-label-{next_numeric_id + (index * 2) + 1}"
+            x = base_x + (index * 110)
+            y = base_y
+            if x > row_limit:
+                x = 30 + ((index % 4) * 110)
+                y = base_y + 130
+
+            icon_path = "img/lib/azure2/compute/Function_Apps.svg"
+            if resource_type == "web_app":
+                icon_path = "img/lib/azure2/app_services/App_Services.svg"
+            elif resource_type == "database":
+                icon_path = "img/lib/azure2/databases/Azure_Database_PostgreSQL_Server.svg"
+
+            icon_cell = ET.Element(
+                "mxCell",
+                {
+                    "id": icon_id,
+                    "value": "",
+                    "style": f"image;aspect=fixed;html=1;points=[];align=center;image={icon_path};strokeColor=#166534;strokeWidth=2;fillColor=#dcfce7;rounded=1;",
+                    "parent": parent_id,
+                    "vertex": "1",
+                },
+            )
+            ET.SubElement(
+                icon_cell,
+                "mxGeometry",
+                {
+                    "x": str(int(x)),
+                    "y": str(int(y)),
+                    "width": "44",
+                    "height": "44",
+                    "as": "geometry",
+                },
+            )
+            graph_root.append(icon_cell)
+
+            label_text = html.escape(component_name).replace("\n", "&#xa;") + "&#xa;(New)"
+            label_cell = ET.Element(
+                "mxCell",
+                {
+                    "id": label_id,
+                    "value": label_text,
+                    "style": "text;html=1;align=center;verticalAlign=top;fontSize=9;fontStyle=1;strokeColor=#166534;fillColor=#dcfce7;rounded=1;whiteSpace=wrap;",
+                    "parent": parent_id,
+                    "vertex": "1",
+                },
+            )
+            ET.SubElement(
+                label_cell,
+                "mxGeometry",
+                {
+                    "x": str(int(x - 15)),
+                    "y": str(int(y + 48)),
+                    "width": "90",
+                    "height": "44",
+                    "as": "geometry",
+                },
+            )
+            graph_root.append(label_cell)
+
+            width_expand = max(width_expand, int(x + 110))
+
+        if func_group is not None:
+            group_geometry = func_group.find("mxGeometry")
+            if group_geometry is not None and width_expand:
+                current_width = float(group_geometry.get("width", 1760))
+                if width_expand > current_width:
+                    group_geometry.set("width", str(width_expand))
+
+            if func_section is not None:
+                section_geometry = func_section.find("mxGeometry")
+                if section_geometry is not None and width_expand:
+                    current_width = float(section_geometry.get("width", 1760))
+                    if width_expand > current_width:
+                        section_geometry.set("width", str(width_expand))
+
+                title = html.unescape(func_section.get("value") or "Azure Functions")
+                count_match = re.search(r"\((\d+) apps\)", title)
+                if count_match:
+                    current_count = int(count_match.group(1))
+                    func_section.set(
+                        "value",
+                        re.sub(
+                            r"\(\d+ apps\)",
+                            f"({current_count + len(new_components)} apps)",
+                            func_section.get("value") or title,
+                            count=1,
+                        ),
+                    )
+
+        return ET.tostring(root, encoding="unicode")
+
+    def _get_similar_architecture_principles_context(self) -> str:
+        """Load diagram principles guidance from the local knowledge base file."""
+        if self._similar_architecture_principles_context is not None:
+            return self._similar_architecture_principles_context
+
+        principles_path = (
+            Path(__file__).resolve().parent.parent
+            / "knowledge_base"
+            / "similar-architecture-diagram-principles.txt"
+        )
+
+        try:
+            principles_text = principles_path.read_text(encoding="utf-8").strip()
+            if not principles_text:
+                self._similar_architecture_principles_context = ""
+                return ""
+
+            context = (
+                "\nDIAGRAM PRINCIPLES KNOWLEDGE BASE (MUST FOLLOW):\n"
+                "Treat these principles as hard constraints when deciding layer ordering, "
+                "traffic flow, segmentation, security boundaries, HA/DR, observability, "
+                "management isolation, and diagram notation.\n"
+                f"{principles_text}\n"
+            )
+            self._similar_architecture_principles_context = context
+            return context
+        except Exception as e:
+            logger.warning(f"Unable to load diagram principles knowledge base from {principles_path}: {e}")
+            self._similar_architecture_principles_context = ""
+            return ""
     
     def _get_learned_patterns_context(self, requirements: str, 
                                        security_services: List = None, 
@@ -429,6 +675,9 @@ Use the Resource Group Boundaries above to create MULTIPLE separate Resource Gro
         
         # Get Draw.io reference patterns for better connections and layouts
         drawio_reference_context = self._get_drawio_reference_context(requirements, max_references=5)
+
+        # Get explicit architecture diagram principles from local knowledge base
+        diagram_principles_section = self._get_similar_architecture_principles_context()
         
         # Get learned patterns from Azure Architecture Center Draw.io files
         learned_patterns_section = ""
@@ -525,10 +774,12 @@ Design a complete, production-ready Azure architecture based on the requirements
 {learned_patterns_section}
 {rl_patterns_section}
 IMPORTANT: Use the LOCAL REFERENCE DOCS and REFERENCE ARCHITECTURE PATTERNS below as your PRIMARY source for architecture patterns, service selection, CONNECTIONS, and LAYOUT.
+Also strictly follow the DIAGRAM PRINCIPLES KNOWLEDGE BASE section below.
 {arch_docs}
 {component_section}
 {ref_section}
 {drawio_reference_context}
+{diagram_principles_section}
 
 **User Requirements:** "{requirements}"
 

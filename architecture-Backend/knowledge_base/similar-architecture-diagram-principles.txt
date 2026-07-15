@@ -1,0 +1,78 @@
+Principles For Creating A Similar Production Architecture Diagram
+
+It is important to keep the layers stacked horizontaly and logically. I mean top to bottom. Do not keep left to right. 
+
+1. Diagram Scope And Orientation
+- Start with a clear title that includes environment, region, and resource group context.
+- Keep the flow top-to-bottom: Users/Internet -> Edge -> DMZ/Gateway -> App/API -> Data/Security/Observability.
+- Group related resources in bounded containers to show trust boundaries.
+
+2. Layer Hierarchy (Required Ordering)
+- Layer 1: External access (Internet/Users).
+- Layer 2: Edge and protection (Front Door/CDN/WAF, DNS).
+- Layer 3: DMZ ingress controls (Application Gateway, controlled public ingress).
+- Layer 4: Application/API runtime (Web App, APIM, Function Apps).
+- Layer 5: Data and platform security (PostgreSQL, Key Vault, private DNS).
+- Layer 6: Observability/SOC (Application Insights, Log Analytics/SIEM).
+- Layer 7: Management plane (Bastion/jump access in separate management VNet).
+
+3. Access And Traffic Principles
+- Default deny between layers; only allow explicit, minimum required paths.
+- Inbound internet traffic must terminate at Edge/DMZ controls, never directly at app/data tiers.
+- API ingress should be routed through API Management before backend services.
+- East-west calls (for example APIM -> Functions) should be private and explicitly shown.
+- Data access is one-way from app tier to data tier; no direct user/data path.
+- Administrative traffic must use management paths (Bastion/JIT/PIM), not app ingress paths.
+
+4. VNet And Subnet Segmentation Principles
+- Use separate VNets by function: DMZ, internal application, management, and gateway/shared services.
+- Map each subnet to a specific role and trust level (for example ndmz-app, ndmz-ilb, ndmz-data, mgmt, gateway).
+- Enforce subnet-level NSGs and document each NSG boundary in the diagram.
+- Keep sensitive data services in protected subnets with no public exposure.
+- Show private endpoint usage for data/security/platform services.
+- Show private DNS zones for private-link resolution (appservice, apim, keyvault, postgres).
+
+5. Security Principles
+- Prefer private connectivity over public endpoints for internal service-to-service traffic.
+- Use WAF at edge and/or gateway with prevention mode.
+- Use RBAC and managed identities for service authentication.
+- Keep secrets in Key Vault and reference secret rotation as an operating control.
+- Explicitly indicate where public IPs are allowed and restrict their purpose.
+
+6. High Availability And Resilience Principles
+- Show zone-redundant or HA configurations for critical services.
+- Represent primary and DR region resources (for example primary DB + DR/geo-restore).
+- Include failover path at edge (Front Door origin failover) and DR runbook notes.
+- Show deployment safety controls (staging slot, blue/green swap for web/app tiers).
+
+7. Observability And SOC Principles
+- Every critical runtime (Web App, APIM, Functions) should emit telemetry.
+- Centralize logs/metrics/traces into a single Log Analytics workspace.
+- Show alerting/dashboards/distributed tracing in the observability layer.
+- Distinguish telemetry flows from business traffic using separate line style.
+
+8. API And Microservice Mapping Principles
+- Name each function app clearly with domain responsibility (search, payment, cart, order, etc.).
+- Keep API list near APIM to show bounded backend capabilities.
+- Ensure naming conventions are environment and region encoded for all components.
+
+9. Management And Governance Principles
+- Keep management VNet separate from workload VNets.
+- Show JIT/PIM and admin-only access expectations in the diagram text.
+- Include governance controls as explicit labels (security, retention, rotation, diagnostics).
+
+10. Visual Notation Principles
+- Use distinct containers and colors for each layer (edge, app, data, security, observability).
+- Use a legend and keep line semantics consistent:
+  - Solid lines for primary data path.
+  - Dashed lines for control-plane, telemetry, or async integrations.
+  - Distinct colors for HTTPS/API/data/telemetry/security/admin traffic.
+- Annotate each service with SKU/tier and critical configuration notes when relevant.
+
+11. Completeness Checklist For Similar Diagrams
+- Internet ingress path and all enforcement points are visible.
+- Every runtime has a network boundary and security control.
+- Every data and secret store shows private access pattern.
+- DR posture is visible (region, failover, restore target).
+- Observability flow to centralized SOC workspace is visible.
+- Management/admin path is isolated from business traffic.

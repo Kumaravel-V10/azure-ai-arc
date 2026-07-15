@@ -1,0 +1,96 @@
+Below is a clear **sequence of execution** for the **Architecture Impact Analysis** feature.
+
+***
+
+# Architecture Impact Analysis – Execution Flow
+
+| Step | Stage                                          | What the Application Should Do                                                                                                                                                                                      | Expected Output                                                                                                   |
+| ---- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| 1    | Application Selection                          | User provides the **application name**.                                                                                                                                                                             | Application context is identified.                                                                                |
+| 2    | Retrieve Existing Architecture                 | System retrieves the **current architecture diagram** for the selected application.                                                                                                                                 | Existing architecture diagram is loaded for analysis.                                                             |
+| 3    | Trigger Impact Analysis                        | User provides the **feature name** and **feature details**, then triggers analysis.                                                                                                                                 | Impact analysis workflow starts.                                                                                  |
+| 4    | Read Existing Architecture Diagram             | System parses the existing architecture diagram and extracts the current list of components, integrations, databases, APIs, external systems, and dependencies.                                                     | Existing component inventory is generated.                                                                        |
+| 5    | Read Feature–Component–Repo Mapping            | System reads the **features, components, and repository mapping sheet** to identify which features are already delivered by which components and repos.                                                             | Mapping of existing features to components and repositories.                                                      |
+| 6    | Read User Stories                              | System reads the **user stories list** to understand functional details, business rules, impacted journeys, and acceptance criteria related to the new feature.                                                     | Detailed feature understanding and business context.                                                              |
+| 7    | Compare New Feature with Existing Capabilities | System compares the requested feature with existing features and component responsibilities.                                                                                                                        | Reuse opportunities and capability gaps are identified.                                                           |
+| 8    | Identify Impacted Existing Components          | System proposes the list of existing components that may require changes based on architecture dependency, feature ownership, data flow, API usage, UI impact, integration impact, and repository mapping.          | List of impacted components with reason for impact.                                                               |
+| 9    | Identify New Components Required               | System checks whether the new feature can be supported by existing components or requires new components, services, APIs, data stores, queues, agents, or integrations.                                             | List of proposed new components, if any.                                                                          |
+| 10   | Expand Component-Level Impact                  | For each impacted component, system explains the required changes such as UI changes, API changes, data model changes, integration changes, security changes, logging changes, deployment changes, and test impact. | Detailed component impact analysis.                                                                               |
+| 11   | Repository Impact Mapping                      | System maps each impacted component to its owning repository based on the mapping sheet.                                                                                                                            | Repo-wise change list.                                                                                            |
+| 12   | Architecture Change Recommendation             | System proposes whether the existing architecture diagram needs an update and highlights where the new/changed components should be placed.                                                                         | Recommended architecture changes.                                                                                 |
+| 13   | Risk and Dependency Analysis                   | System identifies downstream/upstream dependencies, integration risks, performance impact, security impact, data privacy impact, and release dependency.                                                            | Risk and dependency summary.                                                                                      |
+| 14   | Final Impact Report                            | System generates a structured impact analysis report.                                                                                                                                                               | Final output with impacted components, new components, required changes, repo impact, risks, and recommendations. |
+
+***
+
+# Recommended Workflow Summary
+
+```text
+Application Name
+   ↓
+Load Existing Architecture Diagram
+   ↓
+Feature Name + Feature Details
+   ↓
+Trigger Impact Analysis
+   ↓
+Parse Architecture Components
+   ↓
+Read Feature–Component–Repo Mapping
+   ↓
+Read User Stories
+   ↓
+Compare New Feature with Existing Capabilities
+   ↓
+Identify Impacted Components
+   ↓
+Identify New Components Required
+   ↓
+Expand Detailed Change Impact
+   ↓
+Map Changes to Repositories
+   ↓
+Generate Architecture Impact Report
+```
+
+***
+
+# Suggested Output Format from the Feature
+
+| Output Section                 | Description                                                                         |
+| ------------------------------ | ----------------------------------------------------------------------------------- |
+| Feature Summary                | Short summary of the requested feature.                                             |
+| Existing Architecture Context  | Components currently available in the application.                                  |
+| Existing Capability Match      | Existing components/features that partially or fully support the requested feature. |
+| Impacted Components            | Existing components that need changes.                                              |
+| New Components Required        | Any new services, APIs, databases, queues, agents, or integrations required.        |
+| Component-Level Change Details | Detailed change required for each impacted component.                               |
+| Repository Impact              | Repositories that need code changes.                                                |
+| API / Integration Impact       | New or modified APIs, events, integrations, or contracts.                           |
+| Data Impact                    | New/changed data fields, storage, retention, or migration needs.                    |
+| Security / Compliance Impact   | Authentication, authorization, PII, audit, logging, or compliance changes.          |
+| Testing Impact                 | Unit, integration, regression, performance, and security test needs.                |
+| Architecture Recommendation    | Suggested architecture update and design recommendation.                            |
+| Risks and Assumptions          | Known risks, open questions, and assumptions.                                       |
+
+***
+
+# Example Final Output Structure
+
+| Area                         | Output                                                                    |
+| ---------------------------- | ------------------------------------------------------------------------- |
+| Feature                      | View accrual points in flight offers                                      |
+| Impacted Existing Components | Offer Search UI, Offer API, Loyalty Integration, Pricing/Offer Aggregator |
+| New Components Required      | None / Loyalty accrual calculator if not existing                         |
+| Repository Impact            | `agentassist-ui`, `offer-service`, `loyalty-adapter`                      |
+| API Impact                   | Add accrual points field in flight offer response                         |
+| Data Impact                  | No persistent storage required if calculated real time                    |
+| Security Impact              | Loyalty profile access must follow customer consent and RBAC              |
+| Testing Impact               | Offer search regression, loyalty tier test cases, fare family validation  |
+| Architecture Change          | Update offer response flow to enrich flight offers with accrual points    |
+
+***
+
+# Concise Feature Logic
+
+The application should act as an **architecture impact assistant**. It should first understand the current application architecture, then correlate the new feature request with existing components, feature ownership, repositories, and user stories. Based on this correlation, the system should identify impacted components, recommend any new components required, explain the detailed changes needed, and produce an architecture-ready impact report for design review and implementation planning.

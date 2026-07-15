@@ -5,7 +5,8 @@ import { GenerateTab } from "@/components/generate-tab"
 import { ReverseEngineerTab } from "@/components/reverse-engineer-tab"
 import { ValidateTab } from "@/components/validate-tab"
 import { SessionHistoryTab } from "@/components/session-history-tab"
-import { GitBranch, Shield, Sparkles, History, Cpu, Zap } from "lucide-react"
+import { FeatureImpactTab } from "@/components/feature-impact-tab"
+import { GitBranch, Shield, Sparkles, History, Cpu, Zap, Layers3 } from "lucide-react"
 import { APP_CONFIG } from "@/lib/config"
 
 export default function Home() {
@@ -71,6 +72,7 @@ export default function Home() {
                 { value: "reverse", icon: GitBranch, label: "Reverse Engineer" },
                 { value: "validate", icon: Shield, label: "Validate" },
                 { value: "history", icon: History, label: "Sessions" },
+                { value: "impact", icon: Layers3, label: "Impact Analyzer" },
               ].map((tab) => (
                 <TabsTrigger
                   key={tab.value}
@@ -97,6 +99,9 @@ export default function Home() {
             </TabsContent>
             <TabsContent value="history" className="mt-0 focus-visible:outline-none focus-visible:ring-0">
               <SessionHistoryTab />
+            </TabsContent>
+            <TabsContent value="impact" className="mt-0 focus-visible:outline-none focus-visible:ring-0">
+              <FeatureImpactTab />
             </TabsContent>
           </div>
         </Tabs>

@@ -1,0 +1,187 @@
+kind: workflow
+trigger:
+  kind: OnConversationStart
+  id: trigger_refund_wf
+id: refund_agent_workflow
+name: refund-agent-workflow
+description: Sequential Azure AI Foundry workflow for Refund Agent with booking retrieval, compliance validation, refund decisioning, approval routing, refund submission, case management, communication, and audit summary.
+
+actions:
+  - kind: InvokeAzureAgent
+    id: supervisor_orchestrator_agent
+    agent:
+      name: Supervisor Orchestrator Agent
+    description: Detect refund intent, extract PNR, ticket, customer details, and route the case to the refund workflow. If the customer request is not refund-related, hand off to the correct specialist agent.
+    conversationId: =System.ConversationId
+    input:
+      messages: =System.LastMessage
+    output:
+      messages: Local.LatestMessage
+      autoSend: true
+
+  - kind: InvokeAzureAgent
+    id: booking_retrieval_agent
+    agent:
+      name: Booking Retrieval Agent
+    description: Retrieve and validate booking context before refund processing. Allowed tools: GetBookingDetails, GetPassengerDetails, GetFlightSegments, GetTicketStatus, ValidatePNR, retrieve_order, ticket_get_by_id.
+    conversationId: =System.ConversationId
+    input:
+      messages: =Local.LatestMessage
+      pnr: =Local.PNR
+      lastName: =Local.LastName
+      ticketNumber: =Local.TicketNumber
+    output:
+      messages: Local.LatestMessage
+      bookingDetails: Local.BookingDetails
+      passengerDetails: Local.PassengerDetails
+      flightSegments: Local.FlightSegments
+      ticketStatus: Local.TicketStatus
+      pnrValidationStatus: Local.PNRValidationStatus
+      autoSend: true
+
+  - kind: InvokeAzureAgent
+    id: validation_compliance_agent
+    agent:
+      name: Validation & Compliance Agent
+    description: Validate customer identity, document consistency, fraud indicators, and policy compliance before sensitive refund actions. Allowed tools: VerifyCustomerIdentity, ValidateDocumentIntegrity, CheckFraudSignals, ValidatePolicyCompliance, BlockSuspiciousAction.
+    conversationId: =System.ConversationId
+    input:
+      messages: =Local.LatestMessage
+      pnr: =Local.PNR
+      bookingDetails: =Local.BookingDetails
+      passengerDetails: =Local.PassengerDetails
+    output:
+      messages: Local.LatestMessage
+      complianceStatus: Local.ComplianceStatus
+      fraudRisk: Local.FraudRisk
+      policyComplianceStatus: Local.PolicyComplianceStatus
+      autoSend: true
+
+  - kind: InvokeAzureAgent
+    id: refund_agent_decisioning
+    agent:
+      name: Refund Agent
+    description: Execute refund SOP decisioning. Check ticket coupon status, fare rules, waiver eligibility, refund eligibility, and calculate refundable amount. Allowed tools: GetTicketCouponStatus, GetFareRules, CheckWaiverEligibility, CheckRefundEligibility, CalculateRefundAmount, GetRefundStatus.
+    conversationId: =System.ConversationId
+    input:
+      messages: =Local.LatestMessage
+      pnr: =Local.PNR
+      ticketNumber: =Local.TicketNumber
+      refundReason: =Local.RefundReason
+      ticketStatus: =Local.TicketStatus
+      complianceStatus: =Local.ComplianceStatus
+    output:
+      messages: Local.LatestMessage
+      refundEligibility: Local.RefundEligibility
+      refundEligibilityReason: Local.RefundEligibilityReason
+      refundAmount: Local.RefundAmount
+      currency: Local.Currency
+      approvalRequired: Local.ApprovalRequired
+      refundDecision: Local.RefundDecision
+      autoSend: true
+
+  - kind: InvokeAzureAgent
+    id: supervisor_approval_agent
+    agent:
+      name: Supervisor Orchestrator Agent
+    description: Evaluate whether refund approval, human supervisor review, or cross-agent handoff is required. Trigger approval when refund amount exceeds threshold, policy exception exists, or approvalRequired is true. Allowed tools: TriggerApproval, RouteToAgent, InvokeAgent.
+    conversationId: =System.ConversationId
+    input:
+      messages: =Local.LatestMessage
+      refundEligibility: =Local.RefundEligibility
+      refundAmount: =Local.RefundAmount
+      currency: =Local.Currency
+      approvalRequired: =Local.ApprovalRequired
+      refundDecision: =Local.RefundDecision
+    output:
+      messages: Local.LatestMessage
+      approvalStatus: Local.ApprovalStatus
+      nextAction: Local.NextAction
+      handoffTarget: Local.HandoffTarget
+      autoSend: true
+
+  - kind: InvokeAzureAgent
+    id: refund_agent_submission
+    agent:
+      name: Refund Agent
+    description: Submit refund only when eligibility is approved and required approval is complete. Allowed tools: SubmitRefund, CreateRefundCase, GetRefundStatus. Must not submit refund if refundEligibility is not eligible or approvalStatus is rejected.
+    conversationId: =System.ConversationId
+    input:
+      messages: =Local.LatestMessage
+      pnr: =Local.PNR
+      ticketNumber: =Local.TicketNumber
+      refundEligibility: =Local.RefundEligibility
+      refundAmount: =Local.RefundAmount
+      currency: =Local.Currency
+      approvalStatus: =Local.ApprovalStatus
+    output:
+      messages: Local.LatestMessage
+      refundSubmissionStatus: Local.RefundSubmissionStatus
+      refundReference: Local.RefundReference
+      refundStatus: Local.RefundStatus
+      autoSend: true
+
+  - kind: InvokeAzureAgent
+    id: crm_case_management_agent
+    agent:
+      name: CRM / Case Management Agent
+    description: Create or update refund case and add audit notes. Allowed tools: CreateCase, UpdateCase, AddCaseNotes, GetCaseStatus.
+    conversationId: =System.ConversationId
+    input:
+      messages: =Local.LatestMessage
+      pnr: =Local.PNR
+      refundReference: =Local.RefundReference
+      refundSubmissionStatus: =Local.RefundSubmissionStatus
+      refundEligibilityReason: =Local.RefundEligibilityReason
+    output:
+      messages: Local.LatestMessage
+      caseId: Local.CaseId
+      caseStatus: Local.CaseStatus
+      autoSend: true
+
+  - kind: InvokeAzureAgent
+    id: communication_agent
+    agent:
+      name: Communication Agent
+    description: Generate and send customer-safe refund communication. Allowed tools: GenerateEmailTemplate, SendEmail, SendNotification. Do not expose internal policy codes or sensitive payment data.
+    conversationId: =System.ConversationId
+    input:
+      messages: =Local.LatestMessage
+      customerEmail: =Local.CustomerEmail
+      pnr: =Local.PNR
+      caseId: =Local.CaseId
+      refundSubmissionStatus: =Local.RefundSubmissionStatus
+      refundReference: =Local.RefundReference
+    output:
+      messages: Local.LatestMessage
+      communicationStatus: Local.CommunicationStatus
+      autoSend: true
+
+  - kind: InvokeAzureAgent
+    id: case_summary_audit_agent
+    agent:
+      name: Case Summary & Audit Agent
+    description: Generate final case summary, compile agent actions, and attach audit note. Allowed tools: GenerateCaseSummary, GenerateAuditLog, CompileAgentActions, AttachNotesToCase.
+    conversationId: =System.ConversationId
+    input:
+      messages: =Local.LatestMessage
+      caseId: =Local.CaseId
+      pnr: =Local.PNR
+      refundReference: =Local.RefundReference
+      refundSubmissionStatus: =Local.RefundSubmissionStatus
+      communicationStatus: =Local.CommunicationStatus
+    output:
+      messages: Local.LatestMessage
+      auditSummary: Local.AuditSummary
+      workflowStatus: Local.WorkflowStatus
+      autoSend: true
+
+# Sticky Notes
+
+## STICKY_NOTE: {"id":"sticky_refund_supervisor","text":"Create and connect a /Supervisor Orchestrator Agent/ with instructions:Detect refund intent, extract PNR, ticket number, last name, refund reason, and customer email. Route only refund-related requests to Refund Agent. If request is medical, disruption/rebooking, SSR, ancillary, or name change, recommend handoff to the appropriate agent.","width":360,"height":260,"x":"100","y":"-280"}
+
+## STICKY_NOTE: {"id":"sticky_refund_booking","text":"Create and connect a /Booking Retrieval Agent/ with instructions:Retrieve booking, passenger, flight segment, ticket status, and validate PNR before refund processing. Use only booking read tools and Nevio retrieve order/ticket tools.","width":360,"height":220,"x":"500","y":"-260"}
+
+## STICKY_NOTE: {"id":"sticky_refund_agent","text":"Create and connect a /Refund Agent/ with instructions:Follow refund SOP. Check coupon status, fare rules, waiver eligibility, refund eligibility, calculate refund amount, and submit refund only after approval conditions are satisfied. Do not perform name change, rebooking, ancillary, SSR, or medical approval tasks.","width":380,"height":280,"x":"900","y":"-300"}
+
+## STICKY_NOTE: {"id":"sticky_refund_closure","text":"Create and connect /CRM Case Management Agent/, /Communication Agent/, and /Case Summary & Audit Agent/ to create/update case, send customer-safe refund communication, and generate audit-ready case summary.","width":380,"height":240,"x":"1320","y":"-260"}

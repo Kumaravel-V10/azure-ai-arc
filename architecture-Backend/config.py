@@ -17,16 +17,29 @@ class APIConfig:
     
     # CORS Origins - comma separated list or "*" for all
     CORS_ORIGINS: List[str] = os.getenv(
-        "CORS_ORIGINS", 
-        "http://localhost:3000,http://localhost:5173"
+        "CORS_ORIGINS",
+        "http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:3001"
     ).split(",")
-    
+
     # Add wildcard if in development mode
     @classmethod
     def get_cors_origins(cls) -> List[str]:
-        origins = cls.CORS_ORIGINS.copy()
-        if cls.DEBUG or os.getenv("ALLOW_ALL_ORIGINS", "false").lower() == "true":
-            origins.append("*")
+        origins = [o.strip() for o in cls.CORS_ORIGINS if o.strip()]
+        # Only allow wildcard when explicitly requested.
+        if os.getenv("ALLOW_ALL_ORIGINS", "false").lower() == "true":
+            return ["*"]
+
+        # If not configured, fall back to common local dev origins explicitly.
+        if not origins:
+            return [
+                "http://localhost:3000",
+                "http://localhost:3001",
+                "http://localhost:3002",
+                "http://localhost:5173",
+                "http://127.0.0.1:3000",
+                "http://127.0.0.1:3001",
+                "http://127.0.0.1:5173",
+            ]
         return origins
 
 

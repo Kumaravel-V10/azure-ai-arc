@@ -4,22 +4,26 @@ from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, Field
 import asyncio
+import csv
 import zipfile
 import io
 import base64
 import os
+import re
 import logging
 import json
 import glob
 import uuid
 from datetime import datetime
 import time
+from pathlib import Path
 from typing import Optional, List, Dict, Any
+import xml.etree.ElementTree as ET
 from dotenv import load_dotenv
 from azure_analyzer import AzureOpenAIAnalyzer
 from azure_icon_generator import AzureIconDiagramGenerator
 from multi_agent_workflow import MultiAgentWorkflowPipeline, run_multi_agent_workflow
-from agents import AgentOrchestrator
+from agents import AgentOrchestrator, FeatureImpactAnalyzerAgent, ArchitectureAgent
 from ai_validator import AIArchitectureValidator
 from drawio_parser import DrawioParser, generate_drawio_from_architecture
 from config import api_config, agent_config, validation_config, path_config, workflow_config, content_config, azure_openai_config
@@ -83,6 +87,696 @@ class ArchitectureAnalysisRequest(BaseModel):
     services: List[str] = Field(..., description="List of Azure services to analyze")
     requirements: str = Field(..., description="Architecture requirements")
     architecture_pattern: Optional[str] = Field(None, description="Preferred architecture pattern")
+
+class FeatureImpactAnalyzeRequest(BaseModel):
+    application_name: str = Field(..., min_length=2, description="Application name")
+    feature_name: str = Field(..., min_length=2, description="Feature name")
+    feature_description: str = Field(..., min_length=10, description="Feature description")
+    business_capability: Optional[str] = Field("General", description="Business capability")
+    change_type: Optional[str] = Field("New Feature", description="Change type")
+    priority: Optional[str] = Field("Medium", description="Priority")
+    target_release: Optional[str] = Field(None, description="Target release")
+    architecture_layer: Optional[List[str]] = Field(default_factory=list, description="Scoped architecture layers")
+    impact_type: Optional[List[str]] = Field(default_factory=list, description="Scoped impact types")
+    environment: Optional[str] = Field("Prod", description="Target environment")
+    view_mode: Optional[str] = Field("Technical View", description="View mode")
+    confidence_threshold: Optional[str] = Field("All", description="Confidence threshold")
+
+
+def _build_feature_impact_requirements_text(request: FeatureImpactAnalyzeRequest) -> str:
+    """Build a normalized text requirement block consumed by the impact agent."""
+    return (
+        f"Application: {request.application_name}\n"
+        f"Feature: {request.feature_name}\n"
+        f"Description: {request.feature_description}\n"
+        f"Business Capability: {request.business_capability}\n"
+        f"Change Type: {request.change_type}\n"
+        f"Priority: {request.priority}\n"
+        f"Target Release: {request.target_release}\n"
+        f"Architecture Layer Scope: {', '.join(request.architecture_layer or [])}\n"
+        f"Impact Type Scope: {', '.join(request.impact_type or [])}\n"
+        f"Environment: {request.environment}\n"
+        f"View Mode: {request.view_mode}\n"
+    )
+
+
+def _lookup_application_diagram(application_name: str) -> Dict[str, Any]:
+    """Lookup application architecture diagram from Knowledgebase/applications.csv."""
+    if not application_name:
+        return {"found": False}
+
+    workspace_root = Path(__file__).resolve().parents[1]
+    csv_path = workspace_root / "Knowledgebase" / "applications.csv"
+    if not csv_path.exists():
+        return {"found": False}
+
+    try:
+        with csv_path.open("r", encoding="utf-8-sig", newline="") as handle:
+            reader = csv.DictReader(handle)
+            for row in reader:
+                row_name = (row.get("application_name") or row.get("application") or "").strip().lower()
+                if row_name != application_name.strip().lower():
+                    continue
+
+                diagram_path = (row.get("architecture_diagram") or row.get("diagram_path") or row.get("location") or "").strip()
+                diagram_title = (row.get("diagram_title") or row.get("title") or application_name).strip()
+
+                resolved_path = None
+                diagram_xml = None
+                if diagram_path:
+                    candidate_paths = [
+                        workspace_root / diagram_path,
+                        workspace_root / "Knowledgebase" / Path(diagram_path).name,
+                    ]
+                    for candidate in candidate_paths:
+                        if candidate.exists():
+                            resolved_path = candidate
+                            break
+                    if resolved_path and resolved_path.suffix.lower() == ".drawio":
+                        diagram_xml = resolved_path.read_text(encoding="utf-8")
+
+                return {
+                    "found": True,
+                    "application_name": application_name,
+                    "diagram_title": diagram_title,
+                    "diagram_path": diagram_path,
+                    "diagram_xml": diagram_xml,
+                    "resolved_path": str(resolved_path) if resolved_path else None,
+                }
+    except Exception as exc:
+        logger.warning(f"Application diagram lookup failed: {exc}")
+
+    return {"found": False}
+
+
+def _build_feature_impact_analysis_payload(request: FeatureImpactAnalyzeRequest) -> Dict[str, Any]:
+    """Build a pragmatic architecture impact analysis payload for UI rendering."""
+    capability = (request.business_capability or "General").lower()
+    feature_name = request.feature_name.strip()
+    feature_description = request.feature_description.strip()
+
+    existing_components = [
+        {
+            "id": "ui-agent",
+            "name": "Agent UI",
+            "layer": "UI",
+            "purpose": "Agent-facing servicing workflows",
+            "status": "Active",
+            "changeStatus": "Impacted",
+            "impactSummary": f"Add {feature_name} workflow section"
+        },
+        {
+            "id": "api-gateway",
+            "name": "API Gateway",
+            "layer": "API",
+            "purpose": "Single entry point for application APIs",
+            "status": "Active",
+            "changeStatus": "Impacted",
+            "impactSummary": "Route new feature endpoint and policies"
+        },
+        {
+            "id": "svc-core",
+            "name": "Core Business Service",
+            "layer": "Service",
+            "purpose": "Orchestrates domain business operations",
+            "status": "Active",
+            "changeStatus": "Impacted",
+            "impactSummary": "Add orchestration for new feature path"
+        },
+        {
+            "id": "db-main",
+            "name": "Operational Database",
+            "layer": "Data",
+            "purpose": "Stores transactional records",
+            "status": "Active",
+            "changeStatus": "Impacted",
+            "impactSummary": "Persist feature-related state"
+        },
+        {
+            "id": "obs-appinsights",
+            "name": "Application Insights",
+            "layer": "Observability",
+            "purpose": "Tracing, metrics, and logs",
+            "status": "Active",
+            "changeStatus": "Impacted",
+            "impactSummary": "Add telemetry for feature execution"
+        },
+    ]
+
+    if capability in {"payment", "refund"}:
+        existing_components.append(
+            {
+                "id": "int-payment",
+                "name": "Payment Gateway Integration",
+                "layer": "Integration",
+                "purpose": "External payment provider integration",
+                "status": "Active",
+                "changeStatus": "Impacted",
+                "impactSummary": "Contract and payload updates"
+            }
+        )
+
+    proposed_components = [c.copy() for c in existing_components]
+    new_component = {
+        "id": "svc-feature-impact",
+        "name": f"{feature_name} Service",
+        "layer": "Service",
+        "purpose": f"Executes {feature_name} domain logic",
+        "status": "Planned",
+        "changeStatus": "New",
+        "impactSummary": feature_description,
+        "discussionRequired": True,
+        "reasonNeeded": "Isolates feature logic from existing orchestration to reduce coupling",
+        "ownerNeeded": "Yes",
+        "deploymentRequired": "Yes",
+    }
+    proposed_components.append(new_component)
+
+    detailed_impacts = [
+        {
+            "component": "Agent UI",
+            "layer": "UI",
+            "currentRole": "Agent servicing screen",
+            "impact": f"Expose {feature_name} workflow",
+            "changeNeeded": "UI enhancement",
+            "risk": "Medium",
+            "discussionRequired": "No",
+        },
+        {
+            "component": "API Gateway",
+            "layer": "API",
+            "currentRole": "API routing and policy enforcement",
+            "impact": "Add new route and policy checks",
+            "changeNeeded": "API route + policy update",
+            "risk": "Medium",
+            "discussionRequired": "No",
+        },
+        {
+            "component": "Core Business Service",
+            "layer": "Service",
+            "currentRole": "Core orchestration",
+            "impact": f"Invoke {feature_name} Service",
+            "changeNeeded": "Service orchestration change",
+            "risk": "High",
+            "discussionRequired": "Yes",
+        },
+        {
+            "component": "Operational Database",
+            "layer": "Data",
+            "currentRole": "Transactional persistence",
+            "impact": "Store feature state and outcomes",
+            "changeNeeded": "Schema extension",
+            "risk": "High",
+            "discussionRequired": "Yes",
+        },
+        {
+            "component": f"{feature_name} Service",
+            "layer": "Service",
+            "currentRole": "New service",
+            "impact": "New deployable unit",
+            "changeNeeded": "Build + deploy",
+            "risk": "Medium",
+            "discussionRequired": "Yes",
+        },
+    ]
+
+    decision_items = [
+        {
+            "decision": "Build vs Reuse",
+            "question": f"Should {feature_name} logic be embedded in Core Business Service or isolated in a new service?",
+            "participants": ["Architect", "Service Owner", "Product Owner"],
+            "priority": "High",
+        },
+        {
+            "decision": "API Design",
+            "question": "Should feature execution be synchronous or asynchronous?",
+            "participants": ["Architect", "API Owner"],
+            "priority": "High",
+        },
+        {
+            "decision": "Data Storage",
+            "question": "What data retention and migration strategy is required?",
+            "participants": ["Architect", "DBA", "Compliance Owner"],
+            "priority": "Medium",
+        },
+    ]
+
+    discussion_items = [
+        {
+            "topic": f"{feature_name} ownership and deployment boundary",
+            "reason": "A new service is introduced and ownership/SLO must be defined",
+            "requiredParticipants": ["Architect", "Product Owner", "Service Owner"],
+            "priority": "High",
+        },
+        {
+            "topic": "Database schema update",
+            "reason": "Schema changes require migration and rollback strategy",
+            "requiredParticipants": ["Architect", "DBA", "Platform Owner"],
+            "priority": "High",
+        },
+    ]
+
+    impacted_count = len([c for c in proposed_components if c.get("changeStatus") == "Impacted"])
+    new_count = len([c for c in proposed_components if c.get("changeStatus") == "New"])
+    discussion_required = any(item.get("priority") == "High" for item in discussion_items)
+
+    return {
+        "application": {
+            "name": request.application_name,
+            "environment": request.environment,
+            "viewMode": request.view_mode,
+        },
+        "feature": {
+            "name": feature_name,
+            "description": feature_description,
+            "changeType": request.change_type,
+            "priority": request.priority,
+            "targetRelease": request.target_release,
+            "businessCapability": request.business_capability,
+        },
+        "existingArchitecture": {
+            "components": existing_components,
+        },
+        "proposedArchitecture": {
+            "components": proposed_components,
+        },
+        "architectureDiff": {
+            "added": [new_component["name"]],
+            "modified": [c["name"] for c in proposed_components if c.get("changeStatus") == "Impacted"],
+            "unchanged": [],
+            "removed": [],
+        },
+        "impactSummary": {
+            "impactLevel": "High" if impacted_count >= 4 else "Medium",
+            "impactedComponentCount": impacted_count,
+            "newComponentCount": new_count,
+            "apiChangeRequired": True,
+            "dataChangeRequired": True,
+            "securityReviewRequired": True,
+            "discussionRequired": discussion_required,
+        },
+        "detailedImpactTable": detailed_impacts,
+        "newComponentRecommendations": [
+            {
+                "componentName": new_component["name"],
+                "componentType": "Service",
+                "purpose": new_component["purpose"],
+                "reasonNeeded": new_component["reasonNeeded"],
+                "ownerNeeded": new_component["ownerNeeded"],
+                "deploymentRequired": new_component["deploymentRequired"],
+                "discussionRequired": "Yes",
+            }
+        ],
+        "decisionPanel": decision_items,
+        "minimalExplanation": {
+            "whyImpacted": f"Core API, service orchestration, and persistence layers are impacted to support {feature_name}.",
+            "whatChanges": f"Introduce {feature_name} Service, update API routes, extend database schema, and add telemetry.",
+            "discussionRequired": "Yes - ownership, schema migration, and API contract updates require architecture review.",
+        },
+        "aiConfidence": {
+            "confidence": "Medium",
+            "assumptions": [
+                "Existing architecture has API gateway, core service, and transactional database.",
+                f"{feature_name} requires persistent state and observability updates.",
+            ],
+            "missingInformation": [
+                "Current API contract details",
+                "Data retention policy",
+                "Throughput and latency targets",
+            ],
+            "sourceUsed": ["user_input", "feature_impact_rules"],
+        },
+        "discussionItems": discussion_items,
+        "legend": {
+            "unchanged": "Grey",
+            "impacted": "Orange",
+            "new": "Green",
+            "removed": "Red",
+            "discussionRequired": "Purple",
+        },
+        "requestedScope": {
+            "architectureLayer": request.architecture_layer,
+            "impactType": request.impact_type,
+            "confidenceThreshold": request.confidence_threshold,
+        },
+        "timestamp": datetime.now().isoformat(),
+    }
+
+
+def _slugify_filename(value: str, fallback: str) -> str:
+    cleaned = re.sub(r"[^a-zA-Z0-9_-]+", "-", (value or "").strip().lower())
+    cleaned = re.sub(r"-+", "-", cleaned).strip("-")
+    return cleaned or fallback
+
+
+def _layer_to_category(layer: str) -> str:
+    layer_key = (layer or "").strip().lower()
+    mapping = {
+        "ui": "networking",
+        "api": "integration",
+        "service": "compute",
+        "data": "data",
+        "integration": "integration",
+        "security": "security",
+        "observability": "monitoring",
+    }
+    return mapping.get(layer_key, "compute")
+
+
+def _build_feature_impact_drawio_architecture(payload: Dict[str, Any], request: FeatureImpactAnalyzeRequest) -> Dict[str, Any]:
+    proposed_arch = payload.get("proposedArchitecture", {}) if isinstance(payload.get("proposedArchitecture"), dict) else {}
+    components = proposed_arch.get("components", []) if isinstance(proposed_arch.get("components"), list) else []
+    connections = proposed_arch.get("connections", []) if isinstance(proposed_arch.get("connections"), list) else []
+
+    components_by_id = {}
+    services = []
+    impacted_names = []
+    new_names = []
+
+    for comp in components:
+        if not isinstance(comp, dict):
+            continue
+        comp_id = str(comp.get("id") or "").strip()
+        name = str(comp.get("name") or "").strip()
+        if not name:
+            continue
+        if comp_id:
+            components_by_id[comp_id] = name
+
+        change_status = str(comp.get("changeStatus") or "").strip()
+        if change_status == "Impacted":
+            impacted_names.append(name)
+        elif change_status == "New":
+            new_names.append(name)
+
+        services.append(
+            {
+                "name": name,
+                "category": _layer_to_category(str(comp.get("layer") or "")),
+            }
+        )
+
+    normalized_connections = []
+    for conn in connections:
+        if not isinstance(conn, dict):
+            continue
+        source = str(conn.get("source") or "").strip()
+        target = str(conn.get("target") or "").strip()
+        if not source or not target:
+            continue
+
+        source_name = components_by_id.get(source, source)
+        target_name = components_by_id.get(target, target)
+        if not source_name or not target_name:
+            continue
+
+        normalized_connections.append(
+            {
+                "source": source_name,
+                "target": target_name,
+                "label": str(conn.get("label") or ""),
+            }
+        )
+
+    annotations = []
+    if impacted_names:
+        annotations.append({"text": f"Impacted: {', '.join(impacted_names[:6])}"})
+    if new_names:
+        annotations.append({"text": f"New: {', '.join(new_names[:6])}"})
+
+    return {
+        "project_name": f"{request.application_name} - {request.feature_name} (Proposed)",
+        "services": services,
+        "connections": normalized_connections,
+        "annotations": annotations,
+        "_impacted_names": impacted_names,
+        "_new_names": new_names,
+    }
+
+
+def _normalize_drawio_text(value: str) -> str:
+    decoded = html.unescape(value or "")
+    decoded = decoded.replace("&#xa;", "\n").replace("&nbsp;", " ")
+    decoded = decoded.replace("\n", " ")
+    decoded = re.sub(r"\s+", " ", decoded)
+    return decoded.strip().lower()
+
+
+def _append_style_once(style: str, extra: str) -> str:
+    style = style or ""
+    if extra in style:
+        return style
+    if style and not style.endswith(";"):
+        style += ";"
+    return style + extra
+
+
+def _find_existing_drawio_label_matches(root: ET.Element, names: List[str]) -> Dict[str, ET.Element]:
+    matches: Dict[str, ET.Element] = {}
+    wanted = {name.strip().lower(): name for name in names if name}
+    if not wanted:
+        return matches
+
+    for cell in root.findall(".//mxCell"):
+        value = cell.get("value") or ""
+        if not value:
+            continue
+        normalized = _normalize_drawio_text(value)
+        for lookup in wanted:
+            if lookup and lookup in normalized and lookup not in matches:
+                matches[lookup] = cell
+    return matches
+
+
+def _highlight_existing_drawio_copy(drawio_xml: str, impacted_names: List[str], new_names: List[str]) -> str:
+    if not drawio_xml:
+        return drawio_xml
+
+    try:
+        root = ET.fromstring(drawio_xml)
+    except ET.ParseError:
+        return drawio_xml
+
+    impacted_matches = _find_existing_drawio_label_matches(root, impacted_names)
+    new_matches = _find_existing_drawio_label_matches(root, new_names)
+
+    for lookup, cell in impacted_matches.items():
+        style = cell.get("style") or ""
+        cell.set("style", _append_style_once(style, "fontStyle=1;fontColor=#b45309;labelBackgroundColor=#fef3c7;rounded=1;spacing=4;"))
+        value = cell.get("value") or ""
+        if "(Impacted)" not in html.unescape(value):
+            cell.set("value", f"{value}&#xa;(Impacted)")
+
+    for lookup, cell in new_matches.items():
+        style = cell.get("style") or ""
+        cell.set("style", _append_style_once(style, "fontStyle=1;fontColor=#166534;labelBackgroundColor=#dcfce7;rounded=1;spacing=4;"))
+        value = cell.get("value") or ""
+        if "(New)" not in html.unescape(value):
+            cell.set("value", f"{value}&#xa;(New)")
+
+    return ET.tostring(root, encoding="unicode")
+
+
+def _next_numeric_cell_id(root: ET.Element) -> int:
+    max_id = 1000
+    for cell in root.findall(".//mxCell"):
+        cell_id = cell.get("id") or ""
+        if cell_id.isdigit():
+            max_id = max(max_id, int(cell_id))
+    return max_id + 1
+
+
+def _add_new_components_to_existing_drawio(drawio_xml: str, payload: Dict[str, Any]) -> str:
+    if not drawio_xml:
+        return drawio_xml
+
+    proposed_arch = payload.get("proposedArchitecture", {}) if isinstance(payload.get("proposedArchitecture"), dict) else {}
+    new_components = [
+        component for component in (proposed_arch.get("components") or [])
+        if isinstance(component, dict) and component.get("changeStatus") == "New"
+    ]
+    if not new_components:
+        return drawio_xml
+
+    try:
+        root = ET.fromstring(drawio_xml)
+    except ET.ParseError:
+        return drawio_xml
+
+    graph_root = root.find(".//root")
+    func_group = root.find(".//mxCell[@id='11']")
+    func_section = root.find(".//mxCell[@id='func-section']")
+    if graph_root is None:
+        return drawio_xml
+
+    parent_id = "11" if func_group is not None else "1"
+    icon_parent = func_group if func_group is not None else graph_root.find(".//mxCell[@id='1']")
+
+    existing_icons = [
+        cell for cell in root.findall(f".//mxCell[@parent='{parent_id}']")
+        if "Function_Apps.svg" in (cell.get("style") or "")
+    ]
+
+    xs = []
+    ys = []
+    for cell in existing_icons:
+        geometry = cell.find("mxGeometry")
+        if geometry is None:
+            continue
+        xs.append(float(geometry.get("x", 0)))
+        ys.append(float(geometry.get("y", 0)))
+
+    base_x = (max(xs) + 110) if xs else 30
+    base_y = min(ys) if ys else 50
+    row_limit = 1680 if parent_id == "11" else 1800
+    width_expand = 0
+    next_id = _next_numeric_cell_id(root)
+
+    for index, component in enumerate(new_components):
+        comp_name = str(component.get("name") or f"New Component {index + 1}")
+        icon_id = f"proposed-new-icon-{index + 1}"
+        label_id = f"proposed-new-label-{index + 1}"
+        x = base_x + (index * 110)
+        y = base_y
+        if x > row_limit:
+            x = 30 + ((index % 4) * 110)
+            y = base_y + 130
+
+        icon_cell = ET.Element("mxCell", {
+            "id": icon_id,
+            "value": "",
+            "style": "image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/compute/Function_Apps.svg;strokeColor=#166534;strokeWidth=2;fillColor=#dcfce7;rounded=1;",
+            "parent": parent_id,
+            "vertex": "1",
+        })
+        ET.SubElement(icon_cell, "mxGeometry", {
+            "x": str(int(x)),
+            "y": str(int(y)),
+            "width": "44",
+            "height": "44",
+            "as": "geometry",
+        })
+        graph_root.append(icon_cell)
+
+        label_text = html.escape(comp_name).replace("\n", "&#xa;") + "&#xa;(New)"
+        label_cell = ET.Element("mxCell", {
+            "id": label_id,
+            "value": label_text,
+            "style": "text;html=1;align=center;verticalAlign=top;fontSize=9;fontStyle=1;strokeColor=#166534;fillColor=#dcfce7;rounded=1;whiteSpace=wrap;",
+            "parent": parent_id,
+            "vertex": "1",
+        })
+        ET.SubElement(label_cell, "mxGeometry", {
+            "x": str(int(x - 15)),
+            "y": str(int(y + 48)),
+            "width": "90",
+            "height": "44",
+            "as": "geometry",
+        })
+        graph_root.append(label_cell)
+
+        width_expand = max(width_expand, int(x + 110))
+        next_id += 2
+
+    if func_group is not None:
+        group_geometry = func_group.find("mxGeometry")
+        if group_geometry is not None and width_expand:
+            current_width = float(group_geometry.get("width", 1760))
+            if width_expand > current_width:
+                group_geometry.set("width", str(width_expand))
+        if func_section is not None:
+            section_geometry = func_section.find("mxGeometry")
+            if section_geometry is not None and width_expand:
+                current_width = float(section_geometry.get("width", 1760))
+                if width_expand > current_width:
+                    section_geometry.set("width", str(width_expand))
+            title = html.unescape(func_section.get("value") or "Azure Functions")
+            count_match = re.search(r"\((\d+) apps\)", title)
+            if count_match:
+                current_count = int(count_match.group(1))
+                func_section.set("value", re.sub(r"\(\d+ apps\)", f"({current_count + len(new_components)} apps)", func_section.get("value") or title, count=1))
+
+    return ET.tostring(root, encoding="unicode")
+
+
+def _highlight_drawio_labels(drawio_xml: str, impacted_names: List[str], new_names: List[str]) -> str:
+    if not drawio_xml:
+        return drawio_xml
+
+    impacted_lookup = {name.strip().lower() for name in impacted_names if name}
+    new_lookup = {name.strip().lower() for name in new_names if name}
+    if not impacted_lookup and not new_lookup:
+        return drawio_xml
+
+    try:
+        root = ET.fromstring(drawio_xml)
+    except ET.ParseError:
+        return drawio_xml
+
+    def append_style(style: str, extra: str) -> str:
+        style = style or ""
+        if style and not style.endswith(";"):
+            style += ";"
+        return style + extra
+
+    for cell in root.findall(".//mxCell"):
+        value = (cell.get("value") or "").strip()
+        if not value:
+            continue
+        value_key = value.lower()
+        style = cell.get("style") or ""
+
+        if value_key in impacted_lookup:
+            cell.set("style", append_style(style, "fontStyle=1;fontColor=#b45309;labelBackgroundColor=#fef3c7;rounded=1;spacing=4;"))
+            if "(Impacted)" not in value:
+                cell.set("value", f"{value} (Impacted)")
+        elif value_key in new_lookup:
+            cell.set("style", append_style(style, "fontStyle=1;fontColor=#166534;labelBackgroundColor=#dcfce7;rounded=1;spacing=4;"))
+            if "(New)" not in value:
+                cell.set("value", f"{value} (New)")
+
+    return ET.tostring(root, encoding="unicode")
+
+
+async def _generate_and_save_feature_impact_drawio(payload: Dict[str, Any], request: FeatureImpactAnalyzeRequest) -> Dict[str, Any]:
+    if not isinstance(payload, dict):
+        return payload
+
+    architecture = _build_feature_impact_drawio_architecture(payload, request)
+    if not architecture.get("services"):
+        return payload
+
+    impacted_names = architecture.pop("_impacted_names", [])
+    new_names = architecture.pop("_new_names", [])
+
+    try:
+        existing_drawio_xml = payload.get("architectureDiagramXml") or payload.get("applicationReference", {}).get("diagram_xml")
+        if existing_drawio_xml:
+            drawio_xml = ArchitectureAgent.build_proposed_architecture_from_existing_diagram(
+                existing_drawio_xml,
+                payload.get("proposedArchitecture", {}),
+            )
+        else:
+            requirements = _build_feature_impact_requirements_text(request)
+            drawio_xml = await generate_drawio_from_architecture(architecture, requirements)
+            drawio_xml = _highlight_drawio_labels(drawio_xml, impacted_names, new_names)
+
+        workspace_root = Path(__file__).resolve().parents[1]
+        output_dir = workspace_root / "Arc-frontend" / "public" / "Architecture"
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        app_slug = _slugify_filename(request.application_name, "application")
+        feature_slug = _slugify_filename(request.feature_name, "feature")
+        filename = f"{app_slug}-{feature_slug}-proposed.drawio"
+        file_path = output_dir / filename
+        file_path.write_text(drawio_xml, encoding="utf-8")
+
+        payload["proposedArchitectureDiagramPath"] = f"/Architecture/{filename}"
+        payload["proposedArchitectureDiagramXml"] = drawio_xml
+    except Exception as exc:
+        logger.warning(f"Failed to generate proposed drawio for feature impact: {exc}")
+
+    return payload
 
 class InteractionResponse(BaseModel):
     """User response to an agent interaction request."""
@@ -323,6 +1017,93 @@ async def run_drawio_generation_background(session_id: str, request: GenerateReq
         agent_progress_store[session_id]["status"] = "error"
         agent_progress_store[session_id]["error"] = str(e)
 
+
+async def run_feature_impact_background(session_id: str, request: FeatureImpactAnalyzeRequest):
+    """Background task for feature impact analysis with live agent thinking."""
+    agent_progress_store[session_id]["status"] = "running"
+    agent_progress_store[session_id]["agent_logs"] = []
+
+    def progress_callback(agent_name: str, status: str, percentage: int, output_summary: dict = None):
+        agent_progress_store[session_id]["current_agent"] = agent_name
+        if status != "completed":
+            agent_progress_store[session_id]["status"] = status
+        agent_progress_store[session_id]["progress_percentage"] = percentage
+
+        if percentage == -1 and status == "thinking" and output_summary:
+            thought_entry = {
+                "agent": agent_name,
+                "type": output_summary.get("thought_type", "reasoning"),
+                "content": output_summary.get("thought", ""),
+                "emoji": output_summary.get("emoji", "🧠"),
+                "agent_emoji": output_summary.get("agent_emoji", "🤖"),
+                "agent_persona": output_summary.get("agent_persona", ""),
+                "timestamp": datetime.now().isoformat(),
+            }
+            if "live_thoughts" not in agent_progress_store[session_id]:
+                agent_progress_store[session_id]["live_thoughts"] = []
+            agent_progress_store[session_id]["live_thoughts"].append(thought_entry)
+            if len(agent_progress_store[session_id]["live_thoughts"]) > 50:
+                agent_progress_store[session_id]["live_thoughts"] = agent_progress_store[session_id]["live_thoughts"][-50:]
+            return
+
+        log_entry = {
+            "agent": agent_name,
+            "status": status,
+            "percentage": percentage,
+            "timestamp": datetime.now().isoformat(),
+            "output_summary": output_summary or {},
+        }
+
+        if status == "running":
+            existing_idx = None
+            for i, log in enumerate(agent_progress_store[session_id]["agent_logs"]):
+                if log["agent"] == agent_name and log["status"] == "running":
+                    existing_idx = i
+                    break
+            if existing_idx is not None:
+                agent_progress_store[session_id]["agent_logs"][existing_idx] = log_entry
+            else:
+                agent_progress_store[session_id]["agent_logs"].append(log_entry)
+        else:
+            agent_progress_store[session_id]["agent_logs"].append(log_entry)
+
+    try:
+        agent = FeatureImpactAnalyzerAgent()
+        if hasattr(agent, "set_progress_callback"):
+            agent.set_progress_callback(progress_callback)
+
+        progress_callback("FeatureImpactAnalyzerAgent", "running", 10, {
+            "message": "Analyzing feature impact with architecture context...",
+        })
+
+        requirements = _build_feature_impact_requirements_text(request)
+
+        payload = await agent.analyze(
+            requirements,
+            context={"feature_request": request.dict()}
+        )
+        payload = await _generate_and_save_feature_impact_drawio(payload, request)
+
+        summary = payload.get("impactSummary", {}) if isinstance(payload, dict) else {}
+        progress_callback("FeatureImpactAnalyzerAgent", "completed", 95, {
+            "message": "Feature impact analysis completed.",
+            "impact_level": summary.get("impactLevel"),
+            "impacted_components": summary.get("impactedComponentCount", 0),
+            "new_components": summary.get("newComponentCount", 0),
+            "thinking_summary": payload.get("thinking_summary") if isinstance(payload, dict) else None,
+        })
+
+        agent_progress_store[session_id]["status"] = "completed"
+        agent_progress_store[session_id]["progress_percentage"] = 100
+        agent_progress_store[session_id]["result"] = {
+            "status": "success",
+            "result": payload,
+        }
+    except Exception as e:
+        logger.exception("Feature impact background workflow failed")
+        agent_progress_store[session_id]["status"] = "error"
+        agent_progress_store[session_id]["error"] = str(e)
+
  
   
 @app.post("/api/analyze-architecture")
@@ -372,6 +1153,55 @@ async def analyze_architecture(request: ArchitectureAnalysisRequest):
     except Exception as e:
         logger.error(f"Architecture analysis error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+
+
+@app.post("/api/feature-impact/analyze")
+async def analyze_feature_impact(request: FeatureImpactAnalyzeRequest):
+    """Analyze the impact of a new feature on an existing architecture."""
+    try:
+        agent = FeatureImpactAnalyzerAgent()
+        payload = await agent.analyze(
+            _build_feature_impact_requirements_text(request),
+            context={"feature_request": request.dict()}
+        )
+        payload = await _generate_and_save_feature_impact_drawio(payload, request)
+        return {
+            "status": "success",
+            "result": payload,
+        }
+    except Exception as e:
+        logger.exception("Feature impact analysis failed")
+        raise HTTPException(status_code=500, detail=f"Feature impact analysis failed: {str(e)}")
+
+
+@app.post("/api/feature-impact/stream")
+async def analyze_feature_impact_stream(request: FeatureImpactAnalyzeRequest, background_tasks: BackgroundTasks):
+    """Start feature impact analysis as a background task and return session_id for progress polling."""
+    if not request.application_name.strip() or not request.feature_name.strip() or not request.feature_description.strip():
+        raise HTTPException(status_code=400, detail="application_name, feature_name and feature_description are required")
+
+    session_id = f"impact_{uuid.uuid4().hex[:workflow_config.SESSION_ID_LENGTH]}_{int(time.time())}"
+
+    agent_progress_store[session_id] = {
+        "status": "queued",
+        "current_agent": None,
+        "progress_percentage": 0,
+        "agent_logs": [],
+        "result": None,
+        "error": None,
+        "created_at": datetime.now().isoformat(),
+        "requirements": request.feature_description[:200],
+        "interaction": None,
+        "live_thoughts": [],
+    }
+
+    background_tasks.add_task(run_feature_impact_background, session_id, request)
+
+    return {
+        "session_id": session_id,
+        "status": "queued",
+        "message": "Feature impact workflow started. Poll /api/progress/{session_id} for real-time updates.",
+    }
 
 @app.get("/api/recent-diagrams")
 async def get_recent_diagrams(limit: int = Query(10, description="Number of recent diagrams to return")):
@@ -481,7 +1311,8 @@ async def get_agents_status():
 app.add_middleware(
     CORSMiddleware,
     allow_origins=api_config.get_cors_origins(),
-    allow_credentials=True,
+    allow_origin_regex=r"https?://(localhost|127\.0\.0\.1)(:\d+)?$",
+    allow_credentials=("*" not in api_config.get_cors_origins()),
     allow_methods=["*"],
     allow_headers=["*"],
 )

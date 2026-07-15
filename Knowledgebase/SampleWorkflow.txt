@@ -1,0 +1,17 @@
+kind: workflow
+trigger:
+  kind: OnConversationStart
+  id: trigger_refund_wf
+  actions:
+    - kind: InvokeAzureAgent
+      id: node-1783532167735
+      agent:
+        name: Supervisor-Orchestrator-Agent
+      conversationId: =System.ConversationId
+      input:
+        messages: ""
+      output:
+        autoSend: true
+id: refund_agent_workflow
+name: refund-agent-workflow
+description: Sequential Azure AI Foundry workflow for Refund Agent with booking retrieval, compliance validation, refund decisioning, approval routing, refund submission, case management, communication, and audit summary.
