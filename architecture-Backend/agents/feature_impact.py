@@ -522,7 +522,7 @@ class FeatureImpactAnalyzerAgent(BaseAgent):
             },
         )
 
-        fallback = self._build_fallback_payload(feature_request)
+        fallback = await self._build_fallback_payload(feature_request)
         if application_reference.get("found"):
             fallback["applicationReference"] = application_reference
             fallback["architectureDiagramXml"] = application_reference.get("diagram_xml")
@@ -860,7 +860,116 @@ Return ONLY valid JSON with this exact shape:
         summary["newComponentCount"] = len(added)
         result["impactSummary"] = summary
 
-    def _build_fallback_payload(self, feature_request: Dict[str, Any]) -> Dict[str, Any]:
+    async def _infer_new_components_from_llm(
+        self,
+        feature_request: Dict[str, Any],
+        existing_components: list,
+    ) -> list[Dict[str, Any]]:
+        """Use the LLM to decide what new Azure components are needed for this feature.
+        Mirrors the extras ArchitectureAgent pattern: LLM receives context and returns
+        a structured list of new services, rather than matching hardcoded keywords."""
+        feature_name = feature_request.get("feature_name", "Feature")
+        feature_description = feature_request.get("feature_description", "")
+        business_capability = feature_request.get("business_capability", "")
+        existing_names = [
+            c.get("name", "") for c in existing_components
+            if isinstance(c, dict) and c.get("name")
+        ]
+
+        prompt = f"""You are an Azure Solutions Architect. Identify the NEW Azure components that must be ADDED to support this feature.
+Do NOT include existing components. Only return genuinely new services or function apps that are required.
+
+Feature Name: {feature_name}
+Feature Description: {feature_description}
+Business Capability: {business_capability}
+
+Existing components (DO NOT re-add these):
+{json.dumps(existing_names, indent=2)}
+
+Rules:
+- If the feature integrates with a new external system (loyalty, payment, CRM, partner, etc.), add a dedicated function app for that integration.
+- If the feature needs a new isolated service boundary, add it.
+- If the feature requires data processing/orchestration not handled by existing components, add a service for it.
+- Use realistic Azure naming conventions (e.g. func-aai-perf-<purpose>-neu-new).
+- Return an empty array ONLY if this feature truly maps entirely to existing infrastructure.
+
+Return ONLY a valid JSON array (can be empty []):
+[
+  {{
+    "name": "func-aai-perf-<purpose>-neu-new",
+    "layer": "API",
+    "purpose": "<what it does>",
+    "changeDescription": "<what changes for this feature>",
+    "reasonNeeded": "<why a new component is needed>",
+    "resourceType": "function_app",
+    "changeStatus": "New",
+    "status": "Planned",
+    "ownerNeeded": "Yes",
+    "deploymentRequired": "Yes",
+    "humanDiscussionRequired": true,
+    "humanDiscussionReason": "<what needs discussion>"
+  }}
+]"""
+
+        messages = [
+            {
+                "role": "system",
+                "content": "You are an Azure architect. Return only a valid JSON array of new components. No markdown, no explanation.",
+            },
+            {"role": "user", "content": prompt},
+        ]
+
+        try:
+            self.think("Calling LLM to infer new components needed for this feature.", "tool_call")
+            response = await self._call_openai(messages)
+            logger.debug(f"[InferNewComponents] Raw LLM response: {response}")
+            
+            parsed = self._safe_json_parse(response, [])
+            logger.debug(f"[InferNewComponents] Parsed JSON: {parsed}")
+            
+            if not isinstance(parsed, list):
+                logger.warning(f"[InferNewComponents] Parsed result is not a list, got {type(parsed)}")
+                return []
+
+            existing_lower = {n.lower() for n in existing_names}
+            logger.debug(f"[InferNewComponents] Existing component names (lowercase): {existing_lower}")
+            
+            normalized = []
+            for i, item in enumerate(parsed):
+                if not isinstance(item, dict):
+                    logger.debug(f"[InferNewComponents] Item {i} is not dict, skipping: {item}")
+                    continue
+                if not item.get("name"):
+                    logger.debug(f"[InferNewComponents] Item {i} has no name, skipping: {item}")
+                    continue
+                name = str(item["name"]).strip()
+                if not name:
+                    logger.debug(f"[InferNewComponents] Item {i} has empty name after strip, skipping")
+                    continue
+                if name.lower() in existing_lower:
+                    logger.debug(f"[InferNewComponents] Item {i} name '{name}' is in existing components, skipping")
+                    continue
+                    
+                item["id"] = f"function_app-{name}".lower()
+                item.setdefault("changeStatus", "New")
+                item.setdefault("status", "Planned")
+                item.setdefault("ownerNeeded", "Yes")
+                item.setdefault("deploymentRequired", "Yes")
+                item.setdefault("humanDiscussionRequired", True)
+                item.setdefault("discussionRequired", True)
+                item.setdefault("impactSummary", item.get("changeDescription", ""))
+                normalized.append(item)
+                logger.debug(f"[InferNewComponents] Added component {i}: {name}")
+
+            self.think(f"LLM inferred {len(normalized)} new component(s) for this feature.", "observation")
+            logger.info(f"[InferNewComponents] Final result: {len(normalized)} components")
+            return normalized
+
+        except Exception as exc:
+            logger.exception(f"[InferNewComponents] LLM new-component inference failed: {exc}")
+            return []
+
+    async def _build_fallback_payload(self, feature_request: Dict[str, Any]) -> Dict[str, Any]:
         """Deterministic fallback payload for robust UX even when model output fails."""
         from datetime import datetime
 
@@ -887,40 +996,28 @@ Return ONLY valid JSON with this exact shape:
                 },
             ]
 
-        new_component = {
-            "id": "svc-feature-impact",
-            "name": f"{feature_name} Service",
-            "layer": "Service",
-            "purpose": f"Executes {feature_name} domain logic",
-            "status": "Planned",
-            "changeStatus": "New",
-            "resourceType": "proposed_service",
-            "impactSummary": feature_description,
-            "changeDescription": f"Introduce a dedicated service boundary for {feature_name} implementation.",
-            "discussionRequired": True,
-            "reasonNeeded": "Isolates feature logic from existing orchestration to reduce coupling",
-            "ownerNeeded": "Yes",
-            "deploymentRequired": "Yes",
-            "humanDiscussionRequired": True,
-            "humanDiscussionReason": "Ownership, SLO, and deployment strategy for new service must be assigned.",
-            "diagramReferences": [
+        inferred_new_components = await self._infer_new_components_from_llm(feature_request, existing_components)
+        if not inferred_new_components:
+            inferred_new_components = [
                 {
-                    "type": "Integration Diagram",
-                    "title": "Feature service interactions",
-                    "path": "/diagrams/azure-architecture-sample.png",
-                    "status": "available",
-                },
-                {
-                    "type": "Sequence Diagram",
-                    "title": "Feature execution sequence",
-                    "path": "/diagrams/azure-architecture-eastus.png",
-                    "status": "available",
-                },
-            ],
-        }
-
-        inferred_integration_components = self._infer_new_integration_components(feature_request)
-        new_components = [new_component, *inferred_integration_components]
+                    "id": "svc-feature-impact",
+                    "name": f"{feature_name} Service",
+                    "layer": "Service",
+                    "purpose": f"Executes {feature_name} domain logic",
+                    "status": "Planned",
+                    "changeStatus": "New",
+                    "resourceType": "proposed_service",
+                    "impactSummary": feature_description,
+                    "changeDescription": f"Introduce a dedicated service boundary for {feature_name} implementation.",
+                    "discussionRequired": True,
+                    "reasonNeeded": "Isolates feature logic from existing orchestration to reduce coupling",
+                    "ownerNeeded": "Yes",
+                    "deploymentRequired": "Yes",
+                    "humanDiscussionRequired": True,
+                    "humanDiscussionReason": "Ownership, SLO, and deployment strategy for new service must be assigned.",
+                }
+            ]
+        new_components = inferred_new_components
         proposed_components = [c.copy() for c in existing_components] + [copy.deepcopy(component) for component in new_components]
 
         web_components = azure_inventory.get("web_components", [])
@@ -943,17 +1040,18 @@ Return ONLY valid JSON with this exact shape:
                     "label": "SQL",
                 })
 
+        first_new_id = new_components[0]["id"] if new_components else "svc-feature-impact"
         proposed_connections = [
             *existing_connections,
             *([
-                {"source": function_components[0]["id"], "target": "svc-feature-impact", "label": "Internal API"}
+                {"source": function_components[0]["id"], "target": first_new_id, "label": "Internal API"}
             ] if function_components else []),
             *([
-                {"source": "svc-feature-impact", "target": database_components[0]["id"], "label": "Read/Write"}
+                {"source": first_new_id, "target": database_components[0]["id"], "label": "Read/Write"}
             ] if database_components else []),
             *[
-                {"source": "svc-feature-impact", "target": component["id"], "label": "External Integration"}
-                for component in inferred_integration_components
+                {"source": new_components[0]["id"], "target": component["id"], "label": "External Integration"}
+                for component in new_components[1:]
             ],
         ]
 
@@ -1070,11 +1168,11 @@ Return ONLY valid JSON with this exact shape:
                 *[
                     {
                         "topic": f"{component['name']} integration design",
-                        "reason": component["reasonNeeded"],
+                        "reason": component.get("reasonNeeded", f"New component required for {feature_name}"),
                         "requiredParticipants": ["Architect", "Integration Owner", "Service Owner"],
                         "priority": "High",
                     }
-                    for component in inferred_integration_components
+                    for component in new_components[1:]
                 ]
             ],
             "legend": {

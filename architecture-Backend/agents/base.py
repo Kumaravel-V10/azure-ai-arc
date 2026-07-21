@@ -597,40 +597,39 @@ class BaseAgent(AgenticMixin, ABC):
         pass
     
     def _clean_json_response(self, response: str) -> str:
-        """Clean and prepare JSON response for parsing"""
+        """Clean and prepare JSON response for parsing. Handles both objects {} and arrays []"""
         if not response or not isinstance(response, str) or response.strip() == "":
             return "{}"
         
         cleaned = response.strip()
+        import re
         
-        # Remove markdown code blocks
-        if cleaned.startswith("```json"):
-            cleaned = cleaned[7:]
-        if cleaned.startswith("```"):
-            cleaned = cleaned[3:]
-        if cleaned.endswith("```"):
-            cleaned = cleaned[:-3]
-        
+        # Safely remove markdown code blocks (```json ... ```)
+        cleaned = re.sub(r'^```(?:json)?\s*', '', cleaned, flags=re.IGNORECASE | re.MULTILINE)
+        cleaned = re.sub(r'```\s*$', '', cleaned, flags=re.MULTILINE)
         cleaned = cleaned.strip()
         
-        # Find the start of the JSON object
+        # Find the very first '{' or '['
         start_brace = cleaned.find('{')
-        if start_brace == -1:
-            return "{}"
+        start_bracket = cleaned.find('[')
         
-        # Find the end of the JSON object
-        end_brace = cleaned.rfind('}')
-        if end_brace == -1:
-            return "{}"
-            
-        cleaned = cleaned[start_brace:end_brace+1]
+        # Determine if the root structure is an Object or an Array
+        is_object = start_brace != -1 and (start_bracket == -1 or start_brace < start_bracket)
+        is_array = start_bracket != -1 and (start_brace == -1 or start_bracket < start_brace)
         
-        # Fix trailing commas using a more robust regex
-        import re
+        if is_object:
+            end_brace = cleaned.rfind('}')
+            if end_brace != -1:
+                cleaned = cleaned[start_brace:end_brace+1]
+        elif is_array:
+            end_bracket = cleaned.rfind(']')
+            if end_bracket != -1:
+                cleaned = cleaned[start_bracket:end_bracket+1]
+        
+        # Fix trailing commas
         cleaned = re.sub(r',\s*([\}\]])', r'\1', cleaned)
 
         return cleaned
-    
     def _extract_partial_data(self, response: str, default_response: Dict[str, Any]) -> Dict[str, Any]:
         """Extract partial data from malformed/truncated JSON responses.
         Tries to recover services, connections, containers, and recommendations arrays."""

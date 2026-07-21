@@ -1197,25 +1197,30 @@ class DrawioParser:
 </mxfile>'''
     
     def _get_azure_icon_path(self, service_name: str) -> str:
-        """Get Draw.io built-in Azure icon path for a service.
-        Uses img/lib/azure2/... paths which are natively supported by Draw.io.
+        """Get Azure icon path for a service.
+        Priority:
+        1. Draw.io built-in Azure icon library (img/lib/azure2/...)
+        2. Falls back to generic resource icon
         """
         service_lower = service_name.lower()
         
         # Draw.io built-in Azure icon library paths (img/lib/azure2/<category>/<icon>.svg)
+        # These are Draw.io's native Azure 2.0 icon set and should be available
         icon_mappings = {
             # Compute
             'function app': 'img/lib/azure2/compute/Function_Apps.svg',
             'function': 'img/lib/azure2/compute/Function_Apps.svg',
             'func-': 'img/lib/azure2/compute/Function_Apps.svg',
+            'func': 'img/lib/azure2/compute/Function_Apps.svg',
+            'functions': 'img/lib/azure2/compute/Function_Apps.svg',
             'app service plan': 'img/lib/azure2/app_services/App_Service_Plans.svg',
             'service plan': 'img/lib/azure2/app_services/App_Service_Plans.svg',
             'function asp': 'img/lib/azure2/app_services/App_Service_Plans.svg',
-            'shared function asp': 'img/lib/azure2/app_services/App_Service_Plans.svg',
             'app service': 'img/lib/azure2/app_services/App_Services.svg',
+            'app-service': 'img/lib/azure2/app_services/App_Services.svg',
             'web app': 'img/lib/azure2/app_services/App_Services.svg',
-            'portal': 'img/lib/azure2/app_services/App_Services.svg',
             'virtual machine': 'img/lib/azure2/compute/Virtual_Machine.svg',
+            'vm': 'img/lib/azure2/compute/Virtual_Machine.svg',
             'vm scale set': 'img/lib/azure2/compute/VM_Scale_Sets.svg',
             'kubernetes': 'img/lib/azure2/containers/Kubernetes_Services.svg',
             'aks': 'img/lib/azure2/containers/Kubernetes_Services.svg',
@@ -1223,20 +1228,22 @@ class DrawioParser:
             'container app': 'img/lib/azure2/containers/Container_Apps.svg',
             'batch': 'img/lib/azure2/compute/Batch_Accounts.svg',
             'static web': 'img/lib/azure2/app_services/Static_Apps.svg',
-            'cloud service': 'img/lib/azure2/compute/Cloud_Services.svg',
             # Storage
             'storage account': 'img/lib/azure2/storage/Storage_Accounts.svg',
             'storage': 'img/lib/azure2/storage/Storage_Accounts.svg',
             'blob': 'img/lib/azure2/storage/Storage_Accounts.svg',
             'data lake': 'img/lib/azure2/storage/Data_Lake_Storage.svg',
+            'file share': 'img/lib/azure2/storage/Managed_File_Shares.svg',
             # Databases
             'sql database': 'img/lib/azure2/databases/SQL_Database.svg',
             'sql server': 'img/lib/azure2/databases/SQL_Server.svg',
             'sql': 'img/lib/azure2/databases/SQL_Database.svg',
+            'database': 'img/lib/azure2/databases/SQL_Database.svg',
             'cosmos db': 'img/lib/azure2/databases/Azure_Cosmos_DB.svg',
             'cosmos': 'img/lib/azure2/databases/Azure_Cosmos_DB.svg',
             'redis cache': 'img/lib/azure2/databases/Cache_Redis.svg',
             'redis': 'img/lib/azure2/databases/Cache_Redis.svg',
+            'cache': 'img/lib/azure2/databases/Cache_Redis.svg',
             'postgresql': 'img/lib/azure2/databases/Azure_Database_PostgreSQL_Server.svg',
             'postgres': 'img/lib/azure2/databases/Azure_Database_PostgreSQL_Server.svg',
             'mysql': 'img/lib/azure2/databases/Azure_Database_MySQL_Server.svg',
@@ -1247,6 +1254,7 @@ class DrawioParser:
             'front door': 'img/lib/azure2/networking/Front_Doors.svg',
             'application gateway': 'img/lib/azure2/networking/Application_Gateways.svg',
             'app gateway': 'img/lib/azure2/networking/Application_Gateways.svg',
+            'appgw': 'img/lib/azure2/networking/Application_Gateways.svg',
             'load balancer': 'img/lib/azure2/networking/Load_Balancers.svg',
             'virtual network': 'img/lib/azure2/networking/Virtual_Networks.svg',
             'vnet': 'img/lib/azure2/networking/Virtual_Networks.svg',
@@ -1255,7 +1263,6 @@ class DrawioParser:
             'traffic manager': 'img/lib/azure2/networking/Traffic_Manager_Profiles.svg',
             'dns zone': 'img/lib/azure2/networking/DNS_Zones.svg',
             'dns': 'img/lib/azure2/networking/DNS_Zones.svg',
-            'private dns': 'img/lib/mscae/DNS_Private_Zones.svg',
             'expressroute': 'img/lib/azure2/networking/ExpressRoute_Circuits.svg',
             'firewall': 'img/lib/azure2/networking/Firewalls.svg',
             'waf': 'img/lib/azure2/networking/Web_Application_Firewall_Policies_WAF.svg',
@@ -1264,19 +1271,18 @@ class DrawioParser:
             'private link': 'img/lib/azure2/networking/Private_Link_Services.svg',
             'nsg': 'img/lib/azure2/networking/Network_Security_Groups.svg',
             'network security group': 'img/lib/azure2/networking/Network_Security_Groups.svg',
-            'nat gateway': 'img/lib/azure2/networking/NAT.svg',
             'vpn gateway': 'img/lib/azure2/networking/VPN_Gateways.svg',
             'bastion': 'img/lib/azure2/networking/Bastions.svg',
             'ddos': 'img/lib/azure2/networking/DDoS_Protection_Plans.svg',
             # Security & Identity
             'key vault': 'img/lib/azure2/security/Key_Vaults.svg',
+            'keyvault': 'img/lib/azure2/security/Key_Vaults.svg',
             'entra id': 'img/lib/azure2/identity/Entra_ID_Protection.svg',
             'entra': 'img/lib/azure2/identity/Entra_ID_Protection.svg',
             'active directory': 'img/lib/azure2/identity/Azure_Active_Directory.svg',
             'azure ad': 'img/lib/azure2/identity/Azure_Active_Directory.svg',
             'sentinel': 'img/lib/azure2/security/Microsoft_Sentinel.svg',
             'defender': 'img/lib/azure2/security/MS_Defender_EASM.svg',
-            'microsoft defender': 'img/lib/azure2/security/MS_Defender_EASM.svg',
             'managed identity': 'img/lib/azure2/identity/Managed_Identities.svg',
             'certificate': 'img/lib/azure2/security/Certificates.svg',
             'ssl': 'img/lib/azure2/security/Certificates.svg',
@@ -1286,14 +1292,18 @@ class DrawioParser:
             'monitor': 'img/lib/azure2/management_governance/Monitor.svg',
             'azure monitor': 'img/lib/azure2/management_governance/Monitor.svg',
             'log analytics': 'img/lib/azure2/analytics/Log_Analytics_Workspaces.svg',
+            'log-analytics': 'img/lib/azure2/analytics/Log_Analytics_Workspaces.svg',
+            'logging': 'img/lib/azure2/analytics/Log_Analytics_Workspaces.svg',
             'policy': 'img/lib/azure2/management_governance/Policy.svg',
             'advisor': 'img/lib/azure2/management_governance/Advisor.svg',
             'cost management': 'img/lib/azure2/management_governance/Cost_Management.svg',
             # Integration & Messaging
             'api management': 'img/lib/azure2/app_services/API_Management_Services.svg',
             'apim': 'img/lib/azure2/app_services/API_Management_Services.svg',
+            'api-management': 'img/lib/azure2/app_services/API_Management_Services.svg',
             'service bus': 'img/lib/azure2/integration/Service_Bus.svg',
             'event hub': 'img/lib/azure2/analytics/Event_Hubs.svg',
+            'event hubs': 'img/lib/azure2/analytics/Event_Hubs.svg',
             'event grid': 'img/lib/azure2/integration/Event_Grid_Domains.svg',
             'logic app': 'img/lib/azure2/integration/Logic_Apps.svg',
             'notification hub': 'img/lib/azure2/app_services/Notification_Hubs.svg',
@@ -1301,9 +1311,11 @@ class DrawioParser:
             'signalr': 'img/lib/azure2/app_services/SignalR.svg',
             # AI & ML
             'cognitive': 'img/lib/azure2/ai_machine_learning/Cognitive_Services.svg',
+            'cognitive services': 'img/lib/azure2/ai_machine_learning/Cognitive_Services.svg',
             'openai': 'img/lib/azure2/ai_machine_learning/Azure_OpenAI.svg',
             'azure openai': 'img/lib/azure2/ai_machine_learning/Azure_OpenAI.svg',
             'machine learning': 'img/lib/azure2/ai_machine_learning/Machine_Learning.svg',
+            'ml': 'img/lib/azure2/ai_machine_learning/Machine_Learning.svg',
             'bot service': 'img/lib/azure2/ai_machine_learning/Bot_Services.svg',
             'bot': 'img/lib/azure2/ai_machine_learning/Bot_Services.svg',
             'search': 'img/lib/azure2/general/Search.svg',
@@ -1317,19 +1329,30 @@ class DrawioParser:
             'subscription': 'img/lib/azure2/general/Subscriptions.svg',
             'power bi': 'img/lib/azure2/analytics/Power_BI_Embedded.svg',
             'internet user': 'img/lib/azure2/general/User.svg',
-            'internet': 'img/lib/azure2/general/User.svg',
             'user': 'img/lib/azure2/general/User.svg',
-            'users': 'img/lib/azure2/general/User.svg',
-            # VNet Peering visual
             'vnet peering': 'img/lib/azure2/networking/Virtual_Network_Peering.svg',
             'peering': 'img/lib/azure2/networking/Virtual_Network_Peering.svg',
         }
         
-        for key, icon_path in icon_mappings.items():
+        # First try: exact key match (fastest)
+        for key in sorted(icon_mappings.keys(), key=len, reverse=True):  # longest first
             if key in service_lower:
+                icon_path = icon_mappings[key]
+                logger.debug(f"Icon matched by keyword '{key}': {icon_path}")
                 return icon_path
         
-        # Default - generic Azure resource icon
+        # Fallback: keyword substring matching on service name
+        name_parts = service_lower.split('-')
+        for part in name_parts:
+            if len(part) > 3:  # avoid single letters
+                for key in sorted(icon_mappings.keys(), key=len, reverse=True):
+                    if part in key or key in part:
+                        icon_path = icon_mappings[key]
+                        logger.debug(f"Icon matched by substring '{part}' -> '{key}': {icon_path}")
+                        return icon_path
+        
+        # Final fallback: generic resource icon
+        logger.debug(f"No icon match for '{service_name}', using generic Resource Groups icon")
         return 'img/lib/azure2/general/Resource_Groups.svg'
     
    

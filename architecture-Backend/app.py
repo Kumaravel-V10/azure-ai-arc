@@ -10,6 +10,7 @@ import io
 import base64
 import os
 import re
+import html
 import logging
 import json
 import glob
@@ -30,6 +31,16 @@ from config import api_config, agent_config, validation_config, path_config, wor
 from reverse_engineer import ReverseEngineerOrchestrator
 from diff_analyzer import ArchitectureDiffAnalyzer, AIEnhancedDiffAnalyzer, DiffReportGenerator
 from diagram_modification_agent import DiagramModificationAgent, ModificationStrategy
+from extras.architecture_modifier import (
+    _build_baseline_services_and_connections,
+    _dynamic_edge_stitching,
+    _filter_enhanced_connections,
+    _build_service_lookup,
+    _generate_highlighted_preview_xml,
+    _inject_nodes_and_edges_into_xml,
+    _parse_drawio_xml_to_dict,
+    _remove_generated_artifacts_from_xml,
+)
 
 # LangGraph import (optional - falls back gracefully)
 try:
@@ -443,6 +454,109 @@ def _layer_to_category(layer: str) -> str:
     return mapping.get(layer_key, "compute")
 
 
+def _get_icon_path_for_component(component: Dict[str, Any]) -> str:
+    """Determine the appropriate Azure icon path for a component.
+    
+    Priority:
+    1. Use resourceType field if available
+    2. Match component name against keyword patterns
+    3. Fall back to generic resource icon
+    """
+    parser = DrawioParser()
+    
+    # Try resourceType first (if LLM provided it)
+    resource_type = component.get("resourceType", "").strip().lower()
+    if resource_type:
+        # Map resourceType to service name for icon lookup
+        type_to_service_name = {
+            # Compute
+            "function_app": "Function Apps",
+            "function app": "Function Apps",
+            "func": "Function Apps",
+            "app_service": "App Services",
+            "app service": "App Services",
+            "web app": "App Services",
+            "container_instance": "Container Instances",
+            "container app": "Container Apps",
+            "virtual_machine": "Virtual Machine",
+            "vm": "Virtual Machine",
+            "kubernetes": "Kubernetes Services",
+            "aks": "Kubernetes Services",
+            # Storage
+            "storage_account": "Storage Account",
+            "storage account": "Storage Account",
+            "blob": "Blob Storage",
+            "data_lake": "Data Lake",
+            # Database
+            "database": "SQL Database",
+            "sql_database": "SQL Database",
+            "sql database": "SQL Database",
+            "cosmos_db": "Cosmos DB",
+            "cosmosdb": "Cosmos DB",
+            "cache": "Redis Cache",
+            "redis": "Redis Cache",
+            "postgresql": "PostgreSQL",
+            "postgres": "PostgreSQL",
+            "mysql": "MySQL",
+            # Networking
+            "virtual_network": "Virtual Network",
+            "vnet": "Virtual Network",
+            "load_balancer": "Load Balancer",
+            "application_gateway": "Application Gateway",
+            "app gateway": "Application Gateway",
+            "vpn_gateway": "VPN Gateway",
+            "firewall": "Firewall",
+            "cdn": "CDN",
+            "front_door": "Front Door",
+            # Integration
+            "api_management": "API Management",
+            "apim": "API Management",
+            "event_hub": "Event Hubs",
+            "event hubs": "Event Hubs",
+            "service_bus": "Service Bus",
+            "logic_app": "Logic Apps",
+            "event_grid": "Event Grid",
+            # Security & Identity
+            "keyvault": "Key Vault",
+            "key_vault": "Key Vault",
+            "active_directory": "Active Directory",
+            "entra_id": "Entra ID",
+            "sentinel": "Sentinel",
+            "managed_identity": "Managed Identity",
+            # Monitoring & Analytics
+            "log_analytics": "Log Analytics",
+            "log_analytics_workspace": "Log Analytics",
+            "application_insights": "Application Insights",
+            "app insights": "Application Insights",
+            "monitor": "Monitor",
+            "azure monitor": "Azure Monitor",
+            # AI & ML
+            "cognitive_services": "Cognitive Services",
+            "cognitive": "Cognitive Services",
+            "openai": "Azure OpenAI",
+            "azure_openai": "Azure OpenAI",
+            "machine_learning": "Machine Learning",
+            "bot_service": "Bot Services",
+            "ai_search": "Search",
+            "ai search": "Search",
+            # DevOps
+            "container_registry": "Container Registry",
+            "acr": "Container Registry",
+            "devops": "DevOps",
+        }
+        service_name = type_to_service_name.get(resource_type)
+        if service_name:
+            return parser._get_azure_icon_path(service_name)
+    
+    # Fallback: use component name for keyword matching
+    comp_name = component.get("name", "")
+    if comp_name:
+        return parser._get_azure_icon_path(comp_name)
+    
+    # Final fallback to generic resource
+    return parser._get_azure_icon_path("")
+
+
 def _build_feature_impact_drawio_architecture(payload: Dict[str, Any], request: FeatureImpactAnalyzeRequest) -> Dict[str, Any]:
     proposed_arch = payload.get("proposedArchitecture", {}) if isinstance(payload.get("proposedArchitecture"), dict) else {}
     components = proposed_arch.get("components", []) if isinstance(proposed_arch.get("components"), list) else []
@@ -642,10 +756,14 @@ def _add_new_components_to_existing_drawio(drawio_xml: str, payload: Dict[str, A
             x = 30 + ((index % 4) * 110)
             y = base_y + 130
 
+        # Get the appropriate icon for this component
+        icon_url = _get_icon_path_for_component(component)
+        logger.debug(f"[NewNode] {comp_name}: resourceType={component.get('resourceType')}, icon={icon_url}")
+        
         icon_cell = ET.Element("mxCell", {
             "id": icon_id,
             "value": "",
-            "style": "image;aspect=fixed;html=1;points=[];align=center;image=img/lib/azure2/compute/Function_Apps.svg;strokeColor=#166534;strokeWidth=2;fillColor=#dcfce7;rounded=1;",
+            "style": f"image;aspect=fixed;html=1;points=[];align=center;image={icon_url};strokeColor=#166534;strokeWidth=2;fillColor=#dcfce7;rounded=1;",
             "parent": parent_id,
             "vertex": "1",
         })
@@ -751,15 +869,163 @@ async def _generate_and_save_feature_impact_drawio(payload: Dict[str, Any], requ
 
     try:
         existing_drawio_xml = payload.get("architectureDiagramXml") or payload.get("applicationReference", {}).get("diagram_xml")
+
+        # Resolve baseline diagram XML robustly so updates are applied in-place on the real architecture.
+        if not existing_drawio_xml:
+            app_ref = _lookup_application_diagram(request.application_name)
+            existing_drawio_xml = app_ref.get("diagram_xml") if isinstance(app_ref, dict) else None
+            if existing_drawio_xml:
+                logger.info("Feature impact diagram update: using baseline XML from application lookup")
+
+        if not existing_drawio_xml:
+            workspace_root = Path(__file__).resolve().parents[1]
+            architecture_dir = workspace_root / "Arc-frontend" / "public" / "Architecture"
+            if architecture_dir.exists():
+                wanted = (request.application_name or "").strip().lower()
+                for candidate in architecture_dir.glob("*.drawio"):
+                    stem = candidate.stem.strip().lower()
+                    if stem == wanted:
+                        existing_drawio_xml = candidate.read_text(encoding="utf-8", errors="replace")
+                        logger.info(f"Feature impact diagram update: using baseline XML from {candidate}")
+                        break
+
+        preview_drawio_xml = None
+
         if existing_drawio_xml:
-            drawio_xml = ArchitectureAgent.build_proposed_architecture_from_existing_diagram(
-                existing_drawio_xml,
-                payload.get("proposedArchitecture", {}),
+            original_drawio_xml = existing_drawio_xml
+            proposed_arch = payload.get("proposedArchitecture", {}) if isinstance(payload.get("proposedArchitecture"), dict) else {}
+            proposed_components = proposed_arch.get("components", []) if isinstance(proposed_arch.get("components"), list) else []
+
+            def _layer_to_numeric(layer: Any) -> int:
+                key = str(layer or "").strip().lower()
+                if key in {"ui", "edge"}:
+                    return 0
+                if key in {"api", "gateway"}:
+                    return 1
+                if key in {"data", "database"}:
+                    return 3
+                if key in {"security", "observability", "monitoring"}:
+                    return -1
+                return 2
+
+            services_to_add: List[Dict[str, Any]] = []
+            for comp in proposed_components:
+                if not isinstance(comp, dict):
+                    continue
+                if str(comp.get("changeStatus") or "").strip() != "New":
+                    continue
+                name = str(comp.get("name") or "").strip()
+                if not name:
+                    continue
+                services_to_add.append(
+                    {
+                        "name": name,
+                        "layer": _layer_to_numeric(comp.get("layer")),
+                        "category": _layer_to_category(str(comp.get("layer") or "")),
+                        "resourceType": comp.get("resourceType", ""),  # Add resourceType for icon selection
+                    }
+                )
+
+            sanitized_xml = _remove_generated_artifacts_from_xml(existing_drawio_xml)
+            baseline_architecture = _parse_drawio_xml_to_dict(sanitized_xml)
+
+            # Align new services with modifier behavior: avoid re-adding existing baseline services.
+            baseline_lookup = _build_service_lookup(baseline_architecture)
+            filtered_services_to_add: List[Dict[str, Any]] = []
+            seen_new_names = set()
+            for svc in services_to_add:
+                name = str(svc.get("name") or "").strip()
+                if not name:
+                    continue
+                key = name.lower()
+                if key in seen_new_names or key in baseline_lookup:
+                    continue
+                seen_new_names.add(key)
+                filtered_services_to_add.append(svc)
+
+            # Use full modifier connection update logic to preserve baseline-oriented stitching.
+            feature_prompt_text = (
+                f"Feature: {request.feature_name}\n"
+                f"Description: {request.feature_description}\n"
+                f"Business capability: {request.business_capability}"
             )
+            arch_agent = ArchitectureAgent()
+            initial_connections = _dynamic_edge_stitching(
+                baseline_architecture=baseline_architecture,
+                services_to_add=filtered_services_to_add,
+                arch_agent=arch_agent,
+                modification_prompt=feature_prompt_text,
+                csv_context_summary="",
+            )
+            validated_connections = _filter_enhanced_connections(
+                enhanced_connections=initial_connections,
+                baseline_architecture=baseline_architecture,
+                services_to_add=filtered_services_to_add,
+                modification_prompt=feature_prompt_text,
+                csv_context_summary="",
+            )
+            if not validated_connections:
+                validated_connections = initial_connections
+
+            # Include explicit proposed links touching newly inserted services.
+            proposed_connections = proposed_arch.get("connections", []) if isinstance(proposed_arch.get("connections"), list) else []
+            component_name_by_id: Dict[str, str] = {}
+            for comp in proposed_components:
+                if not isinstance(comp, dict):
+                    continue
+                comp_id = str(comp.get("id") or "").strip()
+                comp_name = str(comp.get("name") or "").strip()
+                if comp_id and comp_name:
+                    component_name_by_id[comp_id] = comp_name
+            new_names_set = {str(s.get("name") or "").strip().lower() for s in filtered_services_to_add if s.get("name")}
+            seen_conn_sig = {
+                (
+                    str(c.get("source") or "").strip().lower(),
+                    str(c.get("target") or "").strip().lower(),
+                    str(c.get("label") or "").strip().lower(),
+                )
+                for c in validated_connections
+                if isinstance(c, dict)
+            }
+            for conn in proposed_connections:
+                if not isinstance(conn, dict):
+                    continue
+                source_raw = str(conn.get("source") or "").strip()
+                target_raw = str(conn.get("target") or "").strip()
+                if not source_raw or not target_raw:
+                    continue
+                source_name = component_name_by_id.get(source_raw, source_raw)
+                target_name = component_name_by_id.get(target_raw, target_raw)
+                if not source_name or not target_name or source_name == target_name:
+                    continue
+                if source_name.lower() not in new_names_set and target_name.lower() not in new_names_set:
+                    continue
+                sig = (source_name.lower(), target_name.lower(), str(conn.get("label") or "").strip().lower())
+                if sig in seen_conn_sig:
+                    continue
+                seen_conn_sig.add(sig)
+                validated_connections.append(
+                    {
+                        "source": source_name,
+                        "target": target_name,
+                        "label": str(conn.get("label") or ""),
+                        "type": "service_integration",
+                    }
+                )
+
+            drawio_xml, _, _ = _inject_nodes_and_edges_into_xml(
+                xml_content=sanitized_xml,
+                current_architecture=baseline_architecture,
+                services_to_add=filtered_services_to_add,
+                validated_connections=validated_connections,
+            )
+            preview_drawio_xml = _generate_highlighted_preview_xml(original_drawio_xml, drawio_xml)
+            logger.info("Feature impact diagram update: modifier in-place injection path applied")
         else:
+            logger.warning("Feature impact diagram update: baseline XML unavailable; using fallback diagram generation")
             requirements = _build_feature_impact_requirements_text(request)
             drawio_xml = await generate_drawio_from_architecture(architecture, requirements)
-            drawio_xml = _highlight_drawio_labels(drawio_xml, impacted_names, new_names)
+            preview_drawio_xml = _highlight_drawio_labels(drawio_xml, impacted_names, new_names)
 
         workspace_root = Path(__file__).resolve().parents[1]
         output_dir = workspace_root / "Arc-frontend" / "public" / "Architecture"
@@ -773,6 +1039,8 @@ async def _generate_and_save_feature_impact_drawio(payload: Dict[str, Any], requ
 
         payload["proposedArchitectureDiagramPath"] = f"/Architecture/{filename}"
         payload["proposedArchitectureDiagramXml"] = drawio_xml
+        if preview_drawio_xml:
+            payload["proposedArchitectureDiagramPreviewXml"] = preview_drawio_xml
     except Exception as exc:
         logger.warning(f"Failed to generate proposed drawio for feature impact: {exc}")
 
@@ -797,7 +1065,7 @@ class ErrorResponse(BaseModel):
 
 # Setup logging
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)

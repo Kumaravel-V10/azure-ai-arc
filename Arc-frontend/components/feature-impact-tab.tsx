@@ -84,6 +84,7 @@ type AnalyzerResult = {
   architectureDiagramXml?: string | null
   proposedArchitectureDiagramPath?: string
   proposedArchitectureDiagramXml?: string | null
+  proposedArchitectureDiagramPreviewXml?: string | null
   architectureDiff: { added: string[]; modified: string[]; unchanged: string[]; removed: string[] }
   impactSummary: {
     impactLevel: string
@@ -359,8 +360,9 @@ export function FeatureImpactTab() {
         return
       }
 
-      if (result.proposedArchitectureDiagramXml) {
-        setProposedDiagramXmlPreview(result.proposedArchitectureDiagramXml)
+      const previewXml = result.proposedArchitectureDiagramPreviewXml || result.proposedArchitectureDiagramXml
+      if (previewXml) {
+        setProposedDiagramXmlPreview(previewXml)
         return
       }
 

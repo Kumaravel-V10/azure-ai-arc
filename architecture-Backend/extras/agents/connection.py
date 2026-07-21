@@ -103,7 +103,6 @@ class ConnectionExpertAgent(BaseAgent):
             primary_flow = self._build_primary_flow(layer_services)
             self.think(f"Primary flow: {' â†’ '.join(primary_flow)}", "decision")
             logger.info(f"  Primary flow: {' â†’ '.join(primary_flow)}")
-        primary_flow = self._normalize_primary_flow_top_to_bottom(primary_flow, layer_services, service_layer_map)
         
         # Step 5: Validate and optimize connections
         self.think("Optimizing connections: removing duplicates, adding missing links, fixing labels...", "tool_call")
@@ -153,9 +152,6 @@ class ConnectionExpertAgent(BaseAgent):
                 remaining_errors = len(validation_result.get("errors", []))
                 remaining_warnings = len(validation_result.get("warnings", []))
                 self.think(f"Post-fix validation: {remaining_errors} errors, {remaining_warnings} warnings", "reflection")
-
-            # Enforce top-to-bottom layout metadata and non-overlapping routing hints
-            optimized_connections = self._apply_vertical_layout_constraints(optimized_connections, service_layer_map)
         
         # Step 8: Generate connection statistics
         connection_stats = self._generate_connection_stats(optimized_connections, services)
@@ -171,11 +167,6 @@ class ConnectionExpertAgent(BaseAgent):
             "services": services,
             "connections": optimized_connections,
             "primary_flow": primary_flow,
-            "layout_direction": "top_to_bottom",
-            "connection_routing": {
-                "strategy": "orthogonal_lanes",
-                "avoid_overlap": True
-            },
             "connection_stats": connection_stats,
             "validation_result": validation_result
         }
@@ -229,7 +220,6 @@ class ConnectionExpertAgent(BaseAgent):
             "enhanced_architecture": enhanced_architecture,
             "connection_stats": connection_stats,
             "primary_flow": primary_flow,
-            "layout_direction": "top_to_bottom",
             "optimizations_applied": connection_stats.get("optimizations_applied", []),
             "validation_result": validation_result,
             "errors_found": errors_count,
@@ -314,307 +304,6 @@ class ConnectionExpertAgent(BaseAgent):
                     layer_services[layer].append(name)
         
         return layer_services
-    
-    def _build_primary_flow(self, layer_services: Dict[int, List[str]]) -> List[str]:
-        """Build the primary flow chain from services"""
-        flow = []
-        
-        # Layer 0: Users or edge service
-        if "Users" in layer_services[0]:
-            flow.append("Users")
-        for svc in layer_services[0]:
-            if svc != "Users":
-                flow.append(svc)
-                break
-        
-        # Layer 1: First gateway
-        if layer_services[1]:
-            flow.append(layer_services[1][0])
-        
-        # Layer 2: First compute
-        for svc in layer_services[2]:
-            # Prefer app service/functions over messaging
-            if any(kw in svc.lower() for kw in ["app service", "function", "aks", "container"]):
-                flow.append(svc)
-                break
-        else:
-            if layer_services[2]:
-                flow.append(layer_services[2][0])
-        
-        # Layer 3: First data service
-        if layer_services[3]:
-            flow.append(layer_services[3][0])
-        
-        return flow
-
-    def _normalize_primary_flow_top_to_bottom(
-        self,
-        primary_flow: List[str],
-        layer_services: Dict[int, List[str]],
-        layer_map: Dict[str, int],
-    ) -> List[str]:
-        """Normalize primary flow to strict top-to-bottom ordering by layer."""
-        normalized: List[str] = []
-
-        # Always start from Users if available
-        if "Users" in layer_services.get(0, []):
-            normalized.append("Users")
-
-        # Preserve existing flow services while enforcing ascending layer order
-        for svc in primary_flow:
-            if svc in normalized:
-                continue
-            if svc not in layer_map:
-                continue
-            normalized.append(svc)
-
-        normalized.sort(key=lambda s: (layer_map.get(s, self._get_service_layer(s)), s.lower()))
-
-        # Ensure users remains first if present
-        if "Users" in normalized:
-            normalized = ["Users"] + [s for s in normalized if s != "Users"]
-
-        # Ensure at least one representative from each core layer exists
-        for layer in [0, 1, 2, 3]:
-            if not any(layer_map.get(s, self._get_service_layer(s)) == layer for s in normalized):
-                candidates = layer_services.get(layer, [])
-                if candidates:
-                    candidate = candidates[0]
-                    if candidate not in normalized:
-                        normalized.append(candidate)
-
-        return normalized
-    
-    def _optimize_connections(self, connections: List[Dict], services: List[Dict], 
-                              layer_map: Dict[str, int], layer_services: Dict[int, List[str]],
-                              primary_flow: List[str]) -> List[Dict]:
-        """Optimize connections for professional diagram layout"""
-        optimized = []
-        existing_pairs = set()
-        optimizations = []
-        
-        # Step 1: Process existing connections - validate and fix direction
-        for conn in connections:
-            if not isinstance(conn, dict):
-                continue
-            
-            source = conn.get("source", "")
-            target = conn.get("target", "")
-            label = conn.get("label", "")
-            conn_type = conn.get("type", "")
-            
-            if not source or not target:
-                continue
-            
-            # Skip VNet peering
-            if conn_type in ("vnet_peering", "peering"):
-                optimized.append(conn)
-                existing_pairs.add((source, target))
-                continue
-            
-            source_layer = layer_map.get(source, self._get_service_layer(source))
-            target_layer = layer_map.get(target, self._get_service_layer(target))
-            
-            # Fix reverse connections
-            if source_layer > target_layer and source_layer != -1 and target_layer != -1:
-                # Flip the connection
-                source, target = target, source
-                source_layer, target_layer = target_layer, source_layer
-                label = self._get_professional_label(source_layer, target_layer, source, target)
-                optimizations.append(f"Flipped: {conn.get('source')} â†’ {conn.get('target')}")
-            
-            # Skip duplicates
-            if (source, target) in existing_pairs:
-                continue
-
-            # Route skip-layer traffic through intermediate layers to keep vertical topology clean
-            if source_layer != -1 and target_layer != -1 and abs(target_layer - source_layer) > 1:
-                segmented_pairs = self._route_via_intermediate_layers(source, target, layer_services, layer_map)
-                for seg_src, seg_tgt in segmented_pairs:
-                    if (seg_src, seg_tgt) in existing_pairs:
-                        continue
-                    seg_src_layer = layer_map.get(seg_src, self._get_service_layer(seg_src))
-                    seg_tgt_layer = layer_map.get(seg_tgt, self._get_service_layer(seg_tgt))
-                    optimized.append({
-                        "source": seg_src,
-                        "target": seg_tgt,
-                        "label": self._get_professional_label(seg_src_layer, seg_tgt_layer, seg_src, seg_tgt),
-                        "flow_type": self._determine_flow_type(seg_src_layer, seg_tgt_layer)
-                    })
-                    existing_pairs.add((seg_src, seg_tgt))
-                optimizations.append(f"Rerouted skip-layer connection: {source} â†’ {target}")
-                continue
-            
-            # Add flow_type if missing
-            flow_type = conn.get("flow_type") or self._determine_flow_type(source_layer, target_layer)
-            
-            # Ensure professional label
-            if not label or label in ["", "connection", "link"]:
-                label = self._get_professional_label(source_layer, target_layer, source, target)
-            
-            optimized.append({
-                "source": source,
-                "target": target,
-                "label": label,
-                "flow_type": flow_type,
-                **({"type": conn_type} if conn_type else {})
-            })
-            existing_pairs.add((source, target))
-        
-        # Step 2: Inject primary flow chain connections if missing
-        for i in range(len(primary_flow) - 1):
-            src = primary_flow[i]
-            tgt = primary_flow[i + 1]
-            
-            if (src, tgt) not in existing_pairs:
-                src_layer = layer_map.get(src, self._get_service_layer(src))
-                tgt_layer = layer_map.get(tgt, self._get_service_layer(tgt))
-                
-                label = self._get_professional_label(src_layer, tgt_layer, src, tgt)
-                flow_type = self._determine_flow_type(src_layer, tgt_layer)
-                
-                optimized.append({
-                    "source": src,
-                    "target": tgt,
-                    "label": label,
-                    "flow_type": flow_type
-                })
-                existing_pairs.add((src, tgt))
-                optimizations.append(f"Chain injected: {src} â†’ {tgt}")
-        
-        # Step 3: Connect orphan services
-        connected_services = set()
-        for conn in optimized:
-            connected_services.add(conn.get("source", ""))
-            connected_services.add(conn.get("target", ""))
-        
-        orphans = [svc.get("name", "") for svc in services 
-                   if isinstance(svc, dict) and svc.get("name", "") not in connected_services]
-        
-        for orphan in orphans:
-            orphan_layer = layer_map.get(orphan, self._get_service_layer(orphan))
-            
-            # Find best connection target based on layer
-            target = None
-            if orphan_layer == -1:  # Cross-cutting
-                # Connect FROM compute TO cross-cutting
-                for compute_svc in layer_services[2]:
-                    if compute_svc in connected_services:
-                        target = compute_svc
-                        break
-                if target:
-                    label = self._get_professional_label(2, -1, target, orphan)
-                    optimized.append({
-                        "source": target,
-                        "target": orphan,
-                        "label": label,
-                        "flow_type": "compute_to_crosscutting"
-                    })
-                    connected_services.add(orphan)
-                    optimizations.append(f"Orphan connected: {target} â†’ {orphan}")
-            else:
-                # Find upstream service to connect from
-                for check_layer in range(orphan_layer - 1, -2, -1):
-                    if check_layer == -1:
-                        continue
-                    for svc in layer_services.get(check_layer, []):
-                        if svc in connected_services:
-                            target = svc
-                            break
-                    if target:
-                        break
-                
-                if target:
-                    label = self._get_professional_label(layer_map.get(target, 2), orphan_layer, target, orphan)
-                    optimized.append({
-                        "source": target,
-                        "target": orphan,
-                        "label": label,
-                        "flow_type": self._determine_flow_type(layer_map.get(target, 2), orphan_layer)
-                    })
-                    connected_services.add(orphan)
-                    optimizations.append(f"Orphan connected: {target} â†’ {orphan}")
-        
-        return optimized
-
-    def _route_via_intermediate_layers(
-        self,
-        source: str,
-        target: str,
-        layer_services: Dict[int, List[str]],
-        layer_map: Dict[str, int],
-    ) -> List[Tuple[str, str]]:
-        """Break skip-layer connections into adjacent-layer segments for vertical routing."""
-        source_layer = layer_map.get(source, self._get_service_layer(source))
-        target_layer = layer_map.get(target, self._get_service_layer(target))
-
-        if source_layer == -1 or target_layer == -1:
-            return [(source, target)]
-
-        if abs(target_layer - source_layer) <= 1:
-            return [(source, target)]
-
-        step = 1 if target_layer > source_layer else -1
-        current = source
-        segments: List[Tuple[str, str]] = []
-
-        for layer in range(source_layer + step, target_layer, step):
-            candidates = [s for s in layer_services.get(layer, []) if s != current and s != target]
-            if not candidates:
-                # Fallback to direct connection when no intermediate service exists
-                return [(source, target)]
-            next_hop = candidates[0]
-            segments.append((current, next_hop))
-            current = next_hop
-
-        segments.append((current, target))
-        return segments
-
-    def _apply_vertical_layout_constraints(
-        self,
-        connections: List[Dict],
-        layer_map: Dict[str, int],
-    ) -> List[Dict]:
-        """Attach deterministic top-to-bottom orthogonal routing hints and lane indexes."""
-        lane_counters: Dict[Tuple[int, int], int] = {}
-        constrained: List[Dict] = []
-
-        # Stable sort keeps routing lanes deterministic between runs.
-        sorted_connections = sorted(
-            connections,
-            key=lambda c: (
-                layer_map.get(c.get("source", ""), self._get_service_layer(c.get("source", ""))),
-                layer_map.get(c.get("target", ""), self._get_service_layer(c.get("target", ""))),
-                c.get("source", ""),
-                c.get("target", ""),
-            ),
-        )
-
-        for conn in sorted_connections:
-            source = conn.get("source", "")
-            target = conn.get("target", "")
-            source_layer = layer_map.get(source, self._get_service_layer(source))
-            target_layer = layer_map.get(target, self._get_service_layer(target))
-
-            lane_key = (source_layer, target_layer)
-            lane_index = lane_counters.get(lane_key, 0)
-            lane_counters[lane_key] = lane_index + 1
-
-            routing_hints = {
-                "layout_direction": "top_to_bottom",
-                "line_style": "orthogonal",
-                "avoid_overlap": True,
-                "source_port": "south",
-                "target_port": "north",
-                "lane": lane_index,
-            }
-
-            constrained.append({
-                **conn,
-                "routing_hints": routing_hints,
-            })
-
-        return constrained
     
     def _build_primary_flow(self, layer_services: Dict[int, List[str]]) -> List[str]:
         """Build the primary flow chain from services"""
