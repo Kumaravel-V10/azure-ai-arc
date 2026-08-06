@@ -488,6 +488,29 @@ class ArchitectureAgent(BaseAgent):
             logger.warning(f"Unable to load diagram principles knowledge base from {principles_path}: {e}")
             self._similar_architecture_principles_context = ""
             return ""
+
+    @staticmethod
+    def _limit_prompt_context(text: str, max_chars: int, label: str) -> str:
+        """Clamp oversized prompt sections so the architecture call completes reliably."""
+        if not text or len(text) <= max_chars:
+            return text
+
+        trimmed = text[:max_chars].rstrip()
+        omitted = len(text) - len(trimmed)
+        return f"{trimmed}\n\n[{label} truncated: omitted {omitted} chars for runtime stability]"
+
+    @staticmethod
+    def _compact_json_section(value: Any, max_items: int, max_chars: int, label: str) -> str:
+        """Serialize large agent outputs compactly for prompt use."""
+        if value is None:
+            return "[]"
+
+        compact_value = value
+        if isinstance(value, list):
+            compact_value = value[:max_items]
+
+        text = json.dumps(compact_value, indent=2)
+        return ArchitectureAgent._limit_prompt_context(text, max_chars, label)
     
     def _get_learned_patterns_context(self, requirements: str, 
                                        security_services: List = None, 
@@ -623,21 +646,23 @@ class ArchitectureAgent(BaseAgent):
             rec_pattern = component_data.get("summary", {}).get("recommended_architecture_pattern", "N/A")
             rg_hints_section = ""
             if rg_hints:
-                rg_hints_section = f"- Resource Group Boundaries: {json.dumps(rg_hints, indent=2)}\n"
+                rg_hints_json = self._compact_json_section(rg_hints, 6, 500, "Resource group boundaries")
+                rg_hints_section = f"- Resource Group Boundaries: {rg_hints_json}\n"
             component_section = f"""
 EXTRACTED COMPONENTS FROM ComponentExtractionAgent:
-- APIs: {json.dumps(apis, indent=2)}
-- NFRs: {json.dumps(nfrs, indent=2)}
-- Technical Requirements: {json.dumps(tech_reqs, indent=2)}
-- Tech Stack: {json.dumps(tech_stack, indent=2)}
-- Data Requirements: {json.dumps(data_reqs, indent=2)}
-- Integration Points: {json.dumps(integration_points, indent=2)}
-- Business Requirements: {json.dumps(business_reqs, indent=2)}
+- APIs: {self._compact_json_section(apis, 8, 700, "APIs")}
+- NFRs: {self._compact_json_section(nfrs, 10, 700, "NFRs")}
+- Technical Requirements: {self._compact_json_section(tech_reqs, 10, 700, "Technical requirements")}
+- Tech Stack: {self._compact_json_section(tech_stack, 10, 500, "Tech stack")}
+- Data Requirements: {self._compact_json_section(data_reqs, 8, 600, "Data requirements")}
+- Integration Points: {self._compact_json_section(integration_points, 8, 600, "Integration points")}
+- Business Requirements: {self._compact_json_section(business_reqs, 8, 600, "Business requirements")}
 {rg_hints_section}- Complexity Level: {complexity}
 - Recommended Pattern: {rec_pattern}
 IMPORTANT: Your architecture MUST address ALL of the above components. Every API, NFR, and integration point must be covered by the services you select.
 Use the Resource Group Boundaries above to create MULTIPLE separate Resource Groups in your architecture. Each RG must have a clear purpose.
 """
+            component_section = self._limit_prompt_context(component_section, 2200, "Component extraction context")
 
         # Search local docs for architecture-relevant references
         self.think("Using Azure docs search tool for architecture patterns...", "tool_call")
@@ -652,6 +677,7 @@ Use the Resource Group Boundaries above to create MULTIPLE separate Resource Gro
                 "max_results": 8
             }
         )
+        arch_docs = self._limit_prompt_context(arch_docs, 1800, "Local reference docs")
         
         self.think("Analyzing reference architectures and design patterns to apply...", "reasoning")
         
@@ -672,17 +698,21 @@ Use the Resource Group Boundaries above to create MULTIPLE separate Resource Gro
         if design_decisions:
             ref_section += "\nDESIGN DECISIONS (from Reference Agent):\n"
             ref_section += json.dumps(design_decisions, indent=2) + "\n"
+        ref_section = self._limit_prompt_context(ref_section, 1800, "Matched reference architectures")
         
         # Get Draw.io reference patterns for better connections and layouts
         drawio_reference_context = self._get_drawio_reference_context(requirements, max_references=5)
+        drawio_reference_context = self._limit_prompt_context(drawio_reference_context, 1200, "Draw.io reference patterns")
 
         # Get explicit architecture diagram principles from local knowledge base
         diagram_principles_section = self._get_similar_architecture_principles_context()
+        diagram_principles_section = self._limit_prompt_context(diagram_principles_section, 900, "Diagram principles")
         
         # Get learned patterns from Azure Architecture Center Draw.io files
         learned_patterns_section = ""
         if ACCURACY_ENHANCEMENTS_AVAILABLE:
             learned_patterns_section = self._get_learned_patterns_context(requirements, security_services, performance_services)
+            learned_patterns_section = self._limit_prompt_context(learned_patterns_section, 1200, "Learned pattern context")
         
         # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         # REINFORCEMENT LEARNING: Pattern selection via Q-learning
@@ -751,22 +781,40 @@ Use the Resource Group Boundaries above to create MULTIPLE separate Resource Gro
             except Exception as e:
                 logger.warning(f"RL pattern selection failed (non-fatal): {e}")
                 rl_patterns_section = ""
+        rl_patterns_section = self._limit_prompt_context(rl_patterns_section, 1200, "RL pattern context")
         
         # Get few-shot examples for improved accuracy (from accuracy_enhancements module)
         few_shot_section = ""
         if ACCURACY_ENHANCEMENTS_AVAILABLE and FEW_SHOT_ARCHITECTURE_EXAMPLES:
+            compact_examples = self._limit_prompt_context(
+                f"{FEW_SHOT_ARCHITECTURE_EXAMPLES}\n\n{FEW_SHOT_CONNECTION_EXAMPLES}",
+                2200,
+                "Few-shot examples"
+            )
             few_shot_section = f"""
 
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 FEW-SHOT EXAMPLES - LEARN FROM THESE PATTERNS FOR BETTER ACCURACY:
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-{FEW_SHOT_ARCHITECTURE_EXAMPLES}
-
-{FEW_SHOT_CONNECTION_EXAMPLES}
+{compact_examples}
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 """
         
         # Single comprehensive prompt - no need for separate extraction step
+        security_recommendations = self._compact_json_section(
+            security_services if security_services else [],
+            8,
+            700,
+            "Security recommendations",
+        ) if security_services else "No specific security services recommended yet."
+
+        performance_recommendations = self._compact_json_section(
+            performance_services if performance_services else [],
+            8,
+            700,
+            "Performance recommendations",
+        ) if performance_services else "No specific performance services recommended yet."
+
         architecture_prompt = f"""
 You are a Microsoft Certified Azure Solutions Architect Expert.
 Design a complete, production-ready Azure architecture based on the requirements below.
@@ -784,10 +832,10 @@ Also strictly follow the DIAGRAM PRINCIPLES KNOWLEDGE BASE section below.
 **User Requirements:** "{requirements}"
 
 **Security Agent Recommendations (incorporate these services into the architecture):**
-{json.dumps(security_services, indent=2) if security_services else "No specific security services recommended yet."}
+{security_recommendations}
 
 **Performance Agent Recommendations (incorporate these services into the architecture):**
-{json.dumps(performance_services, indent=2) if performance_services else "No specific performance services recommended yet."}
+{performance_recommendations}
 
 🔴 **CRITICAL: PRESERVE EXACT NAMES FROM REQUIREMENTS — DO NOT COLLAPSE INDIVIDUAL SERVICES**
 - If the requirements specify EXACT resource names (e.g., "func-booking", "func-payment", "rg-test-finnair-fra-sc"), use those EXACT names in your output - do NOT rename them to generic Azure names.

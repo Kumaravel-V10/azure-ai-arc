@@ -889,6 +889,7 @@ class DrawioParser:
 
         # --- CONNECTIONS (with labels and professional routing) ---
         conn_id = 200
+        pair_offsets: Dict[Tuple[str, str], int] = {}
 
         for conn_idx, conn in enumerate(connections):
             source_name = conn.get("source", "")
@@ -901,23 +902,37 @@ class DrawioParser:
 
             if source_pos and target_pos and source_pos["id"] != target_pos["id"]:
                 label_escaped = self._xml_escape(conn_label)
+                pair_key = (source_pos["id"], target_pos["id"])
+                reverse_pair_key = (target_pos["id"], source_pos["id"])
+                offset_idx = pair_offsets.get(pair_key, 0)
+                if reverse_pair_key in pair_offsets:
+                    offset_idx += pair_offsets[reverse_pair_key] + 1
+                pair_offsets[pair_key] = pair_offsets.get(pair_key, 0) + 1
+                exit_style, entry_style = self._calculate_port_directions(source_pos, target_pos, offset_idx)
                 if conn_type == "vnet_peering":
                     # VNet Peering: dashed bidirectional line with label
-                    style = ("edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;"
+                    style = ("edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=28;html=1;"
                              "dashed=1;dashPattern=8 4;strokeColor=#00CC00;strokeWidth=2;"
                              "startArrow=diamondThin;startFill=1;endArrow=diamondThin;endFill=1;"
-                             "fontSize=10;fontColor=#00CC00;")
+                             "fontSize=10;fontColor=#00CC00;labelBackgroundColor=#ffffff;"
+                             "sourcePerimeterSpacing=12;targetPerimeterSpacing=12;"
+                             f"{exit_style}{entry_style}")
                     if not label_escaped:
                         label_escaped = "VNet Peering"
                 else:
-                    style = ("edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;"
-                             "strokeWidth=1;fontSize=10;")
+                    style = ("edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=28;html=1;"
+                             "strokeWidth=1.5;strokeColor=#64748b;fontSize=10;labelBackgroundColor=#ffffff;"
+                             "align=center;verticalAlign=bottom;spacingBottom=10;"
+                             "sourcePerimeterSpacing=12;targetPerimeterSpacing=12;"
+                             f"{exit_style}{entry_style}")
 
                 cells_xml.append(
                     f'        <mxCell id="conn-{conn_id}" value="{label_escaped}" '
                     f'style="{style}" '
                     f'edge="1" parent="1" source="{source_pos["id"]}" target="{target_pos["id"]}">\n'
-                    f'          <mxGeometry relative="1" as="geometry"/>\n'
+                    f'          <mxGeometry relative="1" as="geometry">\n'
+                    f'            <mxPoint x="0" y="-18" as="offset"/>\n'
+                    f'          </mxGeometry>\n'
                     f'        </mxCell>'
                 )
                 conn_id += 1

@@ -5,6 +5,7 @@ Full reverse engineering of architecture diagrams from multiple sources:
 - Draw.io XML files
 - Visio (.vsdx) files
 - Architecture images (PNG, JPG) via GPT-4o Vision
+- Azure Bicep files
 - Terraform files
 
 Extracts services, connections, patterns, and generates requirements from diagrams.
@@ -471,6 +472,204 @@ class ImageReverseEngineer:
 
 
 # ═══════════════════════════════════════════════════════════════════
+# REVERSE ENGINEER: BICEP
+# ═══════════════════════════════════════════════════════════════════
+
+class BicepReverseEngineer:
+    """Reverse engineer architecture from Azure Bicep files"""
+
+    BICEP_RESOURCE_MAP = {
+        "Microsoft.Resources/resourceGroups": ("Resource Group", "networking"),
+        "Microsoft.Network/virtualNetworks": ("Virtual Network", "networking"),
+        "Microsoft.Network/subnets": ("Subnet", "networking"),
+        "Microsoft.Network/networkSecurityGroups": ("Network Security Group", "networking"),
+        "Microsoft.Network/publicIPAddresses": ("Public IP", "networking"),
+        "Microsoft.Network/applicationGateways": ("Application Gateway", "networking"),
+        "Microsoft.Network/frontDoors": ("Azure Front Door", "networking"),
+        "Microsoft.Network/loadBalancers": ("Load Balancer", "networking"),
+        "Microsoft.Network/privateEndpoints": ("Private Endpoint", "networking"),
+        "Microsoft.Network/dnsZones": ("DNS Zone", "networking"),
+        "Microsoft.Network/azureFirewalls": ("Azure Firewall", "networking"),
+        "Microsoft.Network/natGateways": ("NAT Gateway", "networking"),
+        "Microsoft.Network/bastionHosts": ("Azure Bastion", "networking"),
+        "Microsoft.Web/serverfarms": ("App Service Plan", "compute"),
+        "Microsoft.Web/sites": ("App Service", "compute"),
+        "Microsoft.Web/sites/slots": ("Deployment Slot", "compute"),
+        "Microsoft.App/containerApps": ("Container Apps", "compute"),
+        "Microsoft.ContainerService/managedClusters": ("Azure Kubernetes Service", "compute"),
+        "Microsoft.Compute/virtualMachines": ("Virtual Machine", "compute"),
+        "Microsoft.Compute/virtualMachineScaleSets": ("Virtual Machine Scale Set", "compute"),
+        "Microsoft.Sql/servers": ("SQL Server", "data"),
+        "Microsoft.Sql/servers/databases": ("SQL Database", "data"),
+        "Microsoft.DBforPostgreSQL/flexibleServers": ("PostgreSQL Flexible Server", "data"),
+        "Microsoft.DBforMySQL/flexibleServers": ("MySQL Flexible Server", "data"),
+        "Microsoft.DocumentDB/databaseAccounts": ("Cosmos DB", "data"),
+        "Microsoft.Cache/Redis": ("Azure Cache for Redis", "data"),
+        "Microsoft.Storage/storageAccounts": ("Storage Account", "storage"),
+        "Microsoft.KeyVault/vaults": ("Key Vault", "security"),
+        "Microsoft.ManagedIdentity/userAssignedIdentities": ("Managed Identity", "security"),
+        "Microsoft.ApiManagement/service": ("API Management", "integration"),
+        "Microsoft.ServiceBus/namespaces": ("Service Bus", "integration"),
+        "Microsoft.EventGrid/topics": ("Event Grid", "integration"),
+        "Microsoft.EventHub/namespaces": ("Event Hubs", "integration"),
+        "Microsoft.Logic/workflows": ("Logic Apps", "integration"),
+        "Microsoft.DataFactory/factories": ("Data Factory", "integration"),
+        "Microsoft.Insights/components": ("Application Insights", "monitoring"),
+        "Microsoft.OperationalInsights/workspaces": ("Log Analytics", "monitoring"),
+        "Microsoft.CognitiveServices/accounts": ("Cognitive Services", "ai"),
+        "Microsoft.Search/searchServices": ("Azure AI Search", "ai"),
+    }
+
+    async def reverse_engineer(self, bicep_content: str, filename: str = "main.bicep") -> ExtractedArchitecture:
+        """Extract architecture from a Bicep file"""
+        logger.info(f"🔍 Reverse engineering Bicep: {filename}")
+
+        resource_blocks = self._extract_resource_blocks(bicep_content)
+        services: List[ExtractedService] = []
+        symbol_to_name: Dict[str, str] = {}
+
+        for resource in resource_blocks:
+            symbolic_name = resource["symbolic_name"]
+            resource_type = resource["resource_type"]
+            resource_name = resource.get("resource_name") or symbolic_name
+            mapped = self.BICEP_RESOURCE_MAP.get(resource_type)
+
+            if mapped:
+                service_name, category = mapped
+                display_name = f"{service_name} ({resource_name})"
+            else:
+                service_name = resource_type.split("/")[-1].replace("_", " ")
+                display_name = f"{service_name} ({resource_name})"
+                category = categorize_service(service_name)
+
+            symbol_to_name[symbolic_name] = display_name
+            services.append(ExtractedService(
+                name=display_name,
+                type=resource_type,
+                category=category,
+                confidence=0.95,
+                source="bicep",
+                properties={
+                    "symbolic_name": symbolic_name,
+                    "resource_type": resource_type,
+                    "resource_name": resource_name,
+                }
+            ))
+
+        connections = self._infer_connections(resource_blocks, symbol_to_name)
+
+        arch = ExtractedArchitecture(
+            services=services,
+            connections=connections,
+            architecture_pattern="Infrastructure as Code",
+            source_type="bicep",
+            source_filename=filename,
+            complexity="Medium" if len(services) <= content_config.COMPLEXITY_THRESHOLD else "High",
+            requirements_inferred=f"Bicep deployment with {len(services)} resources defined in {filename}.",
+            metadata={
+                "resource_types": sorted({resource["resource_type"] for resource in resource_blocks}),
+                "total_resources": len(resource_blocks),
+            }
+        )
+
+        logger.info(f"✅ Extracted {len(services)} services, {len(connections)} connections from Bicep")
+        return arch
+
+    def _extract_resource_blocks(self, content: str) -> List[Dict[str, str]]:
+        import re
+
+        pattern = re.compile(r"resource\s+(\w+)\s+'([^'@]+)@[^']+'\s*=\s*\{", re.MULTILINE)
+        resources: List[Dict[str, str]] = []
+
+        for match in pattern.finditer(content):
+            symbolic_name = match.group(1)
+            resource_type = match.group(2)
+            body_start = match.end() - 1
+            body_end = self._find_matching_brace(content, body_start)
+            if body_end == -1:
+                continue
+
+            body = content[body_start:body_end + 1]
+            resources.append({
+                "symbolic_name": symbolic_name,
+                "resource_type": resource_type,
+                "body": body,
+                "resource_name": self._extract_declared_name(body) or symbolic_name,
+            })
+
+        return resources
+
+    def _extract_declared_name(self, body: str) -> Optional[str]:
+        import re
+
+        for pattern in [
+            re.compile(r"name\s*:\s*'([^']+)'"),
+            re.compile(r'name\s*:\s*"([^"]+)"'),
+        ]:
+            match = pattern.search(body)
+            if match:
+                return match.group(1).strip()
+        return None
+
+    def _find_matching_brace(self, content: str, start_index: int) -> int:
+        depth = 0
+        for index in range(start_index, len(content)):
+            char = content[index]
+            if char == "{":
+                depth += 1
+            elif char == "}":
+                depth -= 1
+                if depth == 0:
+                    return index
+        return -1
+
+    def _infer_connections(self, resource_blocks: List[Dict[str, str]], symbol_to_name: Dict[str, str]) -> List[ExtractedConnection]:
+        import re
+
+        connections: List[ExtractedConnection] = []
+        seen: set[Tuple[str, str, str]] = set()
+
+        for resource in resource_blocks:
+            source_name = symbol_to_name.get(resource["symbolic_name"])
+            if not source_name:
+                continue
+
+            body = resource.get("body", "")
+            referenced_symbols = set()
+
+            for pattern in [
+                re.compile(r"dependsOn\s*:\s*\[(.*?)\]", re.DOTALL),
+                re.compile(r"parent\s*:\s*(\w+)"),
+                re.compile(r"(\w+)\.[\w.]+"),
+            ]:
+                if pattern.pattern.startswith("dependsOn"):
+                    for match in pattern.finditer(body):
+                        referenced_symbols.update(re.findall(r"\b(\w+)\b", match.group(1)))
+                else:
+                    for match in pattern.finditer(body):
+                        referenced_symbols.add(match.group(1))
+
+            referenced_symbols.discard(resource["symbolic_name"])
+            for symbol in referenced_symbols:
+                target_name = symbol_to_name.get(symbol)
+                if not target_name:
+                    continue
+                key = (source_name, target_name, "references")
+                if key in seen:
+                    continue
+                seen.add(key)
+                connections.append(ExtractedConnection(
+                    source=source_name,
+                    target=target_name,
+                    connection_type="references",
+                    label="references",
+                    confidence=0.7,
+                ))
+
+        return connections
+
+
+# ═══════════════════════════════════════════════════════════════════
 # REVERSE ENGINEER: TERRAFORM
 # ═══════════════════════════════════════════════════════════════════
 
@@ -723,30 +922,36 @@ class ReverseEngineerOrchestrator:
         self.drawio_re = DrawioReverseEngineer()
         self.visio_re = VisioReverseEngineer()
         self.image_re = ImageReverseEngineer()
+        self.bicep_re = BicepReverseEngineer()
         self.terraform_re = TerraformReverseEngineer()
         self.ai_analyzer = AIArchitectureAnalyzer()
 
-    async def reverse_engineer_drawio(self, xml_content: str, filename: str = "diagram.drawio", enhance_with_ai: bool = True) -> Dict[str, Any]:
+    async def reverse_engineer_drawio(self, xml_content: str, filename: str = "diagram.drawio", enhance_with_ai: bool = True, enterprise_requirements: str = "") -> Dict[str, Any]:
         """Reverse engineer a Draw.io file"""
         architecture = await self.drawio_re.reverse_engineer(xml_content, filename)
-        return await self._build_response(architecture, enhance_with_ai)
+        return await self._build_response(architecture, enhance_with_ai, enterprise_requirements)
 
-    async def reverse_engineer_visio(self, file_bytes: bytes, filename: str = "diagram.vsdx", enhance_with_ai: bool = True) -> Dict[str, Any]:
+    async def reverse_engineer_visio(self, file_bytes: bytes, filename: str = "diagram.vsdx", enhance_with_ai: bool = True, enterprise_requirements: str = "") -> Dict[str, Any]:
         """Reverse engineer a Visio file"""
         architecture = await self.visio_re.reverse_engineer(file_bytes, filename)
-        return await self._build_response(architecture, enhance_with_ai)
+        return await self._build_response(architecture, enhance_with_ai, enterprise_requirements)
 
-    async def reverse_engineer_image(self, image_b64: str, content_type: str, filename: str = "diagram.png", enhance_with_ai: bool = True) -> Dict[str, Any]:
+    async def reverse_engineer_image(self, image_b64: str, content_type: str, filename: str = "diagram.png", enhance_with_ai: bool = True, enterprise_requirements: str = "") -> Dict[str, Any]:
         """Reverse engineer an image"""
         architecture = await self.image_re.reverse_engineer(image_b64, content_type, filename)
-        return await self._build_response(architecture, enhance_with_ai)
+        return await self._build_response(architecture, enhance_with_ai, enterprise_requirements)
 
-    async def reverse_engineer_terraform(self, zip_bytes: bytes, filename: str = "terraform.zip", enhance_with_ai: bool = True) -> Dict[str, Any]:
+    async def reverse_engineer_bicep(self, bicep_content: str, filename: str = "main.bicep", enhance_with_ai: bool = True, enterprise_requirements: str = "") -> Dict[str, Any]:
+        """Reverse engineer a Bicep file"""
+        architecture = await self.bicep_re.reverse_engineer(bicep_content, filename)
+        return await self._build_response(architecture, enhance_with_ai, enterprise_requirements)
+
+    async def reverse_engineer_terraform(self, zip_bytes: bytes, filename: str = "terraform.zip", enhance_with_ai: bool = True, enterprise_requirements: str = "") -> Dict[str, Any]:
         """Reverse engineer Terraform files"""
         architecture = await self.terraform_re.reverse_engineer(zip_bytes, filename)
-        return await self._build_response(architecture, enhance_with_ai)
+        return await self._build_response(architecture, enhance_with_ai, enterprise_requirements)
 
-    async def _build_response(self, architecture: ExtractedArchitecture, enhance_with_ai: bool) -> Dict[str, Any]:
+    async def _build_response(self, architecture: ExtractedArchitecture, enhance_with_ai: bool, enterprise_requirements: str = "") -> Dict[str, Any]:
         """Build standardized response from extracted architecture"""
         # Optionally enhance with AI
         ai_enhancement = {}
@@ -774,6 +979,8 @@ class ReverseEngineerOrchestrator:
         except Exception as e:
             logger.warning(f"Draw.io generation failed: {e}")
 
+        requirements_analysis = await self._analyze_requirements(architecture, enterprise_requirements)
+
         return {
             "status": "success",
             "source_type": architecture.source_type,
@@ -781,6 +988,7 @@ class ReverseEngineerOrchestrator:
             "architecture": architecture.to_dict(),
             "drawio_xml": drawio_xml,
             "ai_enhancement": ai_enhancement,
+            "requirements_analysis": requirements_analysis,
             "summary": {
                 "total_services": len(architecture.services),
                 "total_connections": len(architecture.connections),
@@ -791,6 +999,135 @@ class ReverseEngineerOrchestrator:
             },
             "timestamp": datetime.now().isoformat()
         }
+
+    async def _analyze_requirements(self, architecture: ExtractedArchitecture, enterprise_requirements: str) -> Dict[str, Any]:
+        """Compare extracted architecture against enterprise requirements."""
+        requirements_text = (enterprise_requirements or "").strip()
+        requirements_source = "enterprise_input"
+        if not requirements_text:
+            requirements_text = self._build_standard_enterprise_requirements(architecture)
+            requirements_source = "enterprise_default"
+
+        services = [service.name for service in architecture.services]
+        connections = [f"{connection.source} -> {connection.target}" for connection in architecture.connections]
+
+        try:
+            validator = _get_ai_validator()
+            prompt = f"""Evaluate whether this extracted Azure architecture satisfies the enterprise requirements.
+
+ENTERPRISE REQUIREMENTS:
+{requirements_text}
+
+EXTRACTED SERVICES:
+{json.dumps(services, indent=2)}
+
+EXTRACTED CONNECTIONS:
+{json.dumps(connections[:25], indent=2)}
+
+Return JSON only with this shape:
+{{
+  "score": 0,
+  "missing_requirements": ["requirement gaps or deviations from enterprise expectations"],
+  "covered_requirements": ["requirements the architecture already satisfies"]
+}}
+
+Keep each list item specific and concise. If there are no deviations, return an empty missing_requirements array."""
+
+            response = validator.client.chat.completions.create(
+                model=validator.deployment_name,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "You are an enterprise Azure architecture reviewer. Compare implemented architecture to stated requirements and return valid JSON only.",
+                    },
+                    {"role": "user", "content": prompt},
+                ],
+                max_tokens=600,
+                temperature=0.1,
+            )
+            content = response.choices[0].message.content
+            cleaned = validator._clean_json_response(content)
+            parsed = json.loads(cleaned)
+            missing_requirements = parsed.get("missing_requirements", []) or []
+            covered_requirements = parsed.get("covered_requirements", []) or []
+            score = parsed.get("score", 0)
+
+            return {
+                "score": score if isinstance(score, (int, float)) else 0,
+                "missing_requirements": [str(item) for item in missing_requirements],
+                "covered_requirements": [str(item) for item in covered_requirements],
+                "deviations": [str(item) for item in missing_requirements],
+                "requirements_source": requirements_source,
+                "applied_requirements": requirements_text,
+            }
+        except Exception as e:
+            logger.warning(f"Enterprise requirements analysis failed: {e}")
+            return self._fallback_requirements_analysis(requirements_text, services, requirements_source)
+
+    def _fallback_requirements_analysis(self, enterprise_requirements: str, services: List[str], requirements_source: str) -> Dict[str, Any]:
+        """Fallback lexical comparison when AI requirements analysis is unavailable."""
+        import re
+
+        requirement_lines = [
+            line.strip(" -\t")
+            for line in re.split(r"[\r\n;]+", enterprise_requirements)
+            if line.strip()
+        ]
+        service_blob = " ".join(services).lower()
+        covered_requirements: List[str] = []
+        missing_requirements: List[str] = []
+
+        for requirement in requirement_lines:
+            normalized = requirement.lower()
+            keywords = [token for token in re.findall(r"[a-z0-9]{4,}", normalized) if token not in {"shall", "must", "with", "from", "that", "this", "have", "using", "into", "than"}]
+            if keywords and any(keyword in service_blob for keyword in keywords):
+                covered_requirements.append(requirement)
+            else:
+                missing_requirements.append(requirement)
+
+        total = len(requirement_lines)
+        covered = len(covered_requirements)
+        score = int((covered / total) * 100) if total else 0
+
+        return {
+            "score": score,
+            "missing_requirements": missing_requirements,
+            "covered_requirements": covered_requirements,
+            "deviations": missing_requirements,
+            "requirements_source": requirements_source,
+            "applied_requirements": enterprise_requirements,
+        }
+
+    def _build_standard_enterprise_requirements(self, architecture: ExtractedArchitecture) -> str:
+        """Build a default enterprise baseline tailored to the extracted architecture."""
+        service_names = [service.name.lower() for service in architecture.services]
+        categories = {service.category for service in architecture.services}
+
+        requirements = [
+            "Use centralized secrets management with Azure Key Vault for application and platform secrets.",
+            "Use managed identity or equivalent workload identity for service-to-service authentication; avoid embedded credentials.",
+            "Provide production observability with Application Insights or Azure Monitor plus centralized logging and alerting.",
+            "Represent production-ready infrastructure as code and keep platform configuration deployable through automation.",
+        ]
+
+        has_public_app = any(category in {"compute", "networking"} for category in categories)
+        has_data = any(category in {"data", "storage"} for category in categories)
+        has_multiple_compute = sum(1 for category in categories if category == "compute") > 1 or sum(1 for name in service_names if "app service" in name or "function" in name or "container" in name) > 1
+        has_ai = any(category == "ai" for category in categories)
+
+        if has_public_app:
+            requirements.append("Protect internet-facing traffic with secure ingress controls such as WAF, Front Door, Application Gateway, or equivalent network filtering.")
+
+        if has_data:
+            requirements.append("Use resilient data services with backup, disaster recovery, and private or restricted access paths for enterprise data stores.")
+
+        if has_multiple_compute or ("integration" in categories):
+            requirements.append("Use scalable integration patterns such as messaging, decoupling, or caching for performance and resilience across distributed services.")
+
+        if has_ai:
+            requirements.append("Apply enterprise controls to AI services, including private access where possible, monitoring, and governed access to model endpoints.")
+
+        return "\n".join(f"- {requirement}" for requirement in requirements)
 
     def _count_categories(self, services: List[ExtractedService]) -> Dict[str, int]:
         """Count services by category"""

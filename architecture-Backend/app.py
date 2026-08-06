@@ -2518,7 +2518,7 @@ async def get_validation_report(validation_id: str):
 # ═══════════════════════════════════════════════════════════════════
 
 @app.post("/api/reverse-engineer/drawio")
-async def reverse_engineer_drawio(drawio_xml: str = Form(...)):
+async def reverse_engineer_drawio(drawio_xml: str = Form(...), enterprise_requirements: str = Form("")):
     """
     🔍 Reverse engineer a Draw.io XML file.
     Extracts services, connections, patterns, and generates requirements.
@@ -2526,7 +2526,7 @@ async def reverse_engineer_drawio(drawio_xml: str = Form(...)):
     try:
         logger.info("🔍 Reverse engineering Draw.io file...")
         orchestrator = ReverseEngineerOrchestrator()
-        result = await orchestrator.reverse_engineer_drawio(drawio_xml)
+        result = await orchestrator.reverse_engineer_drawio(drawio_xml, enterprise_requirements=enterprise_requirements)
         logger.info(f"✅ Reverse engineering complete: {result['summary']['total_services']} services found")
         return result
     except Exception as e:
@@ -2535,7 +2535,7 @@ async def reverse_engineer_drawio(drawio_xml: str = Form(...)):
 
 
 @app.post("/api/reverse-engineer/visio")
-async def reverse_engineer_visio(file: UploadFile = File(...)):
+async def reverse_engineer_visio(file: UploadFile = File(...), enterprise_requirements: str = Form("")):
     """
     🔍 Reverse engineer a Visio (.vsdx) file.
     Extracts shapes, connections, and maps to Azure services.
@@ -2547,7 +2547,7 @@ async def reverse_engineer_visio(file: UploadFile = File(...)):
         logger.info(f"🔍 Reverse engineering Visio file: {file.filename}")
         content = await file.read()
         orchestrator = ReverseEngineerOrchestrator()
-        result = await orchestrator.reverse_engineer_visio(content, file.filename)
+        result = await orchestrator.reverse_engineer_visio(content, file.filename, enterprise_requirements=enterprise_requirements)
         logger.info(f"✅ Visio reverse engineering complete: {result['summary']['total_services']} services")
         return result
     except HTTPException:
@@ -2558,7 +2558,7 @@ async def reverse_engineer_visio(file: UploadFile = File(...)):
 
 
 @app.post("/api/reverse-engineer/image")
-async def reverse_engineer_image(file: UploadFile = File(...)):
+async def reverse_engineer_image(file: UploadFile = File(...), enterprise_requirements: str = Form("")):
     """
     🔍 Reverse engineer architecture from an image using GPT-4o Vision.
     Extracts services, connections, patterns from PNG/JPG diagrams.
@@ -2573,7 +2573,7 @@ async def reverse_engineer_image(file: UploadFile = File(...)):
         image_b64 = base64.b64encode(content).decode("utf-8")
         
         orchestrator = ReverseEngineerOrchestrator()
-        result = await orchestrator.reverse_engineer_image(image_b64, file.content_type, file.filename)
+        result = await orchestrator.reverse_engineer_image(image_b64, file.content_type, file.filename, enterprise_requirements=enterprise_requirements)
         logger.info(f"✅ Image reverse engineering complete: {result['summary']['total_services']} services")
         return result
     except HTTPException:
@@ -2583,8 +2583,33 @@ async def reverse_engineer_image(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=f"Image reverse engineering failed: {str(e)}")
 
 
+@app.post("/api/reverse-engineer/bicep")
+async def reverse_engineer_bicep(file: UploadFile = File(...), enterprise_requirements: str = Form("")):
+    """
+    🔍 Reverse engineer architecture from a Bicep file.
+    Parses Azure resource declarations and infers service relationships.
+    """
+    try:
+        if not file.filename.endswith('.bicep'):
+            raise HTTPException(400, "Only .bicep files are supported")
+
+        logger.info(f"🔍 Reverse engineering Bicep: {file.filename}")
+        content = await file.read()
+        bicep_content = content.decode('utf-8', errors='replace')
+
+        orchestrator = ReverseEngineerOrchestrator()
+        result = await orchestrator.reverse_engineer_bicep(bicep_content, file.filename, enterprise_requirements=enterprise_requirements)
+        logger.info(f"✅ Bicep reverse engineering complete: {result['summary']['total_services']} services")
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Bicep reverse engineering failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Bicep reverse engineering failed: {str(e)}")
+
+
 @app.post("/api/reverse-engineer/terraform")
-async def reverse_engineer_terraform(file: UploadFile = File(...)):
+async def reverse_engineer_terraform(file: UploadFile = File(...), enterprise_requirements: str = Form("")):
     """
     🔍 Reverse engineer architecture from Terraform ZIP.
     Parses .tf files and maps resources to Azure services.
@@ -2596,7 +2621,7 @@ async def reverse_engineer_terraform(file: UploadFile = File(...)):
         logger.info(f"🔍 Reverse engineering Terraform: {file.filename}")
         content = await file.read()
         orchestrator = ReverseEngineerOrchestrator()
-        result = await orchestrator.reverse_engineer_terraform(content, file.filename)
+        result = await orchestrator.reverse_engineer_terraform(content, file.filename, enterprise_requirements=enterprise_requirements)
         logger.info(f"✅ Terraform reverse engineering complete: {result['summary']['total_services']} services")
         return result
     except HTTPException:

@@ -701,7 +701,7 @@ class BaseAgent(AgenticMixin, ABC):
     
     async def _call_openai(self, messages: List[Dict[str, str]], model: str = None) -> str:
         """Make async call to OpenAI API with improved error handling and retry logic"""
-        max_retries = agent_config.AGENT_MAX_RETRIES
+        max_retries = 2 if self.name == "ArchitectureAgent" else agent_config.AGENT_MAX_RETRIES
         base_delay = 1.0
         
         for attempt in range(max_retries):
@@ -713,13 +713,19 @@ class BaseAgent(AgenticMixin, ABC):
                 if enhanced_messages[0]["role"] == "system":
                     enhanced_messages[0]["content"] += "\n\nIMPORTANT: Return ONLY valid JSON without any trailing commas, ensure all brackets and braces are properly closed, and do not include any explanatory text outside the JSON."
                 
-                # Exponential backoff timeout based on attempt
-                timeout_duration = agent_config.AGENT_TIMEOUT_BASE + (attempt * agent_config.AGENT_TIMEOUT_INCREMENT)
+                # Architecture generation is the heaviest call; fail faster there so
+                # the workflow does not appear hung for several minutes.
+                if self.name == "ArchitectureAgent":
+                    timeout_duration = 35.0 + (attempt * 15.0)
+                else:
+                    timeout_duration = agent_config.AGENT_TIMEOUT_BASE + (attempt * agent_config.AGENT_TIMEOUT_INCREMENT)
                 
-                # Add timeout and improve parameters for better completion
-                # Use higher token limit for ArchitectureAgent which must output
-                # services + containers + connections + annotations in one JSON
-                agent_max_tokens = agent_config.AGENT_MAX_TOKENS_ARCHITECTURE if "architect" in self.name.lower() else agent_config.AGENT_MAX_TOKENS_DEFAULT
+                # Only the core ArchitectureAgent needs the larger output budget.
+                agent_max_tokens = (
+                    agent_config.AGENT_MAX_TOKENS_ARCHITECTURE
+                    if self.name == "ArchitectureAgent"
+                    else agent_config.AGENT_MAX_TOKENS_DEFAULT
+                )
                 
                 response = await asyncio.wait_for(
                     self.openai_client.chat.completions.create(

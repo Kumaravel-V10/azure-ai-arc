@@ -24,6 +24,7 @@ export const API_CONFIG = {
     REVERSE_ENGINEER_DRAWIO: "/api/reverse-engineer/drawio",
     REVERSE_ENGINEER_VISIO: "/api/reverse-engineer/visio",
     REVERSE_ENGINEER_IMAGE: "/api/reverse-engineer/image",
+    REVERSE_ENGINEER_BICEP: "/api/reverse-engineer/bicep",
     REVERSE_ENGINEER_TERRAFORM: "/api/reverse-engineer/terraform",
     COMPARE: "/api/compare",
     COMPARE_DIAGRAMS: "/api/compare/diagrams",

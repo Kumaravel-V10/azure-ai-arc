@@ -65,7 +65,7 @@ class AgentConfig:
     
     # Token limits
     AGENT_MAX_TOKENS_DEFAULT: int = int(os.getenv("AGENT_MAX_TOKENS_DEFAULT", "3000"))
-    AGENT_MAX_TOKENS_ARCHITECTURE: int = int(os.getenv("AGENT_MAX_TOKENS_ARCHITECTURE", "6000"))
+    AGENT_MAX_TOKENS_ARCHITECTURE: int = int(os.getenv("AGENT_MAX_TOKENS_ARCHITECTURE", "4000"))
     
     # Temperature for LLM calls
     AGENT_TEMPERATURE: float = float(os.getenv("AGENT_TEMPERATURE", "0.1"))

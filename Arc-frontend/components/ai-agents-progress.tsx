@@ -224,7 +224,7 @@ export function AIAgentsProgress({
       }
 
       // Handle human-in-the-loop interaction
-      if (progress.interaction && progress.status === "waiting_for_input") {
+      if (progress.interaction && (progress.status === "waiting_for_input" || progress.status === "waiting")) {
         setPendingInteraction(progress.interaction)
       } else {
         setPendingInteraction(null)

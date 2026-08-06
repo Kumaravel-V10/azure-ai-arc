@@ -26,12 +26,14 @@ import {
   Sparkles,
   Network,
   Eye,
+  AlertTriangle,
 } from "lucide-react"
 import { DiffViewer } from "@/components/diff-viewer"
 import { ArchitectureStory } from "@/components/architecture-story"
+import DiagramEmbed from "@/components/DiagramEmbed"
 import { getApiUrl, UI_CONFIG, APP_CONFIG } from "@/lib/config"
 
-type SourceType = "drawio" | "visio" | "image" | "terraform"
+type SourceType = "drawio" | "visio" | "image" | "bicep" | "terraform"
 
 // ─── Matches actual backend _build_response shape ───
 interface BackendResponse {
@@ -47,6 +49,14 @@ interface BackendResponse {
     resource_groups?: any[]
   }
   drawio_xml?: string
+  requirements_analysis?: {
+    score?: number | null
+    missing_requirements?: string[]
+    covered_requirements?: string[]
+    deviations?: string[]
+    requirements_source?: string
+    applied_requirements?: string
+  }
   ai_enhancement: {
     well_architected_scores?: Record<string, number>
     missing_services?: string[]
@@ -66,6 +76,22 @@ interface BackendResponse {
     categories: Record<string, number>
   }
   timestamp?: string
+}
+
+function buildFallbackDeviations(result: BackendResponse | null): string[] {
+  if (!result) return []
+
+  const missingServices = (result.ai_enhancement?.missing_services || []).map(
+    (service) => `Missing enterprise baseline service: ${service}`,
+  )
+  const missingConnections = (result.ai_enhancement?.missing_connections || []).map((connection) => {
+    const source = connection.from || "Unknown source"
+    const target = connection.to || "Unknown target"
+    const label = connection.label ? ` (${connection.label})` : ""
+    return `Missing recommended connection: ${source} -> ${target}${label}`
+  })
+
+  return [...missingServices, ...missingConnections]
 }
 
 interface StoryResponse {
@@ -89,6 +115,7 @@ const SOURCE_OPTIONS: { type: SourceType; label: string; icon: React.ReactNode; 
   { type: "drawio", label: "Draw.io", icon: <FileCode className="size-5" />, accept: ".drawio,.xml", description: "Draw.io XML files" },
   { type: "visio", label: "Visio", icon: <FileText className="size-5" />, accept: ".vsdx,.vsdm", description: "Visio .vsdx files" },
   { type: "image", label: "Image", icon: <ImageIcon className="size-5" />, accept: ".png,.jpg,.jpeg,.webp", description: "Architecture screenshots" },
+  { type: "bicep", label: "Bicep", icon: <FileCode className="size-5" />, accept: ".bicep", description: "Azure Bicep files" },
   { type: "terraform", label: "Terraform", icon: <FileArchive className="size-5" />, accept: ".zip", description: "Terraform ZIP archive" },
 ]
 
@@ -119,6 +146,7 @@ export function ReverseEngineerTab({ onNavigateToValidate }: ReverseEngineerTabP
   const getConnections = (r: BackendResponse | null) => r?.architecture?.connections || []
   const getPattern = (r: BackendResponse | null) => r?.summary?.architecture_pattern || r?.architecture?.architecture_pattern || ""
   const getRequirements = (r: BackendResponse | null) => r?.summary?.inferred_requirements || r?.architecture?.requirements_inferred || ""
+  const getRequirementsAnalysis = (r: BackendResponse | null) => r?.requirements_analysis
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -145,9 +173,10 @@ export function ReverseEngineerTab({ onNavigateToValidate }: ReverseEngineerTabP
       drawio: "REVERSE_ENGINEER_DRAWIO",
       visio: "REVERSE_ENGINEER_VISIO",
       image: "REVERSE_ENGINEER_IMAGE",
+      bicep: "REVERSE_ENGINEER_BICEP",
       terraform: "REVERSE_ENGINEER_TERRAFORM",
     }
-    return map[type] as "REVERSE_ENGINEER_DRAWIO" | "REVERSE_ENGINEER_VISIO" | "REVERSE_ENGINEER_IMAGE" | "REVERSE_ENGINEER_TERRAFORM"
+    return map[type] as "REVERSE_ENGINEER_DRAWIO" | "REVERSE_ENGINEER_VISIO" | "REVERSE_ENGINEER_IMAGE" | "REVERSE_ENGINEER_BICEP" | "REVERSE_ENGINEER_TERRAFORM"
   }, [])
 
   // ─── Step 1: Extract architecture ───
@@ -216,7 +245,6 @@ export function ReverseEngineerTab({ onNavigateToValidate }: ReverseEngineerTabP
 
       const storyResult: StoryResponse = await response.json()
       setStoryData(storyResult)
-      setViewMode("story")
     } catch (err) {
       console.warn("Story analysis failed:", err)
     } finally {
@@ -302,6 +330,11 @@ export function ReverseEngineerTab({ onNavigateToValidate }: ReverseEngineerTabP
   const connections = getConnections(result)
   const pattern = getPattern(result)
   const requirements = getRequirements(result)
+  const requirementsAnalysis = getRequirementsAnalysis(result)
+  const fallbackDeviations = buildFallbackDeviations(result)
+  const deviations = requirementsAnalysis?.deviations || requirementsAnalysis?.missing_requirements || fallbackDeviations
+  const hasRequirementsComparison = (!!requirementsAnalysis?.requirements_source && requirementsAnalysis.requirements_source !== "not_provided") || fallbackDeviations.length > 0
+  const usesStandardBaseline = requirementsAnalysis?.requirements_source === "enterprise_default" || !requirementsAnalysis?.requirements_source
 
   return (
     <div className="grid gap-6 lg:grid-cols-[380px_1fr]">
@@ -368,6 +401,13 @@ export function ReverseEngineerTab({ onNavigateToValidate }: ReverseEngineerTabP
                   <p className="text-[11px] text-muted-foreground">{currentOption.accept}</p>
                 </div>
               </label>
+            </div>
+
+            <div className="rounded-lg border border-primary/20 bg-primary/5 px-3 py-2.5">
+              <p className="text-xs font-medium text-foreground">Standard enterprise baseline enabled</p>
+              <p className="mt-1 text-[11px] text-muted-foreground">
+                Reverse engineering automatically checks the extracted architecture against an internal enterprise baseline for security, observability, resilience, and production readiness.
+              </p>
             </div>
 
             {uploadedFile && (
@@ -577,6 +617,67 @@ export function ReverseEngineerTab({ onNavigateToValidate }: ReverseEngineerTabP
           <ScrollArea className="h-[calc(100vh-200px)]">
             <div className="space-y-4 pr-2">
               {/* Services Grid */}
+              {result.drawio_xml && (
+                <Card className="p-4 space-y-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <h4 className="font-semibold text-sm">Generated Architecture Diagram</h4>
+                      <p className="text-xs text-muted-foreground">Rendered from the reverse-engineered architecture output</p>
+                    </div>
+                    <Badge variant="outline" className="text-[10px]">Draw.io</Badge>
+                  </div>
+                  <DiagramEmbed xml={result.drawio_xml} />
+                </Card>
+              )}
+
+              <Card className="p-4 border-primary/20 space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <h4 className="font-semibold text-sm">Deviations From {usesStandardBaseline ? "Standard Enterprise Requirements" : "Enterprise Requirements"}</h4>
+                    <p className="text-xs text-muted-foreground">
+                      {usesStandardBaseline
+                        ? "Items expected by the built-in enterprise baseline but not evidenced in the extracted architecture"
+                        : "Items expected by the enterprise requirements but not evidenced in the extracted architecture"}
+                    </p>
+                  </div>
+                  {typeof requirementsAnalysis?.score === "number" && (
+                    <Badge variant="outline" className="text-[10px]">
+                      Match {requirementsAnalysis.score}%
+                    </Badge>
+                  )}
+                </div>
+
+                {hasRequirementsComparison ? (
+                  deviations.length > 0 ? (
+                    <div className="space-y-2">
+                      {deviations.map((deviation, idx) => (
+                        <div key={idx} className="flex items-start gap-2 rounded-lg border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-sm">
+                          <AlertTriangle className="size-4 shrink-0 text-amber-600 mt-0.5" />
+                          <span className="text-foreground/90">{deviation}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {usesStandardBaseline && (
+                        <div className="rounded-lg border border-border bg-secondary/30 px-3 py-2 text-xs text-muted-foreground">
+                          Built-in baseline applied automatically for this analysis.
+                        </div>
+                      )}
+                      <div className="flex items-start gap-2 rounded-lg border border-green-500/20 bg-green-500/5 px-3 py-2 text-sm">
+                        <CheckCircle2 className="size-4 shrink-0 text-green-600 mt-0.5" />
+                        <span className="text-foreground/90">No deviations detected against the selected enterprise baseline.</span>
+                      </div>
+                    </div>
+                  )
+                ) : (
+                  <div className="flex items-start gap-2 rounded-lg border border-border bg-secondary/30 px-3 py-2 text-sm">
+                    <AlertTriangle className="size-4 shrink-0 text-muted-foreground mt-0.5" />
+                    <span className="text-muted-foreground">No deviations were detected from the standard enterprise baseline for this result.</span>
+                  </div>
+                )}
+              </Card>
+
               <Card className="p-4">
                 <h4 className="font-semibold mb-3 flex items-center gap-2 text-sm">
                   <Server className="size-4 text-blue-500" /> Services ({services.length})
@@ -650,17 +751,6 @@ export function ReverseEngineerTab({ onNavigateToValidate }: ReverseEngineerTabP
                 </Card>
               )}
               
-              {/* Draw.io XML preview */}
-              {result.drawio_xml && (
-                <Card className="p-4">
-                  <h4 className="font-semibold text-sm mb-2">Generated Draw.io XML</h4>
-                  <pre className="text-xs bg-secondary/50 rounded p-3 max-h-32 overflow-auto font-mono">
-                    {result.drawio_xml.substring(0, 800)}
-                    {result.drawio_xml.length > 800 && "\n..."}
-                  </pre>
-                </Card>
-              )}
-
               {/* Validate Button */}
               <div className="flex justify-center pt-2">
                 <Button
